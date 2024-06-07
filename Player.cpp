@@ -4,6 +4,7 @@
 //#include"Camera.h"
 #include"Field.h"
 #include"TestScene.h"
+#include"Ball.h"
 
 namespace {
 	const float MOVE_SPEED = 2.5f;
@@ -20,10 +21,11 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	transform_.position_.y = GROUND;
 	jumpSpeed = 0.0f;
 	onGround = true;
-	frameCounter = 0;
+	isBall = false;
+	/*frameCounter = 0;
 	animType = 0;
 	animFrame = 0;
-	state = S_Walk;
+	state = S_Walk;*/
 }
 
 Player::~Player()
@@ -37,7 +39,6 @@ Player::~Player()
 void Player::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();
-
 	/*if (state == S_Cry) {
 		frameCounter++;
 		if (frameCounter >= 16)
@@ -50,6 +51,26 @@ void Player::Update()
 	TestScene* scene = dynamic_cast<TestScene*>(GetParent());
 	if (!scene->CanMove())
 		return;*/
+
+	Ball* pBall = nullptr;
+
+	if (CheckHitKey(KEY_INPUT_K))
+	{
+		if (!prevAttackKey && !isBall) {
+			pBall = Instantiate<Ball>(GetParent());
+			XMFLOAT3 ballPos = { transform_.position_.x + 32,transform_.position_.y,transform_.position_.z };
+			pBall->SetPosition(ballPos);
+			pBall->TossBall();
+			prevAttackKey = true;
+			isBall = true;
+		}
+	}
+	else {
+		prevAttackKey = false;
+	}
+	if (pBall == nullptr) {
+		isBall == false;
+	}
 	
 	if (CheckHitKey(KEY_INPUT_D))
 	{
@@ -138,8 +159,6 @@ void Player::Update()
 		if (pushHead >= 1) {
 			transform_.position_.y += pushHead - 1;
 			jumpSpeed = 0.0f;
-			/*onGround = true;
-			animType = 0;*/
 		}
 	}
 	if (transform_.position_.y >= GROUND){

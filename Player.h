@@ -19,6 +19,8 @@ private:
 	int hImage;
 	GameObject* sceneTop;
 	bool prevSpaceKey;
+	bool prevAttackKey;
+	bool isBall;
 	float jumpSpeed;
 	bool onGround;
 	int animType;//èÛãµ

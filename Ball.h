@@ -15,15 +15,13 @@ public:
 	//•`‰æ
 	void Draw() override;
 
-	//ŠJ•ú
-	void Release() override;
-
-	void SetPosition(int x, int y);
-	void ThrowBall();
+	void SetPosition(XMFLOAT3 pos);
+	void SpikeBall();
 	void TossBall();
 private:
 	int hImage;
 	float speed;
 	float bound;
+	XMVECTOR vBall;
 };
 

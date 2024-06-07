@@ -16,7 +16,7 @@ public:
 	/// <param name="x">X座標</param>
 	/// <param name="y">Y座標</param>
 	/// <returns>めり込んだ量（ドット）</returns>
-	int CollisionRight(int x, int y);
+	float CollisionRight(int x, int y);
 
 	/// <summary>
 	/// 下の点が当たっているか調べる
@@ -24,9 +24,9 @@ public:
 	/// <param name="x">X座標</param>
 	/// <param name="y">Y座標</param>
 	/// <returns>めり込んだ量（ドット）</returns>
-	int CollisionDown(int x, int y);
-	int CollisionLeft(int x, int y);
-	int CollisionUp(int x, int y);
+	float CollisionDown(int x, int y);
+	float CollisionLeft(int x, int y);
+	float CollisionUp(int x, int y);
 private:
 	int hImage;
 
