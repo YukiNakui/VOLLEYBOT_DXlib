@@ -21,7 +21,9 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	transform_.position_.y = GROUND;
 	jumpSpeed = 0.0f;
 	onGround = true;
-	isBall = false;
+	isRight = true;
+	pBall = nullptr;
+	isBallAlive = false;
 	/*frameCounter = 0;
 	animType = 0;
 	animFrame = 0;
@@ -52,24 +54,18 @@ void Player::Update()
 	if (!scene->CanMove())
 		return;*/
 
-	Ball* pBall = nullptr;
-
 	if (CheckHitKey(KEY_INPUT_K))
 	{
-		if (!prevAttackKey && !isBall) {
+		if (!prevAttackKey) {
 			pBall = Instantiate<Ball>(GetParent());
 			XMFLOAT3 ballPos = { transform_.position_.x + 32,transform_.position_.y,transform_.position_.z };
 			pBall->SetPosition(ballPos);
-			pBall->TossBall();
-			prevAttackKey = true;
-			isBall = true;
+			pBall->SpikeBall(isRight);
 		}
+		prevAttackKey = true;
 	}
 	else {
 		prevAttackKey = false;
-	}
-	if (pBall == nullptr) {
-		isBall == false;
 	}
 	
 	if (CheckHitKey(KEY_INPUT_D))
@@ -84,11 +80,12 @@ void Player::Update()
 		if (pField != nullptr) {
 			int pushDown = pField->CollisionRight(hitX, hitY);
 			int pushUp = pField->CollisionRight(hitX, transform_.position_.y);
-			int pushRight = max(pushDown, pushUp);//2‚Â‚Ì‘«Œ³‚Ì‚ß‚èž‚Ý‚Ì‘å‚«‚¢‚Ù‚¤
+			int pushRight = max(pushDown, pushUp);//‰E‘¤‚Ì“ª‚Æ‘«Œ³‚Å“–‚½‚è”»’è
 			if (pushRight >= 1) {
 				transform_.position_.x -= pushRight;
 			}
 		}
+		isRight = true;
 	}
 	else if (CheckHitKey(KEY_INPUT_A))
 	{
@@ -102,11 +99,12 @@ void Player::Update()
 		if (pField != nullptr) {
 			int pushDown = pField->CollisionLeft(hitX, hitY);
 			int pushUp = pField->CollisionLeft(hitX, transform_.position_.y);
-			int pushLeft = max(pushDown, pushUp);//2‚Â‚Ì‘«Œ³‚Ì‚ß‚èž‚Ý‚Ì‘å‚«‚¢‚Ù‚¤
+			int pushLeft = max(pushDown, pushUp);//¶‘¤‚Ì“ª‚Æ‘«Œ³‚Å“–‚½‚è”»’è
 			if (pushLeft >= 1) {
 				transform_.position_.x += pushLeft;
 			}
 		}
+		isRight = false;
 	}
 	/*else {
 		animFrame = 0;
@@ -167,12 +165,6 @@ void Player::Update()
 		onGround = true;
 		animType = 0;
 	}
-
-	//if (CheckHitKey(KEY_INPUT_M))
-	//{
-	//	Stone* st = Instantiate<Stone>(GetParent());
-	//	st->SetPosition(transform_.position_);
-	//}
 
 	//std::list<Bird*> pBirds = GetParent()->FindGameObjects<Bird>();
 	//for (Bird* pBird : pBirds) {

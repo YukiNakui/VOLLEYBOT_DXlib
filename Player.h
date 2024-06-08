@@ -1,5 +1,7 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include"Ball.h"
+
 class Player :
     public GameObject
 {
@@ -20,12 +22,14 @@ private:
 	GameObject* sceneTop;
 	bool prevSpaceKey;
 	bool prevAttackKey;
-	bool isBall;
 	float jumpSpeed;
 	bool onGround;
 	int animType;//èÛãµ
 	int animFrame;//ÉRÉ}
 	int frameCounter;
+	bool isRight;
+	Ball* pBall;
+	bool isBallAlive;
 
 	enum State {
 		S_Walk = 0,

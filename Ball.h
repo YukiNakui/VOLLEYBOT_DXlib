@@ -16,12 +16,10 @@ public:
 	void Draw() override;
 
 	void SetPosition(XMFLOAT3 pos);
-	void SpikeBall();
+	void SpikeBall(bool isRight);
 	void TossBall();
 private:
 	int hImage;
-	float speed;
-	float bound;
-	XMVECTOR vBall;
+	XMVECTOR moveVec;
 };
 
