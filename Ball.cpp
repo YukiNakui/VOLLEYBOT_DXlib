@@ -15,6 +15,7 @@ Ball::Ball(GameObject* parent)
 	hImage = LoadGraph("Assets/ball.png");
 	assert(hImage > 0);
 	moveVec = XMVectorZero();
+	isAlive = true;
 }
 
 Ball::~Ball()
@@ -23,6 +24,11 @@ Ball::~Ball()
 	{
 		DeleteGraph(hImage);
 	}
+}
+
+void Ball::Initialize()
+{
+	
 }
 
 void Ball::Update()
@@ -67,6 +73,7 @@ void Ball::Update()
 		if (length < 1.0f)
 		{
 			//moveVec = XMVectorZero();
+			isAlive = false;
 			KillMe();
 		}
 	}
@@ -78,8 +85,10 @@ void Ball::Update()
 	XMStoreFloat3(&transform_.position_, vBall);
 	
 
-	if (transform_.position_.y > 720.0f)
+	if (transform_.position_.y > 720.0f) {
+		isAlive = false;
 		KillMe();
+	}
 }
 
 void Ball::Draw()
@@ -94,6 +103,7 @@ void Ball::SetPosition(XMFLOAT3 pos)
 
 void Ball::SpikeBall(bool isRight)
 {
+	isAlive = true;
 	if (isRight)
 	{
 		moveVec = { 8.0f,8.0f,0.0f,0.0f };
@@ -106,7 +116,13 @@ void Ball::SpikeBall(bool isRight)
 
 void Ball::TossBall()
 {
+	isAlive = true;
 	float tossSpeed = -sqrt(2 * GRAVITY * TOSS_HIGHT);
 	moveVec = { 0.0f,  tossSpeed, 0.0f,0.0f};
+}
+
+bool Ball::GetIsBallAlive()
+{
+	return isAlive;
 }
 

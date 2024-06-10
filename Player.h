@@ -30,6 +30,7 @@ private:
 	bool isRight;
 	Ball* pBall;
 	bool isBallAlive;
+	
 
 	enum State {
 		S_Walk = 0,

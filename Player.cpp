@@ -53,11 +53,12 @@ void Player::Update()
 	TestScene* scene = dynamic_cast<TestScene*>(GetParent());
 	if (!scene->CanMove())
 		return;*/
-
+	
 	if (CheckHitKey(KEY_INPUT_K))
 	{
-		if (!prevAttackKey) {
+		if (!prevAttackKey && !isBallAlive) {
 			pBall = Instantiate<Ball>(GetParent());
+			isBallAlive = true;
 			XMFLOAT3 ballPos = { transform_.position_.x + 32,transform_.position_.y,transform_.position_.z };
 			pBall->SetPosition(ballPos);
 			pBall->SpikeBall(isRight);
@@ -66,6 +67,10 @@ void Player::Update()
 	}
 	else {
 		prevAttackKey = false;
+	}
+
+	if (pBall == nullptr) {
+		isBallAlive = false;
 	}
 	
 	if (CheckHitKey(KEY_INPUT_D))
@@ -194,7 +199,10 @@ void Player::Draw()
 	//	x -= cam->GetValue();//プレイヤーの位置からカメラ分引く
 	//}
 	//DrawRectGraph(x, y, animFrame * 64, animType * 64, 64, 64, hImage, TRUE);
-	DrawRotaGraph(x+32, y+32, 1.0, 0, hImage, TRUE, TRUE);
+	DrawRotaGraph(x+32, y+32, 1.0, 0, hImage, TRUE, !isRight);
+	
+	unsigned int Cr = GetColor(0, 0, 255);
+	DrawCircle(10, 10, 10,Cr, isBallAlive);
 }
 
 void Player::SetPosition(int x, int y)

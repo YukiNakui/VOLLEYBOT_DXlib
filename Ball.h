@@ -9,6 +9,9 @@ public:
 	Ball(GameObject* parent);
 	~Ball();
 
+	//èâä˙âª
+	void Initialize() override;
+
 	//çXêV
 	void Update() override;
 
@@ -18,8 +21,10 @@ public:
 	void SetPosition(XMFLOAT3 pos);
 	void SpikeBall(bool isRight);
 	void TossBall();
+	bool GetIsBallAlive();
 private:
 	int hImage;
 	XMVECTOR moveVec;
+	bool isAlive;
 };
 
