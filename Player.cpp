@@ -56,7 +56,8 @@ void Player::Update()
 	
 	if (CheckHitKey(KEY_INPUT_K))
 	{
-		if (!prevAttackKey && !isBallAlive) {
+		if (!prevAttackKey && (!isBallAlive || (pBall && !pBall->IsBallAlive()))) {
+			pBall = nullptr;
 			pBall = Instantiate<Ball>(GetParent());
 			isBallAlive = true;
 			XMFLOAT3 ballPos = { transform_.position_.x + 32,transform_.position_.y,transform_.position_.z };
@@ -69,8 +70,9 @@ void Player::Update()
 		prevAttackKey = false;
 	}
 
-	if (pBall == nullptr) {
+	if (pBall && !pBall->IsBallAlive()) {
 		isBallAlive = false;
+		pBall = nullptr;
 	}
 	
 	if (CheckHitKey(KEY_INPUT_D))

@@ -72,9 +72,8 @@ void Ball::Update()
 		float length = XMVectorGetX(v);
 		if (length < 1.0f)
 		{
-			//moveVec = XMVectorZero();
 			isAlive = false;
-			KillMe();
+			//KillMe();
 		}
 	}
 
@@ -93,7 +92,8 @@ void Ball::Update()
 
 void Ball::Draw()
 {
-	DrawRotaGraph(transform_.position_.x, transform_.position_.y,1.0, 0, hImage,TRUE);
+	if (isAlive)
+		DrawRotaGraph(transform_.position_.x, transform_.position_.y, 1.0, 0, hImage, TRUE);
 }
 
 void Ball::SetPosition(XMFLOAT3 pos)
@@ -121,7 +121,7 @@ void Ball::TossBall()
 	moveVec = { 0.0f,  tossSpeed, 0.0f,0.0f};
 }
 
-bool Ball::GetIsBallAlive()
+bool Ball::IsBallAlive()
 {
 	return isAlive;
 }

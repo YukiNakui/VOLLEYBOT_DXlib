@@ -21,7 +21,7 @@ public:
 	void SetPosition(XMFLOAT3 pos);
 	void SpikeBall(bool isRight);
 	void TossBall();
-	bool GetIsBallAlive();
+	bool IsBallAlive();
 private:
 	int hImage;
 	XMVECTOR moveVec;
