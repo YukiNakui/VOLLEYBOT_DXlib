@@ -26,11 +26,6 @@ Ball::~Ball()
 	}
 }
 
-void Ball::Initialize()
-{
-	
-}
-
 void Ball::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();

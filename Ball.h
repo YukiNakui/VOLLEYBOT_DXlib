@@ -9,9 +9,6 @@ public:
 	Ball(GameObject* parent);
 	~Ball();
 
-	//‰Šú‰»
-	void Initialize() override;
-
 	//XV
 	void Update() override;
 

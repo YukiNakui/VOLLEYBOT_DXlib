@@ -1,6 +1,7 @@
 #include "Field.h"
 #include <assert.h>
 #include"Player.h"
+#include"Enemy.h"
 #include"Engine/CsvReader.h"
 
 Field::Field(GameObject* scene) :GameObject(scene)
@@ -46,12 +47,18 @@ void Field::Reset()
 	//Mapデータの中で0があれば、Playerの座標を0の位置にする
 	for (int h = 0; h < height; h++) {
 		for (int w = 0; w < width; w++) {
-			switch (csv.GetInt(w, h + height + 1))
+			switch (csv.GetInt(w, h))
 			{
 			case 0://Player
 			{//switch caseのなかでは変数の宣言できないが{}のなかならできる
 				Player* pPlayer = GetParent()->FindGameObject<Player>();
-				//pPlayer->SetPosition(w * 32, h * 32);
+				pPlayer->SetPosition(w * 32, h * 32);
+			}
+			break;
+			case 1://Enemy
+			{
+				Enemy* pEnemy = Instantiate<Enemy>(GetParent());
+				pEnemy->SetPosition(w * 32, h * 32);
 			}
 			break;
 			}

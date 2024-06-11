@@ -38,6 +38,11 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="..\..\..\..\Downloads\time.cpp">
+      <Filter>01Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\GameObject.h">
@@ -62,5 +67,10 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="Ball.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="..\..\..\..\Downloads\time.h">
+      <Filter>01Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\time.h" />
   </ItemGroup>
 </Project>
