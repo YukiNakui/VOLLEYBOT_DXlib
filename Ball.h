@@ -23,5 +23,6 @@ private:
 	int hImage;
 	XMVECTOR moveVec;
 	bool isAlive;
+	float r;
 };
 

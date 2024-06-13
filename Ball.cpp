@@ -16,6 +16,7 @@ Ball::Ball(GameObject* parent)
 	assert(hImage > 0);
 	moveVec = XMVectorZero();
 	isAlive = true;
+	r = 32.0f;
 }
 
 Ball::~Ball()

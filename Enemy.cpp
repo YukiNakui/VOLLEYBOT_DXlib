@@ -37,11 +37,67 @@ void Enemy::Draw()
 {
 	int x = (int)transform_.position_.x;
 	int y = (int)transform_.position_.y;
-	DrawGraph(x, y, hWalkImage[animFrame], TRUE);
+	DrawRotaGraph(x, y,1.0f, 0, hWalkImage[animFrame], TRUE);
 }
 
 void Enemy::SetPosition(int x, int y)
 {
 	transform_.position_.x = x;
 	transform_.position_.y = y;
+}
+
+bool Enemy::CollideRectToCircle(float x, float y, float r)
+{
+	bool result = false;
+	float myRectRight = transform_.position_.x + 64.0f;
+	float myRectLeft = transform_.position_.x - 64.0f;
+	float myRectTop = transform_.position_.y + 64.0f;
+	float myRectBottom = transform_.position_.y - 64.0f;
+	// 矩形の四辺に対して円の半径分だけ足したとき円が重なっていたら
+	if ((x < myRectRight + r) && (x > myRectLeft - r) && (y > myRectTop - r) && (y < myRectBottom + r)) {
+		result = true;
+		if (x < myRectLeft) {//矩形の左
+			float dx = myRectLeft - x;
+			if (y < myRectTop) {//矩形の左上
+				float dy = myRectTop - y;
+				if ( sqrt((dx*dx)+(dy+dy)) >= r)
+				{
+					result = false;
+				}
+			}
+			else {
+				if (y > myRectBottom)//矩形の左下
+				{
+					float dy = myRectBottom - y;
+					if (sqrt((dx * dx) + (dy + dy)) >= r)
+					{
+						result = false;
+					}
+				}
+			}
+		}
+		else {
+			if (x > myRectRight) {//矩形の右
+				float dx = myRectRight - x;
+				if (y < myRectTop) {//矩形の右上
+					float dy = myRectTop - y;
+					if (sqrt((dx * dx) + (dy + dy)) >= r)
+					{
+						result = false;
+					}
+				}
+				else {
+					if (y > myRectBottom)//矩形の右下
+					{
+						float dy = myRectBottom - y;
+						if (sqrt((dx * dx) + (dy + dy)) >= r)
+						{
+							result = false;
+						}
+					}
+				}
+			}
+		}
+	}
+	return result;
 }
