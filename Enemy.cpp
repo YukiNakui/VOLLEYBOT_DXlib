@@ -2,6 +2,11 @@
 #include"Field.h"
 #include "Engine/time.h"
 
+namespace {
+	const float ENEMY_WIDTH = 128.0f;
+	const float ENEMY_HEIGHT = 128.0f;
+}
+
 Enemy::Enemy(GameObject* scene)
 {
 	hWalkImage[WALK_MAXFRAME];
@@ -49,55 +54,93 @@ void Enemy::SetPosition(int x, int y)
 bool Enemy::CollideRectToCircle(float x, float y, float r)
 {
 	bool result = false;
-	float myRectRight = transform_.position_.x + 64.0f;
-	float myRectLeft = transform_.position_.x - 64.0f;
-	float myRectTop = transform_.position_.y + 64.0f;
-	float myRectBottom = transform_.position_.y - 64.0f;
-	// 矩形の四辺に対して円の半径分だけ足したとき円が重なっていたら
-	if ((x < myRectRight + r) && (x > myRectLeft - r) && (y > myRectTop - r) && (y < myRectBottom + r)) {
-		result = true;
-		if (x < myRectLeft) {//矩形の左
-			float dx = myRectLeft - x;
-			if (y < myRectTop) {//矩形の左上
-				float dy = myRectTop - y;
-				if ( sqrt((dx*dx)+(dy+dy)) >= r)
-				{
-					result = false;
-				}
-			}
-			else {
-				if (y > myRectBottom)//矩形の左下
-				{
-					float dy = myRectBottom - y;
-					if (sqrt((dx * dx) + (dy + dy)) >= r)
-					{
-						result = false;
-					}
-				}
-			}
-		}
-		else {
-			if (x > myRectRight) {//矩形の右
-				float dx = myRectRight - x;
-				if (y < myRectTop) {//矩形の右上
-					float dy = myRectTop - y;
-					if (sqrt((dx * dx) + (dy + dy)) >= r)
-					{
-						result = false;
-					}
-				}
-				else {
-					if (y > myRectBottom)//矩形の右下
-					{
-						float dy = myRectBottom - y;
-						if (sqrt((dx * dx) + (dy + dy)) >= r)
-						{
-							result = false;
-						}
-					}
-				}
-			}
-		}
+	float myRectRight = transform_.position_.x + ENEMY_WIDTH / 2.0f;
+	float myRectLeft = transform_.position_.x - ENEMY_WIDTH / 2.0f;
+	float myRectTop = transform_.position_.y + ENEMY_HEIGHT / 2.0f;
+	float myRectBottom = transform_.position_.y - ENEMY_HEIGHT / 2.0f;
+	//// 矩形の四辺に対して円の半径分だけ足したとき円が重なっていたら
+	//if ((x < myRectRight + r) && (x > myRectLeft - r) && (y > myRectTop - r) && (y < myRectBottom + r)) {
+	//	result = true;
+	//	if (x < myRectLeft) {//矩形の左
+	//		float dx = myRectLeft - x;
+	//		if (y < myRectTop) {//矩形の左上
+	//			float dy = myRectTop - y;
+	//			if ( sqrt((dx*dx)+(dy+dy)) >= r){
+	//				result = false;
+	//			}
+	//		}
+	//		else {
+	//			if (y > myRectBottom){//矩形の左下
+	//				float dy = myRectBottom - y;
+	//				if (sqrt((dx * dx) + (dy + dy)) >= r){
+	//					result = false;
+	//				}
+	//			}
+	//		}
+	//	}
+	//	else {
+	//		if (x > myRectRight) {//矩形の右
+	//			float dx = myRectRight - x;
+	//			if (y < myRectTop) {//矩形の右上
+	//				float dy = myRectTop - y;
+	//				if (sqrt((dx * dx) + (dy + dy)) >= r){
+	//					result = false;
+	//				}
+	//			}
+	//			else {
+	//				if (y > myRectBottom){//矩形の右下
+	//					float dy = myRectBottom - y;
+	//					if (sqrt((dx * dx) + (dy + dy)) >= r){
+	//						result = false;
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
+	//return result;
+	float cx = 0.0f;
+	float cy = 0.0f;
+	if (x <= ENEMY_WIDTH/2.0f) {
+		cx = -ENEMY_WIDTH / 2.0f;
 	}
-	return result;
+	else if (x >= ENEMY_WIDTH / 2.0f) {
+		cx = ENEMY_WIDTH / 2.0f;
+	}
+	else {
+		cx = x;
+	}
+	if (y <= ENEMY_HEIGHT / 2.0f) {
+		cy = -ENEMY_HEIGHT / 2.0f;
+	}
+	else if (y >= ENEMY_HEIGHT / 2.0f) {
+		cy = ENEMY_HEIGHT / 2.0f;
+	}
+	else {
+		cy = y;
+	}
+
+
+	//角との判定
+	double dx = cx - x;
+	double dy = cy - y;
+	return (sqrt(dx + dy) <= r );
+}
+
+bool Enemy::CollideRectToRect(float x, float y, float w, float h)
+{
+	float myRectRight = transform_.position_.x + ENEMY_WIDTH / 2.0f;
+	float myRectLeft = transform_.position_.x - ENEMY_WIDTH / 2.0f;
+	float myRectTop = transform_.position_.y + ENEMY_HEIGHT / 2.0f;
+	float myRectBottom = transform_.position_.y - ENEMY_HEIGHT / 2.0f;
+	if (((x - w / 2.0f > myRectLeft && x - w / 2.0f < myRectRight) ||
+		(myRectLeft > x - w / 2.0f && myRectLeft < x + w / 2.0f)) &&
+		((y - h / 2.0f > myRectTop && y - h / 2.0f < myRectBottom) ||
+		(myRectTop > y - h / 2.0f && myRectTop < y + h / 2.0f))) {
+		return true;
+	}
+	else {
+		return false;
+	}
+	return false;
 }

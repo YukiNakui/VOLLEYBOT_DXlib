@@ -5,12 +5,15 @@
 #include"Field.h"
 #include"TestScene.h"
 #include"Ball.h"
+#include"Enemy.h"
 
 namespace {
 	const float MOVE_SPEED = 2.5f;
 	const float GROUND = 600.0f;
 	const float JUMP_HIGHT = 64.0f * 4.0f;//ジャンプの高さ
 	const float GRAVITY = 9.8f / 60.0f;//重力加速度
+	const float PLAYER_WIDTH = 64.0f;
+	const float PLAYER_HEIGHT = 64.0f;
 };
 
 Player::Player(GameObject* parent) : GameObject(sceneTop)
@@ -173,15 +176,16 @@ void Player::Update()
 		animType = 0;
 	}
 
-	//std::list<Bird*> pBirds = GetParent()->FindGameObjects<Bird>();
-	//for (Bird* pBird : pBirds) {
-	//	if (pBird->CollideCircle(transform_.position_.x + 32.0f, transform_.position_.y + 32.0f, 20.0f)) {
-	//		animType = 4;
-	//		animFrame = 0;
-	//		state = S_Cry;
-	//		scene->StartDead();
-	//	}
-	//}
+	std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
+	for (Enemy* pEnemy : pEnemies) {
+		if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, PLAYER_WIDTH,PLAYER_HEIGHT)) {
+			/*animType = 4;
+			animFrame = 0;
+			state = S_Cry;
+			scene->StartDead();*/
+			KillMe();
+		}
+	}
 
 	//ここでカメラ位置を調整
 	//Camera* cam = GetParent()->FindGameObject<Camera>();
@@ -201,7 +205,7 @@ void Player::Draw()
 	//	x -= cam->GetValue();//プレイヤーの位置からカメラ分引く
 	//}
 	//DrawRectGraph(x, y, animFrame * 64, animType * 64, 64, 64, hImage, TRUE);
-	DrawRotaGraph(x+32, y+32, 1.0, 0, hImage, TRUE, !isRight);
+	DrawRotaGraph(x + PLAYER_WIDTH / 2.0f, y + PLAYER_HEIGHT / 2.0f, 1.0, 0, hImage, TRUE, !isRight);
 	
 	unsigned int Cr = GetColor(0, 0, 255);
 	DrawCircle(10, 10, 10,Cr, isBallAlive);

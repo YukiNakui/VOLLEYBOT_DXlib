@@ -2,11 +2,14 @@
 #include"Field.h"
 #include <DxLib.h>
 #include <assert.h>
+#include"Enemy.h"
 
 namespace {
 	const float BALL_E = 0.8f;
 	const float GRAVITY = 9.8f / 60.0f;
-	const float TOSS_HIGHT = 64.0f * 4.0f;
+	const float TOSS_HEIGHT = 64.0f * 4.0f;
+	const float BALL_WIDTH = 64.0f;
+	const float BALL_HEIGHT = 64.0f;
 }
 
 Ball::Ball(GameObject* parent)
@@ -79,6 +82,12 @@ void Ball::Update()
 	vBall += moveVec;
 	XMStoreFloat3(&transform_.position_, vBall);
 	
+	std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
+	for (Enemy* pEnemy : pEnemies) {
+		if (pEnemy->CollideRectToCircle(transform_.position_.x, transform_.position_.y, r)) {
+			isAlive = false;
+		}
+	}
 
 	if (transform_.position_.y > 720.0f) {
 		isAlive = false;
@@ -113,7 +122,7 @@ void Ball::SpikeBall(bool isRight)
 void Ball::TossBall()
 {
 	isAlive = true;
-	float tossSpeed = -sqrt(2 * GRAVITY * TOSS_HIGHT);
+	float tossSpeed = -sqrt(2 * GRAVITY * TOSS_HEIGHT);
 	moveVec = { 0.0f,  tossSpeed, 0.0f,0.0f};
 }
 
