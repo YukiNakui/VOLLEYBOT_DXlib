@@ -10,6 +10,7 @@ class Enemy :
 	int hWalkImage[WALK_MAXFRAME];
 	int animFrame;
 	int frameCounter;
+	bool isRight;
 public:
 	Enemy(GameObject* scene);
 	~Enemy();

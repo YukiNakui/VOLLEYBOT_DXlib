@@ -1,7 +1,7 @@
 #include "Player.h"
 #include <DxLib.h>
 #include <assert.h>
-//#include"Camera.h"
+#include"Camera.h"
 #include"Field.h"
 #include"TestScene.h"
 #include"Ball.h"
@@ -210,7 +210,7 @@ void Player::Update()
 
 	std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
 	for (Enemy* pEnemy : pEnemies) {
-		if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, PLAYER_WIDTH,PLAYER_HEIGHT)) {
+		if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, PLAYER_WIDTH/2.0f,PLAYER_HEIGHT/2.0f)) {
 			/*animType = 4;
 			animFrame = 0;
 			state = S_Cry;
@@ -220,22 +220,22 @@ void Player::Update()
 	}
 
 	//ここでカメラ位置を調整
-	//Camera* cam = GetParent()->FindGameObject<Camera>();
-	//int x = (int)transform_.position_.x - cam->GetValue();
-	//if (x > 400) {
-	//	x = 400;
-	//	cam->SetValue((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
-	//}
+	Camera* cam = GetParent()->FindGameObject<Camera>();
+	int x = (int)transform_.position_.x - cam->GetValue();
+	if (x > 400) {
+		x = 400;
+		cam->SetValue((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
+	}
 }
 
 void Player::Draw()
 {
 	int x = (int)transform_.position_.x;
 	int y = (int)transform_.position_.y;
-	//Camera* cam = GetParent()->FindGameObject<Camera>();
-	//if (cam != nullptr) {
-	//	x -= cam->GetValue();//プレイヤーの位置からカメラ分引く
-	//}
+	Camera* cam = GetParent()->FindGameObject<Camera>();
+	if (cam != nullptr) {
+		x -= cam->GetValue();//プレイヤーの位置からカメラ分引く
+	}
 	//DrawRectGraph(x, y, animFrame * 64, animType * 64, 64, 64, hImage, TRUE);
 	DrawRotaGraph(x, y, 1.0, 0, hImage, TRUE, !isRight);
 	

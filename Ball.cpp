@@ -4,6 +4,7 @@
 #include <assert.h>
 #include"Enemy.h"
 #include"Player.h"
+#include"Camera.h"
 
 namespace {
 	const float BALL_E = 0.8f;
@@ -92,8 +93,9 @@ void Ball::Update()
 	
 	std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
 	for (Enemy* pEnemy : pEnemies) {
-		if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, BALL_WIDTH,BALL_HEIGHT)) {
-			//isAlive = false;
+		if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, BALL_WIDTH/2.0f,BALL_HEIGHT/2.0f)) {
+			pEnemy->KillMe();
+			isAlive = false;
 		}
 	}
 
@@ -105,8 +107,14 @@ void Ball::Update()
 
 void Ball::Draw()
 {
+	float x = (int)transform_.position_.x;
+	float y = (int)transform_.position_.y;
+	Camera* cam = GetParent()->FindGameObject<Camera>();
+	if (cam != nullptr) {
+		x -= cam->GetValue();
+	}
 	if (isAlive)
-		DrawRotaGraph(transform_.position_.x, transform_.position_.y, 1.0, 0, hImage, TRUE);
+		DrawRotaGraph(x, y, 1.0, 0, hImage, TRUE);
 }
 
 void Ball::SetPosition(XMFLOAT3 pos)
