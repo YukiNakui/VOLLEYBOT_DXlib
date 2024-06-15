@@ -88,35 +88,35 @@ void Field::Draw()
 	}
 }
 
-float Field::CollisionRight(int x, int y)
+float Field::CollisionRight(float x, float y)
 {
 	if (IsWallBlock(x, y))
 		//当たっているので、めり込んだ量を返す
-		return x % 32 + 1;
+		return (int)x % 32 + 1;
 	return 0;
 }
 
-float Field::CollisionDown(int x, int y)
+float Field::CollisionDown(float x, float y)
 {
 	if (IsWallBlock(x, y))
 		//当たっているので、めり込んだ量を返す
-		return y % 32 + 1;
+		return (int)y % 32 + 1;
 	return 0;
 }
 
-float Field::CollisionLeft(int x, int y)
+float Field::CollisionLeft(float x, float y)
 {
 	if (IsWallBlock(x, y))
 		//当たっているので、めり込んだ量を返す
-		return 32 - (x % 32);
+		return 32 - ((int)x % 32);
 	return 0;
 }
 
-float Field::CollisionUp(int x, int y)
+float Field::CollisionUp(float x, float y)
 {
 	if (IsWallBlock(x, y))
 		//当たっているので、めり込んだ量を返す
-		return 32 - (y % 32);
+		return 32 - ((int)y % 32);
 	return 0;
 }
 

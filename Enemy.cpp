@@ -5,6 +5,9 @@
 namespace {
 	const float ENEMY_WIDTH = 128.0f;
 	const float ENEMY_HEIGHT = 128.0f;
+	const float GRAVITY = 9.8f / 60.0f;//d—Í‰Á‘¬“x
+	const float CORRECT_WIDTH = 40.0f;
+	const float CORRECT_HEIGHT = 1.0f;
 }
 
 Enemy::Enemy(GameObject* scene)
@@ -31,10 +34,31 @@ Enemy::~Enemy()
 
 void Enemy::Update()
 {
+	Field* pField = GetParent()->FindGameObject<Field>();
 	frameCounter ++;
 	if (frameCounter >= WALK_MAXFRAME) {
 		animFrame = (animFrame + 1) % WALK_MAXFRAME;
 		frameCounter = 0;
+	}
+
+	transform_.position_.y += GRAVITY;
+
+	if (pField != nullptr) {
+		float cx = ENEMY_WIDTH / 2.0f - CORRECT_WIDTH - 1.0f;
+		float cy = ENEMY_HEIGHT / 2.0f - CORRECT_HEIGHT;
+		int pushRbottom = pField->CollisionDown(transform_.position_.x + cx, transform_.position_.y + cy);
+		int pushLbottom = pField->CollisionDown(transform_.position_.x - cx, transform_.position_.y + cy);
+		int pushBottom = max(pushRbottom, pushLbottom);//2‚Â‚Ì‘«Œ³‚Ì‚ß‚èž‚Ý‚Ì‘å‚«‚¢‚Ù‚¤
+		if (pushBottom > 0.0f) {
+			transform_.position_.y -= pushBottom - 1.0f;
+		}
+		int pushRtop = pField->CollisionUp(transform_.position_.x + cx, transform_.position_.y - cy);
+		int pushLtop = pField->CollisionUp(transform_.position_.x - cx, transform_.position_.y - cy);
+		int pushTop = max(pushRtop, pushLtop);//2‚Â‚Ì“ª‚Ì‚ß‚èž‚Ý‚Ì‘å‚«‚¢‚Ù‚¤
+		if (pushTop > 0.0f) {
+			transform_.position_.y += pushTop - 1.0f;
+			
+		}
 	}
 }
 
@@ -129,10 +153,10 @@ bool Enemy::CollideRectToCircle(float x, float y, float r)
 
 bool Enemy::CollideRectToRect(float x, float y, float w, float h)
 {
-	float myRectRight = transform_.position_.x + ENEMY_WIDTH / 2.0f;
-	float myRectLeft = transform_.position_.x - ENEMY_WIDTH / 2.0f;
-	float myRectTop = transform_.position_.y + ENEMY_HEIGHT / 2.0f;
-	float myRectBottom = transform_.position_.y - ENEMY_HEIGHT / 2.0f;
+	float myRectRight = transform_.position_.x + ENEMY_WIDTH / 2.0f-CORRECT_WIDTH;
+	float myRectLeft = transform_.position_.x - ENEMY_WIDTH / 2.0f+CORRECT_WIDTH;
+	float myRectTop = transform_.position_.y + ENEMY_HEIGHT / 2.0f+CORRECT_HEIGHT;
+	float myRectBottom = transform_.position_.y - ENEMY_HEIGHT / 2.0f-CORRECT_HEIGHT;
 	if (((x - w / 2.0f > myRectLeft && x - w / 2.0f < myRectRight) ||
 		(myRectLeft > x - w / 2.0f && myRectLeft < x + w / 2.0f)) &&
 		((y - h / 2.0f > myRectTop && y - h / 2.0f < myRectBottom) ||

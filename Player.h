@@ -17,6 +17,7 @@ public:
 	/// <param name="x">X座標（左）</param>
 	/// <param name="y">Y座標（上）</param>
 	void SetPosition(int x, int y);
+	bool IsTouchBall(XMFLOAT3 pos);
 private:
 	int hImage;
 	GameObject* sceneTop;
@@ -30,6 +31,7 @@ private:
 	bool isRight;
 	Ball* pBall;
 	bool isBallAlive;
+	int tossCount;
 	
 
 	enum State {
