@@ -223,19 +223,23 @@ void Player::Update()
 	Camera* cam = GetParent()->FindGameObject<Camera>();
 	if (cam != nullptr) {
 		int x = (int)transform_.position_.x - cam->GetValue();
-		if (x > 400) {
-			x = 400;
+		if (x > 640) {
+			x = 640;
 			cam->SetValue((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
+		}
+		else if(x<32){
+			x = 32;
+			cam->SetValue((int)transform_.position_.x - x);
 		}
 	}
 	//if (cam != nullptr) {
 	//	int screenCenterX = 400; // 画面の中央のX座標
 	//	int playerScreenX = (int)transform_.position_.x - cam->GetValue();
-	//	if (playerScreenX > screenCenterX) {
+	//	if (playerScreenX >= screenCenterX) {
 	//		cam->SetValue((int)transform_.position_.x - screenCenterX);
 	//	}
 	//	else if (playerScreenX < screenCenterX) {
-	//		cam->SetValue((int)transform_.position_.x - screenCenterX);
+	//		cam->SetValue(-((int)transform_.position_.x - screenCenterX));
 	//	}
 	//}
 }
