@@ -2,6 +2,7 @@
 #include"Player.h"
 #include"Field.h"
 #include"Camera.h"
+#include"BackGround.h"
 
 //コンストラクタ
 TestScene::TestScene(GameObject * parent)
@@ -13,6 +14,7 @@ TestScene::TestScene(GameObject * parent)
 void TestScene::Initialize()
 {
 	Instantiate<Camera>(this);
+	Instantiate<BackGround>(this);
 	Field* pField = Instantiate<Field>(this);
 	Instantiate<Player>(this);
 	pField->Reset();
