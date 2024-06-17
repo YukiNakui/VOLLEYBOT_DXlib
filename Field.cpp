@@ -8,7 +8,7 @@
 Field::Field(GameObject* scene) :GameObject(scene)
 {
 	Map = nullptr;//ポインタ変数はコンストラクタでnullを入れておく
-	hImage = LoadGraph("Assets/bgchar.png");
+	hImage = LoadGraph("Assets/bgchar2.png");
 	assert(hImage > 0);
 }
 
@@ -130,10 +130,26 @@ bool Field::IsWallBlock(int x, int y)
 	case 17:
 	case 18:
 	case 19:
+	case 20:
+	case 21:
 	case 32:
 	case 33:
 	case 34:
 	case 35:
+	case 36:
+	case 37:
+	case 48:
+	case 49:
+	case 50:
+	case 51:
+	case 52:
+	case 53:
+	case 64:
+	case 65:
+	case 66:
+	case 67:
+	case 68:
+	case 69:
 		return true;
 	}
 	return false;//最後に必ずreturnがあったほうがいい
