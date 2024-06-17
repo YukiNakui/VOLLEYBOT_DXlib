@@ -232,16 +232,7 @@ void Player::Update()
 			cam->SetValue((int)transform_.position_.x - x);
 		}
 	}
-	//if (cam != nullptr) {
-	//	int screenCenterX = 400; // ‰æ–Ê‚Ì’†‰›‚ÌXÀ•W
-	//	int playerScreenX = (int)transform_.position_.x - cam->GetValue();
-	//	if (playerScreenX >= screenCenterX) {
-	//		cam->SetValue((int)transform_.position_.x - screenCenterX);
-	//	}
-	//	else if (playerScreenX < screenCenterX) {
-	//		cam->SetValue(-((int)transform_.position_.x - screenCenterX));
-	//	}
-	//}
+	
 }
 
 void Player::Draw()
