@@ -9,10 +9,10 @@
 namespace {
 	const float BALL_E = 0.8f;
 	const float GRAVITY = 9.8f / 60.0f;
-	const float MAX_TOSS_HEIGHT = 64.0f * 4.0f;
+	const float MAX_TOSS_HEIGHT = 64.0f * 6.0f;
 	const float BALL_WIDTH = 32.0f;
 	const float BALL_HEIGHT = 32.0f;
-	const float CORRECT_VALUE = 2.0f;
+	const float CORRECT_VALUE = 5.0f;
 }
 
 Ball::Ball(GameObject* parent)
@@ -47,15 +47,15 @@ void Ball::Update()
 	if (pField != nullptr) {
 		float cx = BALL_WIDTH / 2.0f;
 		float cy = BALL_HEIGHT / 2.0f;
-		float pushRTop = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y - cy+CORRECT_VALUE);
-		float pushRBottom = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y + cy- CORRECT_VALUE);
+		float pushRTop = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y - cy + CORRECT_VALUE);
+		float pushRBottom = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y + cy - CORRECT_VALUE);
 		float pushR = max(pushRBottom, pushRTop);
 		if (pushR > 0.0f) {
 			transform_.position_.x -= pushR - 1.0f;
 			move.x = -move.x * BALL_E;
 		}
-		float pushLTop = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y - cy+ CORRECT_VALUE);
-		float pushLBottom = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + cy- CORRECT_VALUE);
+		float pushLTop = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y - cy + CORRECT_VALUE);
+		float pushLBottom = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + cy - CORRECT_VALUE);
 		float pushL = max(pushLBottom, pushLTop);
 		if (pushL > 0.0f) {
 			transform_.position_.x += pushL - 1.0f;
@@ -80,6 +80,7 @@ void Ball::Update()
 			if (length < 1.0f)
 			{
 				isAlive = false;
+				transform_.position_.y = 720.0f;
 				//KillMe();
 			}
 		}
@@ -96,6 +97,7 @@ void Ball::Update()
 		if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, BALL_WIDTH/2.0f,BALL_HEIGHT/2.0f)) {
 			pEnemy->KillMe();
 			isAlive = false;
+			transform_.position_.y = 720.0f;
 		}
 	}
 

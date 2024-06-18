@@ -1,13 +1,17 @@
 #pragma once
 #include "Engine/GameObject.h"
 
-const int WALK_MAXFRAME{ 11 };
+namespace ENEMY_ANIMFRAME{
+	const int WALK_MAXFRAME{ 11 };
+	const int DEAD_MAXFRAME{ 2 };
+}
+namespace EAF = ENEMY_ANIMFRAME;
 
 class Enemy :
     public GameObject
 {
-	int hImage;
-	int hWalkImage[WALK_MAXFRAME];
+	int hWalkImage[EAF::WALK_MAXFRAME];
+	int hDeadImage[EAF::DEAD_MAXFRAME];
 	int animFrame;
 	int frameCounter;
 	bool isRight;

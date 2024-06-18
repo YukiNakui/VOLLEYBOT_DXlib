@@ -12,16 +12,23 @@ namespace {
 	const float GROUND = 600.0f;
 	const float JUMP_HIGHT = 64.0f * 4.0f;//ジャンプの高さ
 	const float GRAVITY = 9.8f / 60.0f;//重力加速度
-	const float PLAYER_WIDTH = 64.0f;
-	const float PLAYER_HEIGHT = 64.0f;
-	const float CORRECT_WIDTH = 16.0f;
+	const float PLAYER_WIDTH = 128.0f;
+	const float PLAYER_HEIGHT = 128.0f;
+	const float CORRECT_WIDTH = 50.0f;
 	const float CORRECT_HEIGHT = 3.0f;
+	const float CORRECT_TOP = 55.0f;
+	const float CORRECT_BOTTOM = 3.0f;
 };
 
 Player::Player(GameObject* parent) : GameObject(sceneTop)
 {
-	hImage = LoadGraph("Assets/chara.png");
-	assert(hImage > 0);
+	/*hImage = LoadGraph("Assets/chara.png");
+	assert(hImage > 0);*/
+	LoadDivGraph("Assets/PlayerWalk.png", PAF::WALK_MAXFRAME, PAF::WALK_MAXFRAME, 1, 128, 128, hWalkImage);
+	for (int i = 0; i < PAF::WALK_MAXFRAME; i++) {
+		assert(hWalkImage[i] > 0);
+	}
+
 	transform_.position_.x = 128.0f;
 	transform_.position_.y = GROUND;
 	jumpSpeed = 0.0f;
@@ -30,6 +37,8 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	pBall = nullptr;
 	isBallAlive = false;
 	tossCount = 0;
+	animFrame = 0;
+	frameCounter = 0;
 	/*frameCounter = 0;
 	animType = 0;
 	animFrame = 0;
@@ -38,9 +47,15 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 
 Player::~Player()
 {
-	if (hImage > 0)
+	/*if (hImage > 0)
 	{
 		DeleteGraph(hImage);
+	}*/
+	for (int i = 0; i < PAF::WALK_MAXFRAME; i++) {
+		if (hWalkImage[i] > 0)
+		{
+			DeleteGraph(hWalkImage[i]);
+		}
 	}
 }
 
@@ -67,7 +82,7 @@ void Player::Update()
 				pBall = nullptr;
 				pBall = Instantiate<Ball>(GetParent());
 				isBallAlive = true;
-				XMFLOAT3 ballPos = { transform_.position_.x,transform_.position_.y - PLAYER_HEIGHT / 2.0f,transform_.position_.z };
+				XMFLOAT3 ballPos = { transform_.position_.x,transform_.position_.y - PLAYER_HEIGHT / 2.0f + CORRECT_TOP,transform_.position_.z };
 				pBall->SetPosition(ballPos);
 				pBall->FirstToss();
 				tossCount += 1;
@@ -84,8 +99,9 @@ void Player::Update()
 						float lenX = pBall->GetPos().x - transform_.position_.x;
 						float lenY = pBall->GetPos().y - transform_.position_.y;
 						float len = sqrt(lenX * lenX + lenY * lenY);
-						if (len > PLAYER_HEIGHT * 2.0f && pBall->GetPos().y <= transform_.position_.y - PLAYER_HEIGHT * 2.0f) {
-							SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT/2.0f);
+						//プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
+						if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - 64.0f) {
+							SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT/2.0f - CORRECT_TOP);
 							pBall->Spike(isRight);
 							tossCount = 0;
 						}
@@ -111,15 +127,15 @@ void Player::Update()
 	if (CheckHitKey(KEY_INPUT_D))
 	{
 		transform_.position_.x += MOVE_SPEED;
-		/*if (++frameCounter >= 8) {
-			animFrame = (animFrame + 1) % 4;
+		if (++frameCounter >= 6) {
+			animFrame = (animFrame + 1) % PAF::WALK_MAXFRAME;
 			frameCounter = 0;
-		}*/
+		}
 		if (pField != nullptr) {
 			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
-			float cy = PLAYER_HEIGHT / 2.0f - CORRECT_HEIGHT-1.0f;
-			float pushTright = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y + cy);
-			float pushBright = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y - cy);
+			float cy = PLAYER_HEIGHT / 2.0f;
+			float pushTright = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
+			float pushBright = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM) -1.0f);
 			float pushRight = max(pushBright, pushTright);//右側の頭と足元で当たり判定
 			if (pushRight > 0.0f) {
 				transform_.position_.x -= pushRight - 1.0f;
@@ -130,15 +146,15 @@ void Player::Update()
 	else if (CheckHitKey(KEY_INPUT_A))
 	{
 		transform_.position_.x -= MOVE_SPEED;
-		/*if (++frameCounter >= 8) {
-			animFrame = (animFrame + 1) % 4;
+		if (++frameCounter >= PAF::WALK_MAXFRAME) {
+			animFrame = (animFrame + 1) % PAF::WALK_MAXFRAME;
 			frameCounter = 0;
-		}*/
+		}
 		if (pField != nullptr) {
 			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
-			float cy = PLAYER_HEIGHT / 2.0f - CORRECT_HEIGHT-1.0f;
-			float pushTleft = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + cy);
-			float pushBleft = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y - cy);
+			float cy = PLAYER_HEIGHT / 2.0f;
+			float pushTleft = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
+			float pushBleft = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM) - 1.0f);
 			float pushLeft = max(pushBleft, pushTleft);//左側の頭と足元で当たり判定
 			if (pushLeft > 0.0f) {
 				transform_.position_.x += pushLeft - 1.0f;
@@ -146,10 +162,11 @@ void Player::Update()
 		}
 		isRight = false;
 	}
-	/*else {
+	else {
 		animFrame = 0;
 		frameCounter = 0;
-	}*/
+	}
+
 	if (CheckHitKey(KEY_INPUT_SPACE))
 	{
 		if (prevSpaceKey == false) {
@@ -179,10 +196,10 @@ void Player::Update()
 	}*/
 
 	if (pField != nullptr) {
-		float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH-1.0f;
-		float cy = PLAYER_HEIGHT / 2.0f - CORRECT_HEIGHT;
-		float pushRbottom = pField->CollisionDown(transform_.position_.x + cx, transform_.position_.y + cy);
-		float pushLbottom = pField->CollisionDown(transform_.position_.x - cx, transform_.position_.y + cy);
+		float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH-5.0f;
+		float cy = PLAYER_HEIGHT / 2.0f;
+		float pushRbottom = pField->CollisionDown(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
+		float pushLbottom = pField->CollisionDown(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
 		float pushBottom = max(pushRbottom, pushLbottom);//2つの足元のめり込みの大きいほう
 		if (pushBottom > 0.0f) {
 			transform_.position_.y -= pushBottom - 1.0f;
@@ -193,20 +210,15 @@ void Player::Update()
 		else {
 			onGround = false;
 		}
-		float pushRtop = pField->CollisionUp(transform_.position_.x + cx, transform_.position_.y - cy);
-		float pushLtop = pField->CollisionUp(transform_.position_.x - cx, transform_.position_.y - cy);
+		float pushRtop = pField->CollisionUp(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP));
+		float pushLtop = pField->CollisionUp(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP));
 		float pushTop = max(pushRtop, pushLtop);//2つの頭のめり込みの大きいほう
 		if (pushTop > 0.0f) {
 			transform_.position_.y += pushTop - 1.0f;
 			jumpSpeed = 0.0f;
 		}
 	}
-	/*if (transform_.position_.y >= GROUND){
-		transform_.position_.y = GROUND;
-		jumpSpeed = 0.0f;
-		onGround = true;
-		animType = 0;
-	}*/
+	
 
 	std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
 	for (Enemy* pEnemy : pEnemies) {
@@ -244,7 +256,7 @@ void Player::Draw()
 		x -= cam->GetValue();//プレイヤーの位置からカメラ分引く
 	}
 	//DrawRectGraph(x, y, animFrame * 64, animType * 64, 64, 64, hImage, TRUE);
-	DrawRotaGraph(x, y, 1.0, 0, hImage, TRUE, !isRight);
+	DrawRotaGraph(x, y, 1.0, 0, hWalkImage[animFrame], TRUE, !isRight);
 	
 	unsigned int Cr = GetColor(0, 0, 255);
 	DrawCircle(10, 10, 10,Cr, isBallAlive);
@@ -259,7 +271,7 @@ void Player::SetPosition(int x, int y)
 bool Player::IsTouchBall(XMFLOAT3 pos)
 {
 	float cx = PLAYER_WIDTH / 2.0f;
-	float cy = PLAYER_HEIGHT;
+	float cy = PLAYER_HEIGHT / 2.0f;
 	if ((pos.x <= transform_.position_.x + cx) && (pos.x >= transform_.position_.x - cx)) {
 		if ((pos.y <= transform_.position_.y) && (pos.y >= transform_.position_.y - cy)) {
 			return true;

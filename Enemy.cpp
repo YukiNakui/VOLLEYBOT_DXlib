@@ -15,12 +15,16 @@ namespace {
 
 Enemy::Enemy(GameObject* scene)
 {
-	hWalkImage[WALK_MAXFRAME];
-	/*hImage = LoadGraph("Assets/EnemyWalk.png");
-	assert(hImage > 0);*/
-	LoadDivGraph("Assets/EnemyWalk.png", WALK_MAXFRAME, WALK_MAXFRAME, 1, 128, 128, hWalkImage);
-	for (int i = 0; i < WALK_MAXFRAME; i++)
+	LoadDivGraph("Assets/EnemyWalk.png", EAF::WALK_MAXFRAME, EAF::WALK_MAXFRAME, 1, 128, 128, hWalkImage);
+	for (int i = 0; i < EAF::WALK_MAXFRAME; i++) {
 		assert(hWalkImage[i] > 0);
+	}
+	hWalkImage[EAF::DEAD_MAXFRAME];
+	LoadDivGraph("Assets/EnemyDead.png", EAF::DEAD_MAXFRAME, EAF::DEAD_MAXFRAME, 1, 128, 128, hDeadImage);
+	for (int i = 0; i < EAF::DEAD_MAXFRAME; i++) {
+		assert(hDeadImage[i] > 0);
+	}
+
 	animFrame = 0;
 	frameCounter = 0;
 	isRight = true;
@@ -28,7 +32,7 @@ Enemy::Enemy(GameObject* scene)
 
 Enemy::~Enemy()
 {
-	for (int i = 0; i < WALK_MAXFRAME; i++) {
+	for (int i = 0; i < EAF::WALK_MAXFRAME; i++) {
 		if (hWalkImage[i] > 0)
 		{
 			DeleteGraph(hWalkImage[i]);
@@ -40,8 +44,8 @@ void Enemy::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();
 	frameCounter ++;
-	if (frameCounter >= WALK_MAXFRAME) {
-		animFrame = (animFrame + 1) % WALK_MAXFRAME;
+	if (frameCounter > 6) {
+		animFrame = (animFrame + 1) % EAF::WALK_MAXFRAME;
 		frameCounter = 0;
 	}
 	if (isRight) {

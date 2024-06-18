@@ -2,6 +2,11 @@
 #include "Engine/GameObject.h"
 #include"Ball.h"
 
+namespace PLAYER_ANIMFRAME {
+	const int WALK_MAXFRAME{ 6 };
+}
+namespace PAF = PLAYER_ANIMFRAME;
+
 class Player :
     public GameObject
 {
@@ -20,6 +25,8 @@ public:
 	bool IsTouchBall(XMFLOAT3 pos);
 private:
 	int hImage;
+	int hWalkImage[PAF::WALK_MAXFRAME];
+	
 	GameObject* sceneTop;
 	bool prevSpaceKey;
 	bool prevAttackKey;
@@ -35,8 +42,12 @@ private:
 	
 
 	enum State {
-		S_Walk = 0,
-		S_Cry,
+		NORMAL = 0,
+		WALK,
+		TOSS,
+		SPIKE,
+		DEAD,
+		MAX,
 	};
 	State state;
 
