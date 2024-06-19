@@ -21,7 +21,6 @@ public:
 	void Update() override;
 	void Draw() override;
 	void SetPosition(int x, int y);
-	bool CollideRectToCircle(float x, float y, float r);
 	bool CollideRectToRect(float x, float y, float w, float h);
 };
 

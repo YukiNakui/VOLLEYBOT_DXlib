@@ -15,7 +15,7 @@ public:
 	//•`‰æ
 	void Draw() override;
 
-	void SetPosition(XMFLOAT3 pos);
+	void SetPosition(float x,float y);
 	void Spike(bool isRight);
 	void FirstToss();
 	void SecondToss();
@@ -23,6 +23,7 @@ public:
 	XMFLOAT3 GetPos();
 	bool IsBallCatch(float x,float y);
 	void SetIsAlive(bool isalive) { isAlive = isalive; }
+	int GetBallSize();
 private:
 	int hImage;
 	XMVECTOR moveVec;

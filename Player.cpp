@@ -82,8 +82,7 @@ void Player::Update()
 				pBall = nullptr;
 				pBall = Instantiate<Ball>(GetParent());
 				isBallAlive = true;
-				XMFLOAT3 ballPos = { transform_.position_.x,transform_.position_.y - PLAYER_HEIGHT / 2.0f + CORRECT_TOP,transform_.position_.z };
-				pBall->SetPosition(ballPos);
+				pBall->SetPosition(transform_.position_.x, transform_.position_.y - PLAYER_HEIGHT / 2.0f + CORRECT_TOP);
 				pBall->FirstToss();
 				tossCount += 1;
 			}

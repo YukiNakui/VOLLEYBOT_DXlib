@@ -25,7 +25,21 @@ public:
 	/// <param name="y">Y座標</param>
 	/// <returns>めり込んだ量（ドット）</returns>
 	float CollisionDown(float x, float y);
+
+	/// <summary>
+	/// 左の点が当たっているか調べる
+	/// </summary>
+	/// <param name="x">X座標</param>
+	/// <param name="y">Y座標</param>
+	/// <returns>めり込んだ量（ドット）</returns>
 	float CollisionLeft(float x, float y);
+
+	/// <summary>
+	/// 上の点が当たっているか調べる
+	/// </summary>
+	/// <param name="x">X座標</param>
+	/// <param name="y">Y座標</param>
+	/// <returns>めり込んだ量（ドット）</returns>
 	float CollisionUp(float x, float y);
 private:
 	int hImage;

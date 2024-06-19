@@ -42,6 +42,8 @@
     <ClCompile Include="Engine\time.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="BackGround.cpp" />
+    <ClCompile Include="ItemBox.cpp" />
+    <ClCompile Include="GoalObj.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\GameObject.h">
@@ -70,5 +72,7 @@
     <ClInclude Include="Engine\time.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="BackGround.h" />
+    <ClInclude Include="ItemBox.h" />
+    <ClInclude Include="GoalObj.h" />
   </ItemGroup>
 </Project>

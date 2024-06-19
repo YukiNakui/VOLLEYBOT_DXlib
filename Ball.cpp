@@ -119,9 +119,10 @@ void Ball::Draw()
 		DrawRotaGraph(x, y, 1.0, 0, hImage, TRUE);
 }
 
-void Ball::SetPosition(XMFLOAT3 pos)
+void Ball::SetPosition(float x,float y)
 {
-	transform_.position_ = pos;
+	transform_.position_.x = x;
+	transform_.position_.y = y;
 }
 
 void Ball::Spike(bool isRight)
@@ -172,5 +173,10 @@ bool Ball::IsBallCatch(float x,float y)
 		return true;
 	}
 	return false;
+}
+
+int Ball::GetBallSize()
+{
+	return BALL_WIDTH;
 }
 
