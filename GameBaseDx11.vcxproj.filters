@@ -14,6 +14,12 @@
     <Filter Include="01Engine\ResourceManager">
       <UniqueIdentifier>{bedee914-5063-4c08-95bb-79c861b4969c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Characters">
+      <UniqueIdentifier>{f3069efe-7a61-433f-af72-9ed4dcbcfd0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{334ed72b-d931-4e7e-a1df-323b774abd87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\GameObject.cpp">
@@ -34,16 +40,21 @@
     <ClCompile Include="Engine\Transform.cpp">
       <Filter>01Engine\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Ball.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="Engine\time.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="BackGround.cpp" />
     <ClCompile Include="ItemBox.cpp" />
     <ClCompile Include="GoalObj.cpp" />
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\GameObject.h">
@@ -64,15 +75,20 @@
     <ClInclude Include="Engine\Transform.h">
       <Filter>01Engine\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="Ball.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="Engine\time.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="BackGround.h" />
     <ClInclude Include="ItemBox.h" />
     <ClInclude Include="GoalObj.h" />
+    <ClInclude Include="Enemy.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

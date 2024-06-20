@@ -140,7 +140,6 @@
     <ClCompile Include="Engine\Main.cpp" />
     <ClCompile Include="Engine\RootObject.cpp" />
     <ClCompile Include="Engine\SceneManager.cpp" />
-    <ClCompile Include="Engine\time.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="GoalObj.cpp" />
@@ -158,7 +157,6 @@
     <ClInclude Include="Engine\Global.h" />
     <ClInclude Include="Engine\RootObject.h" />
     <ClInclude Include="Engine\SceneManager.h" />
-    <ClInclude Include="Engine\time.h" />
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="GoalObj.h" />

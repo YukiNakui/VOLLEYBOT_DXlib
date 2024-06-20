@@ -2,6 +2,7 @@
 #include <assert.h>
 #include"Player.h"
 #include"Enemy.h"
+#include"ItemBox.h"
 #include"Engine/CsvReader.h"
 #include"Camera.h"
 
@@ -62,6 +63,11 @@ void Field::Reset()
 				pEnemy->SetPosition(w * 32, h * 32);
 			}
 			break;
+			case 10:
+			{
+				ItemBox* pIBox = Instantiate<ItemBox>(GetParent());
+				pIBox->SetPosition(w * 32, h * 32);
+			}
 			}
 		}
 	}
