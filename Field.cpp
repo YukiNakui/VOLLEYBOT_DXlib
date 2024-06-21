@@ -68,6 +68,7 @@ void Field::Reset()
 				ItemBox* pIBox = Instantiate<ItemBox>(GetParent());
 				pIBox->SetPosition(w * 32, h * 32);
 			}
+			break;
 			}
 		}
 	}

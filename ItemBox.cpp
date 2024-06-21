@@ -36,6 +36,9 @@ void ItemBox::Draw()
 		x -= cam->GetValue();
 	}
 	DrawRotaGraph(x, y, 1.0, 0, hImage, TRUE);
+	unsigned int Cr = GetColor(0, 0, 255);        // 青色の値を取得
+
+	DrawBox(x-BOX_WIDTH/2.0f, y-BOX_HEIGHT/2.0f, x + BOX_WIDTH / 2.0f, y + BOX_HEIGHT / 2.0f, Cr, TRUE);
 }
 
 void ItemBox::SetPosition(int x, int y)
@@ -62,20 +65,44 @@ bool ItemBox::CollideRectToRect(float x, float y, float w, float h)
 
 float ItemBox::CollisionRight(float x, float y)
 {
+	if (y > transform_.position_.y - BOX_HEIGHT / 2.0f && y < transform_.position_.y + BOX_HEIGHT / 2.0f) {
+		if (x > transform_.position_.x - BOX_WIDTH / 2.0f&& x < transform_.position_.x + BOX_WIDTH / 2.0f) {
+			//当たっているので、めり込んだ量を返す
+			return x - (transform_.position_.x - BOX_WIDTH / 2.0f);
+		}
+	}
 	return 0.0f;
 }
 
 float ItemBox::CollisionDown(float x, float y)
 {
+	if (x > transform_.position_.x - BOX_WIDTH / 2.0f && x > transform_.position_.x + BOX_WIDTH / 2.0f) {
+		if (y > transform_.position_.y - BOX_HEIGHT / 2.0f && y < transform_.position_.y + BOX_HEIGHT / 2.0f) {
+			//当たっているので、めり込んだ量を返す
+			return y - (transform_.position_.y + BOX_HEIGHT / 2.0f);
+		}
+	}
 	return 0.0f;
 }
 
 float ItemBox::CollisionLeft(float x, float y)
 {
+	if (y > transform_.position_.y - BOX_HEIGHT / 2.0f && y < transform_.position_.y + BOX_HEIGHT / 2.0f) {
+		if (x > transform_.position_.x + BOX_WIDTH / 2.0f && x < transform_.position_.x - BOX_WIDTH / 2.0f) {
+			//当たっているので、めり込んだ量を返す
+			return (transform_.position_.x + BOX_WIDTH / 2.0f) - x;
+		}
+	}
 	return 0.0f;
 }
 
 float ItemBox::CollisionUp(float x, float y)
 {
+	if (x > transform_.position_.x - BOX_WIDTH / 2.0f && x > transform_.position_.x + BOX_WIDTH / 2.0f) {
+		if (y > transform_.position_.y + BOX_HEIGHT / 2.0f && y < transform_.position_.y - BOX_HEIGHT / 2.0f) {
+			//当たっているので、めり込んだ量を返す
+			return (transform_.position_.y - BOX_HEIGHT / 2.0f) - y;
+		}
+	}
 	return 0.0f;
 }

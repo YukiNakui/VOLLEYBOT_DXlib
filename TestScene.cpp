@@ -10,7 +10,7 @@ TestScene::TestScene(GameObject * parent)
 {
 }
 
-//‰Šú‰»
+//‰Šú‰» 
 void TestScene::Initialize()
 {
 	Instantiate<Camera>(this);

@@ -6,6 +6,7 @@
 #include"TestScene.h"
 #include"Ball.h"
 #include"Enemy.h"
+#include"ItemBox.h"
 
 namespace {
 	const float MOVE_SPEED = 2.5f;
@@ -62,6 +63,7 @@ Player::~Player()
 void Player::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();
+	ItemBox* pIBox = GetParent()->FindGameObject<ItemBox>();
 	/*if (state == S_Cry) {
 		frameCounter++;
 		if (frameCounter >= 16)
@@ -117,6 +119,7 @@ void Player::Update()
 
 	if (pBall!=nullptr){ 
 		if (!pBall->IsBallAlive() || pBall->IsBallCatch(transform_.position_.x, transform_.position_.y + PLAYER_HEIGHT / 4.0f)) {
+			pBall->SetPosition(0.0f, 800.0f);
 			isBallAlive = false;
 			pBall = nullptr;
 			tossCount = 0;
@@ -126,15 +129,23 @@ void Player::Update()
 	if (CheckHitKey(KEY_INPUT_D))
 	{
 		transform_.position_.x += MOVE_SPEED;
+		float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
+		float cy = PLAYER_HEIGHT / 2.0f;
 		if (++frameCounter >= 6) {
 			animFrame = (animFrame + 1) % PAF::WALK_MAXFRAME;
 			frameCounter = 0;
 		}
 		if (pField != nullptr) {
-			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
-			float cy = PLAYER_HEIGHT / 2.0f;
 			float pushTright = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
 			float pushBright = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM) -1.0f);
+			float pushRight = max(pushBright, pushTright);//右側の頭と足元で当たり判定
+			if (pushRight > 0.0f) {
+				transform_.position_.x -= pushRight - 1.0f;
+			}
+		}
+		if (pIBox != nullptr) {
+			float pushTright = pIBox->CollisionRight(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
+			float pushBright = pIBox->CollisionRight(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM) - 1.0f);
 			float pushRight = max(pushBright, pushTright);//右側の頭と足元で当たり判定
 			if (pushRight > 0.0f) {
 				transform_.position_.x -= pushRight - 1.0f;
@@ -144,16 +155,24 @@ void Player::Update()
 	}
 	else if (CheckHitKey(KEY_INPUT_A))
 	{
+		float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
+		float cy = PLAYER_HEIGHT / 2.0f;
 		transform_.position_.x -= MOVE_SPEED;
 		if (++frameCounter >= PAF::WALK_MAXFRAME) {
 			animFrame = (animFrame + 1) % PAF::WALK_MAXFRAME;
 			frameCounter = 0;
 		}
 		if (pField != nullptr) {
-			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
-			float cy = PLAYER_HEIGHT / 2.0f;
 			float pushTleft = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
 			float pushBleft = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM) - 1.0f);
+			float pushLeft = max(pushBleft, pushTleft);//左側の頭と足元で当たり判定
+			if (pushLeft > 0.0f) {
+				transform_.position_.x += pushLeft - 1.0f;
+			}
+		}
+		if (pIBox != nullptr) {
+			float pushTleft = pIBox->CollisionLeft(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
+			float pushBleft = pIBox->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM) - 1.0f);
 			float pushLeft = max(pushBleft, pushTleft);//左側の頭と足元で当たり判定
 			if (pushLeft > 0.0f) {
 				transform_.position_.x += pushLeft - 1.0f;
@@ -217,6 +236,26 @@ void Player::Update()
 			jumpSpeed = 0.0f;
 		}
 	}
+	if (pIBox != nullptr) {
+		float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH - 5.0f;
+		float cy = PLAYER_HEIGHT / 2.0f;
+		float pushRbottom = pIBox->CollisionDown(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
+		float pushLbottom = pIBox->CollisionDown(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
+		float pushBottom = max(pushRbottom, pushLbottom);//2つの足元のめり込みの大きいほう
+		if (pushBottom > 0.0f) {
+			transform_.position_.y -= pushBottom - 1.0f;
+			jumpSpeed = 0.0f;
+			onGround = true;
+			animType = 0;
+		}
+		float pushRtop = pIBox->CollisionUp(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP));
+		float pushLtop = pIBox->CollisionUp(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP));
+		float pushTop = max(pushRtop, pushLtop);//2つの頭のめり込みの大きいほう
+		if (pushTop > 0.0f) {
+			transform_.position_.y += pushTop - 1.0f;
+			jumpSpeed = 0.0f;
+		}
+	}
 	
 
 	std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
@@ -238,8 +277,8 @@ void Player::Update()
 			x = 640;
 			cam->SetValue((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
 		}
-		else if(x<32){
-			x = 32;
+		else if(x<64){
+			x = 64;
 			cam->SetValue((int)transform_.position_.x - x);
 		}
 	}

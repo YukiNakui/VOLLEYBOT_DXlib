@@ -15,8 +15,6 @@ public:
 
 	void SetPosition(int x,int y);
 	bool CollideRectToRect(float x, float y, float w, float h);
-	//csvのマップデータでアイテムボックスの上の数字によって箱の中身を決める
-	int GetItemInTheBox(int x, int y);
 
 	float CollisionRight(float x, float y);
 	float CollisionDown(float x, float y);
