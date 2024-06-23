@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include"Field.h"
 #include"Camera.h"
+#include"ItemBox.h"
 
 namespace {
 	const float ENEMY_WIDTH = 128.0f;
@@ -26,7 +27,7 @@ Enemy::Enemy(GameObject* scene)
 
 	animFrame = 0;
 	frameCounter = 0;
-	isRight = true;
+	isRight = false;
 }
 
 Enemy::~Enemy()
@@ -42,6 +43,8 @@ Enemy::~Enemy()
 void Enemy::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();
+	ItemBox* pIBox = GetParent()->FindGameObject<ItemBox>();
+
 	frameCounter ++;
 	if (frameCounter > 6) {
 		animFrame = (animFrame + 1) % EAF::WALK_MAXFRAME;
@@ -93,6 +96,43 @@ void Enemy::Update()
 			
 		}
 	}
+	if (pIBox != nullptr) {
+		float cx = ENEMY_WIDTH / 2.0f - CORRECT_WIDTH;
+		float cy = ENEMY_HEIGHT / 2.0f;
+
+		float pushTright = pIBox->CollisionRight(transform_.position_.x + cx, transform_.position_.y + cy - CORRECT_TOP - 1.0f);
+		float pushBright = pIBox->CollisionRight(transform_.position_.x + cx, transform_.position_.y - cy + CORRECT_BOTTOM + 1.0f);
+		float pushRight = max(pushBright, pushTright);//右側の頭と足元で当たり判定
+		if (pushRight > 0.0f) {
+			isRight = false;
+			transform_.position_.x -= pushRight - 1.0f;
+		}
+
+		float pushTleft = pIBox->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + cy - CORRECT_TOP - 1.0f);
+		float pushBleft = pIBox->CollisionLeft(transform_.position_.x - cx, transform_.position_.y - cy + CORRECT_BOTTOM + 1.0f);
+		float pushLeft = max(pushBleft, pushTleft);//左側の頭と足元で当たり判定
+		if (pushLeft > 0.0f) {
+			isRight = true;
+			transform_.position_.x += pushLeft - 1.0f;
+		}
+
+		transform_.position_.y += GRAVITY;
+
+		int pushRbottom = pIBox->CollisionDown(transform_.position_.x + cx - 1.0f, transform_.position_.y + cy - CORRECT_BOTTOM);
+		int pushLbottom = pIBox->CollisionDown(transform_.position_.x - cx + 1.0f, transform_.position_.y + cy - CORRECT_BOTTOM);
+		int pushBottom = max(pushRbottom, pushLbottom);//2つの足元のめり込みの大きいほう
+		if (pushBottom > 0.0f) {
+			transform_.position_.y -= pushBottom - 1.0f;
+		}
+
+		int pushRtop = pIBox->CollisionUp(transform_.position_.x + cx - 1.0f, transform_.position_.y - cy + CORRECT_TOP);
+		int pushLtop = pIBox->CollisionUp(transform_.position_.x - cx + 1.0f, transform_.position_.y - cy + CORRECT_TOP);
+		int pushTop = max(pushRtop, pushLtop);//2つの頭のめり込みの大きいほう
+		if (pushTop > 0.0f) {
+			transform_.position_.y += pushTop - 1.0f;
+
+		}
+	}
 }
 
 void Enemy::Draw()
@@ -112,19 +152,19 @@ void Enemy::SetPosition(int x, int y)
 	transform_.position_.y = y;
 }
 
-
 bool Enemy::CollideRectToRect(float x, float y, float w, float h)
 {
+	// 敵の矩形の範囲を計算
 	float myRectRight = transform_.position_.x + ENEMY_WIDTH / 2.0f - CORRECT_WIDTH;
 	float myRectLeft = transform_.position_.x - ENEMY_WIDTH / 2.0f + CORRECT_WIDTH;
 	float myRectTop = transform_.position_.y - ENEMY_HEIGHT / 2.0f + CORRECT_TOP;
 	float myRectBottom = transform_.position_.y + ENEMY_HEIGHT / 2.0f - CORRECT_BOTTOM;
-	if (((x - w / 2.0f > myRectLeft && x - w / 2.0f < myRectRight) ||(myRectLeft > x - w / 2.0f && myRectLeft < x + w / 2.0f)) &&
-		((y - h / 2.0f > myRectTop && y - h / 2.0f < myRectBottom) ||(myRectTop > y - h / 2.0f && myRectTop < y + h / 2.0f))) {
-		return true;
-	}
-	else {
-		return false;
+
+	// 指定された矩形と敵の矩形が交差しているかチェック
+	if (x - w / 2.0f < myRectRight && x + w / 2.0f > myRectLeft) {
+		if (y - h / 2.0f < myRectBottom && y + h / 2.0f > myRectTop) {
+			return true;
+		}
 	}
 	return false;
 }

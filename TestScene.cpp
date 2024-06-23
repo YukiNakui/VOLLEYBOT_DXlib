@@ -1,5 +1,6 @@
 #include "TestScene.h"
 #include"Player.h"
+#include"GoalObj.h"
 #include"Field.h"
 #include"Camera.h"
 #include"BackGround.h"
@@ -16,6 +17,7 @@ void TestScene::Initialize()
 	Instantiate<Camera>(this);
 	Instantiate<BackGround>(this);
 	Field* pField = Instantiate<Field>(this);
+	Instantiate<GoalObj>(this);
 	Instantiate<Player>(this);
 	pField->Reset();
 }

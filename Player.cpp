@@ -11,8 +11,8 @@
 namespace {
 	const float MOVE_SPEED = 2.5f;
 	const float GROUND = 600.0f;
-	const float JUMP_HIGHT = 64.0f * 4.0f;//ジャンプの高さ
-	const float GRAVITY = 9.8f / 60.0f;//重力加速度
+	const float JUMP_HIGHT = 64.0f * 1.5f;//ジャンプの高さ
+	const float GRAVITY = 8.0f / 60.0f;//重力加速度
 	const float PLAYER_WIDTH = 128.0f;
 	const float PLAYER_HEIGHT = 128.0f;
 	const float CORRECT_WIDTH = 50.0f;
@@ -236,6 +236,7 @@ void Player::Update()
 			jumpSpeed = 0.0f;
 		}
 	}
+
 	if (pIBox != nullptr) {
 		float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH - 5.0f;
 		float cy = PLAYER_HEIGHT / 2.0f;
@@ -252,9 +253,16 @@ void Player::Update()
 		float pushLtop = pIBox->CollisionUp(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP));
 		float pushTop = max(pushRtop, pushLtop);//2つの頭のめり込みの大きいほう
 		if (pushTop > 0.0f) {
-			transform_.position_.y += pushTop - 1.0f;
+			transform_.position_.y += pushTop;
 			jumpSpeed = 0.0f;
 		}
+	}
+
+	if (transform_.position_.y > 720.0f) {
+		if (pBall != nullptr) {
+			pBall->KillMe();
+		}
+		KillMe();
 	}
 	
 
@@ -265,6 +273,8 @@ void Player::Update()
 			animFrame = 0;
 			state = S_Cry;
 			scene->StartDead();*/
+			if (pBall != nullptr)
+				pBall->KillMe();
 			KillMe();
 		}
 	}
@@ -273,12 +283,12 @@ void Player::Update()
 	Camera* cam = GetParent()->FindGameObject<Camera>();
 	if (cam != nullptr) {
 		int x = (int)transform_.position_.x - cam->GetValue();
-		if (x > 640) {
-			x = 640;
+		if (x > 960) {
+			x = 960;
 			cam->SetValue((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
 		}
-		else if(x<64){
-			x = 64;
+		else if(x<320){
+			x = 320;
 			cam->SetValue((int)transform_.position_.x - x);
 		}
 	}

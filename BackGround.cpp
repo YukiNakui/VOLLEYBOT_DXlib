@@ -10,7 +10,7 @@ BackGround::BackGround(GameObject* scene)
 {
 	hImage = LoadGraph("Assets/BG.png");
 	assert(hImage > 0);
-	transform_.position_.x = SCREEN_WIDTH / 2.0;
+	transform_.position_.x = 0;
 	transform_.position_.y = SCREEN_HEIGHT / 2.0;
 }
 
@@ -24,12 +24,12 @@ BackGround::~BackGround()
 
 void BackGround::Update()
 {
-	if (transform_.position_.x < -SCREEN_WIDTH/2.0) {
+	/*if (transform_.position_.x < -SCREEN_WIDTH/2.0) {
 		transform_.position_.x += SCREEN_WIDTH / 2.0;
 	}
 	else if (transform_.position_.x > SCREEN_WIDTH + SCREEN_WIDTH / 2.0) {
 		transform_.position_.x -= SCREEN_WIDTH / 2.0;
-	}
+	}*/
 
 }
 
@@ -41,6 +41,16 @@ void BackGround::Draw()
 	if (cam != nullptr) {
 		x -= cam->GetValue() / 2.0f;
 	}
+	if (x < 0.0f) {
+		x += SCREEN_WIDTH;
+	}
+	else if (x > SCREEN_WIDTH) {
+		x -= SCREEN_WIDTH;
+	}
 	DrawRotaGraph(x, y, 1.0f, 0, hImage, TRUE);
 	DrawRotaGraph(x + SCREEN_WIDTH, y, 1.0f, 0, hImage, TRUE);
+	
+	if (x > 0) {
+		DrawRotaGraph(x - SCREEN_WIDTH, y, 1.0f, 0, hImage, TRUE);
+	}
 }

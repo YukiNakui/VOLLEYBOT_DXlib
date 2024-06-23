@@ -3,6 +3,7 @@
 #include"Player.h"
 #include"Enemy.h"
 #include"ItemBox.h"
+#include"GoalObj.h"
 #include"Engine/CsvReader.h"
 #include"Camera.h"
 
@@ -51,22 +52,28 @@ void Field::Reset()
 		for (int w = 0; w < width; w++) {
 			switch (csv.GetInt(w, h))
 			{
-			case 0://Player
+			case 0:
+			{
+				GoalObj* pGoal = GetParent()->FindGameObject<GoalObj>();
+				pGoal->SetPosition(w * 32, h * 32);
+			}
+			break;
+			case 1:
+			{
+				ItemBox* pIBox = Instantiate<ItemBox>(GetParent());
+				pIBox->SetPosition(w * 32, h * 32);
+			}
+			break;
+			case 10://Player
 			{//switch case‚Ì‚È‚©‚Å‚Í•Ï”‚ÌéŒ¾‚Å‚«‚È‚¢‚ª{}‚Ì‚È‚©‚È‚ç‚Å‚«‚é
 				Player* pPlayer = GetParent()->FindGameObject<Player>();
 				pPlayer->SetPosition(w * 32, h * 32);
 			}
 			break;
-			case 1://Enemy
+			case 11://Enemy
 			{
 				Enemy* pEnemy = Instantiate<Enemy>(GetParent());
 				pEnemy->SetPosition(w * 32, h * 32);
-			}
-			break;
-			case 10:
-			{
-				ItemBox* pIBox = Instantiate<ItemBox>(GetParent());
-				pIBox->SetPosition(w * 32, h * 32);
 			}
 			break;
 			}
