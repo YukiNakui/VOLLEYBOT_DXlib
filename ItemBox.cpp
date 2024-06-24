@@ -33,7 +33,8 @@ void ItemBox::Draw()
 	float y = (int)transform_.position_.y;
 	Camera* cam = GetParent()->FindGameObject<Camera>();
 	if (cam != nullptr) {
-		x -= cam->GetValue();
+		x -= cam->GetValueX();
+		y -= cam->GetValueY();
 	}
 	DrawRotaGraph(x, y, 1.0, 0, hImage, TRUE);
 }

@@ -7,6 +7,7 @@
 #include"Camera.h"
 #include"ItemBox.h"
 #include"GoalObj.h"
+#include"Engine/SceneManager.h"
 
 namespace {
 	const float BALL_E = 0.8f;
@@ -40,7 +41,7 @@ Ball::~Ball()
 void Ball::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();
-	ItemBox* pIBox = GetParent()->FindGameObject<ItemBox>();
+	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
 	
 	XMVECTOR vBall = XMLoadFloat3(&transform_.position_);
 	XMFLOAT3 move;
@@ -93,7 +94,7 @@ void Ball::Update()
 			}
 		}
 	}
-	if (pIBox != nullptr) {
+	for (ItemBox* pIBox : pIBoxs) {
 		float cx = BALL_WIDTH / 2.0f;
 		float cy = BALL_HEIGHT / 2.0f;
 		// アイテムボックスとの衝突判定と位置補正
@@ -155,6 +156,8 @@ void Ball::Update()
 		pGoal->Goal();
 		isAlive = false;
 		transform_.position_.y = 720.0f;
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_CLEAR);
 	}
 
 	if (transform_.position_.y > 720.0f) {
@@ -169,7 +172,8 @@ void Ball::Draw()
 	float y = (int)transform_.position_.y;
 	Camera* cam = GetParent()->FindGameObject<Camera>();
 	if (cam != nullptr) {
-		x -= cam->GetValue();
+		x -= cam->GetValueX();
+		y -= cam->GetValueY();
 	}
 	if (isAlive)
 		DrawRotaGraph(x, y, 1.0, 0, hImage, TRUE);
@@ -187,11 +191,11 @@ void Ball::Spike(bool isRight)
 
 	if (isRight)
 	{
-		moveVec = { 8.0f,8.0f,0.0f,0.0f };
+		moveVec = { 10.0f,10.0f,0.0f,0.0f };
 	}
 	else
 	{
-		moveVec = { -8.0f,8.0f,0.0f,0.0f };
+		moveVec = { -10.0f,10.0f,0.0f,0.0f };
 	}
 }
 

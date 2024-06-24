@@ -89,16 +89,18 @@ void Field::Update()
 
 void Field::Draw()
 {
-	int scroll = 0;
+	int scrollX = 0;
+	int scrollY = 0;
 	Camera* cam = GetParent()->FindGameObject<Camera>();
 	if (cam != nullptr) {
-		scroll = cam->GetValue();
+		scrollX = cam->GetValueX();
+		scrollY = cam->GetValueY();
 	}
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			int chip = Map[y * width + x];
-			DrawRectGraph(x * 32 - scroll, y * 32, 32 * (chip % 16), 32 * (chip / 16), 32, 32, hImage, TRUE);
+			DrawRectGraph(x * 32 - scrollX, y * 32 - scrollY, 32 * (chip % 16), 32 * (chip / 16), 32, 32, hImage, TRUE);
 		}
 	}
 }

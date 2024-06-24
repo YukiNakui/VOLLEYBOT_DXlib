@@ -39,7 +39,8 @@ void BackGround::Draw()
 	int y = (int)transform_.position_.y;
 	Camera* cam = GetParent()->FindGameObject<Camera>();
 	if (cam != nullptr) {
-		x -= cam->GetValue() / 2.0f;
+		x -= cam->GetValueX();
+		y -= cam->GetValueY();
 	}
 	if (x < 0.0f) {
 		x += SCREEN_WIDTH;

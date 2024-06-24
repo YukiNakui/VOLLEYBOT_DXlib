@@ -42,7 +42,8 @@ void GoalObj::Draw()
 	int y = (int)transform_.position_.y;
 	Camera* cam = GetParent()->FindGameObject<Camera>();
 	if (cam != nullptr) {
-		x -= cam->GetValue();
+		x -= cam->GetValueX();
+		y -= cam->GetValueY();
 	}
 	DrawRotaGraph(x, y, 1.0f, 0, hImage[animFrame], TRUE);
 

@@ -7,10 +7,11 @@ namespace {
 	const float ENEMY_WIDTH = 128.0f;
 	const float ENEMY_HEIGHT = 128.0f;
 	const float MOVE_SPEED = 1.5f;
-	const float GRAVITY = 9.8f / 60.0f;//重力加速度
+	const float GRAVITY = 15.0f / 60.0f;//重力加速度
 	const float CORRECT_WIDTH = 35.0f;
 	const float CORRECT_BOTTOM = 1.0f;
 	const float CORRECT_TOP = 35.0f;
+	static const int SCREEN_WIDTH = 1280;
 }
 
 Enemy::Enemy(GameObject* scene)
@@ -43,7 +44,19 @@ Enemy::~Enemy()
 void Enemy::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();
-	ItemBox* pIBox = GetParent()->FindGameObject<ItemBox>();
+	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
+
+	int x = (int)transform_.position_.x;
+	Camera* cam = GetParent()->FindGameObject<Camera>();
+	if (cam != nullptr) {
+		x -= cam->GetValueX();
+	}
+	if (x > SCREEN_WIDTH)//画面外に敵がいたら動かさない
+		return;
+	else if (x < -64) {
+		KillMe();
+		return;
+	}
 
 	frameCounter ++;
 	if (frameCounter > 6) {
@@ -96,7 +109,7 @@ void Enemy::Update()
 			
 		}
 	}
-	if (pIBox != nullptr) {
+	for (ItemBox* pIBox : pIBoxs) {
 		float cx = ENEMY_WIDTH / 2.0f - CORRECT_WIDTH;
 		float cy = ENEMY_HEIGHT / 2.0f;
 
@@ -141,7 +154,8 @@ void Enemy::Draw()
 	int y = (int)transform_.position_.y;
 	Camera* cam = GetParent()->FindGameObject<Camera>();
 	if (cam != nullptr) {
-		x -= cam->GetValue();
+		x -= cam->GetValueX();
+		y -= cam->GetValueY();
 	}
 	DrawRotaGraph(x, y,1.0f, 0, hWalkImage[animFrame], TRUE,!isRight);
 }
