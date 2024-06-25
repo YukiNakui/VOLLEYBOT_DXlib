@@ -15,7 +15,7 @@ void GameOverScene::Update()
 {
 	if (CheckHitKey(KEY_INPUT_C)) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_TEST);
+		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}
 }
 

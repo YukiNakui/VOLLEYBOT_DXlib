@@ -4,6 +4,7 @@
 
 namespace PLAYER_ANIMFRAME {
 	const int WALK_MAXFRAME{ 6 };
+	const int SPIKE_FRAME{ 4 };
 }
 namespace PAF = PLAYER_ANIMFRAME;
 
@@ -22,11 +23,20 @@ public:
 	/// <param name="x">X座標（左）</param>
 	/// <param name="y">Y座標（上）</param>
 	void SetPosition(int x, int y);
-	bool IsTouchBall(XMFLOAT3 pos);
+	
 private:
 	int hImage;
 	int hWalkImage[PAF::WALK_MAXFRAME];
 	
+	enum State {
+		NORMAL = 0,
+		TOSS,
+		SPIKE,
+		DAMAGE,
+		DEAD,
+	};
+	State state;
+
 	GameObject* sceneTop;
 	bool prevSpaceKey;
 	bool prevAttackKey;
@@ -40,16 +50,12 @@ private:
 	bool isBallAlive;
 	int tossCount;
 	
+	bool IsTouchBall(XMFLOAT3 pos);
 
-	enum State {
-		NORMAL = 0,
-		WALK,
-		TOSS,
-		SPIKE,
-		DEAD,
-		MAX,
-	};
-	State state;
-
+	void UpdateNormal();
+	void UpdateToss();
+	void UpdateSpike();
+	void UpdateDamage();
+	void UpdateDead();
 };
 

@@ -3,7 +3,7 @@
 #include <assert.h>
 #include"Camera.h"
 #include"Field.h"
-#include"TestScene.h"
+#include"PlayScene.h"
 #include"Ball.h"
 #include"Enemy.h"
 #include"ItemBox.h"
@@ -26,7 +26,7 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 {
 	/*hImage = LoadGraph("Assets/chara.png");
 	assert(hImage > 0);*/
-	LoadDivGraph("Assets/PlayerWalk.png", PAF::WALK_MAXFRAME, PAF::WALK_MAXFRAME, 1, 128, 128, hWalkImage);
+	LoadDivGraph("Assets/Player/PlayerWalk.png", PAF::WALK_MAXFRAME, PAF::WALK_MAXFRAME, 1, 128, 128, hWalkImage);
 	for (int i = 0; i < PAF::WALK_MAXFRAME; i++) {
 		assert(hWalkImage[i] > 0);
 	}
@@ -67,18 +67,18 @@ void Player::Update()
 	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
 	Camera* cam = GetParent()->FindGameObject<Camera>();
 
-	/*if (state == S_Cry) {
-		frameCounter++;
+	if (state == DEAD) {
+		/*frameCounter++;
 		if (frameCounter >= 16)
 		{
 			frameCounter = 0;
 			animFrame = (animFrame + 1) % 2;
-		}
+		}*/
 		return;
 	}
-	TestScene* scene = dynamic_cast<TestScene*>(GetParent());
+	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
 	if (!scene->CanMove())
-		return;*/
+		return;
 	
 	if (CheckHitKey(KEY_INPUT_K))
 	{
@@ -350,4 +350,24 @@ bool Player::IsTouchBall(XMFLOAT3 pos)
 		}
 	}
 	return false;
+}
+
+void Player::UpdateNormal()
+{
+}
+
+void Player::UpdateToss()
+{
+}
+
+void Player::UpdateSpike()
+{
+}
+
+void Player::UpdateDamage()
+{
+}
+
+void Player::UpdateDead()
+{
 }

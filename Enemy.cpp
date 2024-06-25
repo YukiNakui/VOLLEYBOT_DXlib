@@ -29,6 +29,7 @@ Enemy::Enemy(GameObject* scene)
 	animFrame = 0;
 	frameCounter = 0;
 	isRight = false;
+	onGround = true;
 }
 
 Enemy::~Enemy()
@@ -106,9 +107,9 @@ void Enemy::Update()
 		int pushTop = max(pushRtop, pushLtop);//2‚Â‚Ì“ª‚Ì‚ß‚èž‚Ý‚Ì‘å‚«‚¢‚Ù‚¤
 		if (pushTop > 0.0f) {
 			transform_.position_.y += pushTop - 1.0f;
-			
 		}
 	}
+
 	for (ItemBox* pIBox : pIBoxs) {
 		float cx = ENEMY_WIDTH / 2.0f - CORRECT_WIDTH;
 		float cy = ENEMY_HEIGHT / 2.0f;

@@ -15,6 +15,7 @@ class Enemy :
 	int animFrame;
 	int frameCounter;
 	bool isRight;
+	bool onGround;
 public:
 	Enemy(GameObject* scene);
 	~Enemy();

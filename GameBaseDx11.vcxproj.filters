@@ -52,7 +52,7 @@
     <ClCompile Include="Player.cpp">
       <Filter>Characters</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene.cpp">
+    <ClCompile Include="PlayScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="ClearScene.cpp">
@@ -93,7 +93,7 @@
     <ClInclude Include="Player.h">
       <Filter>Characters</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h">
+    <ClInclude Include="PlayScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="ClearScene.h">
