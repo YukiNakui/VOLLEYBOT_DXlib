@@ -58,10 +58,16 @@ bool PlayScene::CanMove()
 
 void PlayScene::StartReady()
 {
+	state = s_Ready;
+	readyTimer = 2.0f;
 }
 
 void PlayScene::UpdateReady()
 {
+	readyTimer -= 1.0f / 60.0f;
+	if (readyTimer <= 0.0f) {
+		StartPlay();
+	}
 }
 
 void PlayScene::StartPlay()
@@ -78,6 +84,7 @@ void PlayScene::UpdateClear()
 
 void PlayScene::StartDead()
 {
+	state = s_Dead;
 }
 
 void PlayScene::UpdateDead()
