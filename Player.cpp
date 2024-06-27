@@ -24,8 +24,6 @@ namespace {
 
 Player::Player(GameObject* parent) : GameObject(sceneTop)
 {
-	/*hImage = LoadGraph("Assets/chara.png");
-	assert(hImage > 0);*/
 	LoadDivGraph("Assets/Player/PlayerWalk.png", PAF::WALK_MAXFRAME, PAF::WALK_MAXFRAME, 1, 128, 128, hWalkImage);
 	for (int i = 0; i < PAF::WALK_MAXFRAME; i++) {
 		assert(hWalkImage[i] > 0);
@@ -41,10 +39,8 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	tossCount = 0;
 	animFrame = 0;
 	frameCounter = 0;
-	/*frameCounter = 0;
-	animType = 0;
-	animFrame = 0;
-	state = S_Walk;*/
+	
+	//state = S_Walk
 }
 
 Player::~Player()

@@ -72,6 +72,7 @@ void PlayScene::UpdateReady()
 
 void PlayScene::StartPlay()
 {
+	state = s_Play;
 }
 
 void PlayScene::UpdatePlay()
