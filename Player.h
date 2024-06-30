@@ -50,6 +50,7 @@ private:
 	int animFrame;//コマ
 	int frameCounter;
 	bool isRight;
+	bool canMove;
 
 	Ball* pBall;
 
@@ -58,6 +59,7 @@ private:
 	float cdTimer;
 	
 	bool IsTouchBall(XMFLOAT3 pos);
+	void KnockBack(XMFLOAT3& pos);//ダメージ時のノックバック
 
 //private:
 //	void UpdateNormal();

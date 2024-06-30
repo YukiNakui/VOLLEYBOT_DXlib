@@ -41,6 +41,7 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	jumpSpeed = 0.0f;
 	onGround = true;
 	isRight = true;
+	canMove = true;
 
 	pBall = nullptr;
 	isBallAlive = false;
@@ -67,9 +68,6 @@ Player::~Player()
 			DeleteGraph(hWalkImage[i]);
 		}
 	}*/
-	if (pBall != nullptr) {
-		delete pBall;
-	}
 }
 
 void Player::Update()
@@ -90,7 +88,7 @@ void Player::Update()
 	if (state == DEAD) {
 		if (animFrame < DEAD_MAXFRAME - 1) {
 			frameCounter++;
-			if (frameCounter >= 16) {
+			if (frameCounter >= 10) {
 				frameCounter = 0;
 				animFrame++;
 			}
@@ -103,57 +101,116 @@ void Player::Update()
 				pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
 			}
 		}
-		return;
-	}
-	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
-	if (!scene->CanMove()) {
-		return;
+		//return;
 	}
 
-	
-	if (CheckHitKey(KEY_INPUT_K))
-	{
-		if (!prevAttackKey){
-			if (!isBallAlive ||(pBall != nullptr && !pBall->IsBallAlive())) {
-				pBall = nullptr;
-				pBall = Instantiate<Ball>(GetParent());
-				isBallAlive = true;
-				pBall->SetPosition(transform_.position_.x, transform_.position_.y - PLAYER_HEIGHT / 2.0f + CORRECT_TOP);
-				pBall->FirstToss();
-				tossCount += 1;
-				state = TOSS;
+	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
+	if (!scene->CanMove()) {
+		canMove = false;
+	}
+
+	if (state == TOSS) {
+		if (animFrame < TOSS_MAXFRAME - 1) {
+			frameCounter++;
+			if (frameCounter >= 10) {
+				frameCounter = 0;
+				animFrame++;
 			}
-			else {
-				if (tossCount > 0){
-					if (IsTouchBall(pBall->GetPos())){
-						if (tossCount == 1) {
-							pBall->SecondToss();
-								tossCount += 1;
-								state = TOSS;
-						}
-					}
-					else{
-						float lenX = pBall->GetPos().x - transform_.position_.x;
-						float lenY = pBall->GetPos().y - transform_.position_.y;
-						float len = sqrt(lenX * lenX + lenY * lenY);
-						//プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
-						if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - 64.0f) {
-							SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT/2.0f - CORRECT_TOP);
-							pBall->Spike(isRight);
-							tossCount = 0;
-							cam->VibrationY(10.0f);
-							state = SPIKE;
-						}
-					}
+			if (animFrame == 1) {
+				if (tossCount == 1) {
+					if (pBall != nullptr)
+						pBall->FirstToss();
 				}
-				
 			}
-			prevAttackKey = true;
+		}
+		else {
+			canMove = true;
+			animType = 0;
+			animFrame = 0;
+			frameCounter = 0;
+			state = NORMAL;
 		}
 	}
-	else {
-		prevAttackKey = false;
+
+	if (state == SPIKE) {
+		if (animFrame < SPIKE_MAXFRAME - 1) {
+			frameCounter++;
+			if (frameCounter >= 10) {
+				frameCounter = 0;
+				animFrame++;
+			}
+			if (animFrame == 1) {
+				if (pBall != nullptr) {
+					SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT / 2.0f - CORRECT_TOP);
+					pBall->Spike(isRight);
+					cam->VibrationY(10.0f);
+				}
+			}
+		}
+		else {
+			canMove = true;
+			animType = 0;
+			animFrame = 0;
+			frameCounter = 0;
+			state = NORMAL;
+		}
 	}
+	
+	if (canMove) {
+		if (CheckHitKey(KEY_INPUT_K))
+		{
+			if (!prevAttackKey) {
+				if (!isBallAlive || (pBall != nullptr && !pBall->IsBallAlive())) {
+					pBall = nullptr;
+					pBall = Instantiate<Ball>(GetParent());
+					isBallAlive = true;
+					pBall->SetPosition(transform_.position_.x, transform_.position_.y - PLAYER_HEIGHT / 2.0f + CORRECT_TOP);
+					//pBall->FirstToss();
+					canMove = false;
+					tossCount += 1;
+					animType = 2;
+					animFrame = 0;
+					frameCounter = 0;
+					state = TOSS;
+				}
+				else {
+					if (tossCount > 0) {
+						if (IsTouchBall(pBall->GetPos())) {
+							if (tossCount == 1) {
+								pBall->SecondToss();
+								canMove = false;
+								tossCount += 1;
+								animType = 2;
+								animFrame = 0;
+								state = TOSS;
+							}
+						}
+						else {
+							float lenX = pBall->GetPos().x - transform_.position_.x;
+							float lenY = pBall->GetPos().y - transform_.position_.y;
+							float len = sqrt(lenX * lenX + lenY * lenY);
+							//プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
+							if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - 64.0f) {
+								//SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT/2.0f - CORRECT_TOP);
+								//pBall->Spike(isRight);
+								tossCount = 0;
+								animType = 3;
+								animFrame = 0;
+								//cam->VibrationY(10.0f);
+								state = SPIKE;
+							}
+						}
+					}
+
+				}
+				prevAttackKey = true;
+			}
+		}
+		else {
+			prevAttackKey = false;
+		}
+	}
+
 
 	if (pBall != nullptr) {
 		float lenX = pBall->GetPos().x - transform_.position_.x;
@@ -175,8 +232,9 @@ void Player::Update()
 			tossCount = 0;
 		}
 	}
-
 	
+
+	if (canMove) {
 		if (CheckHitKey(KEY_INPUT_D))
 		{
 			if (onGround)
@@ -261,20 +319,18 @@ void Player::Update()
 		else {
 			prevSpaceKey = false;
 		}
+
+		if (!onGround) {
+			if (state == NORMAL && animType == 3)
+			{
+				animFrame = 3;
+			}
+		}
+	}
 	
 
 	jumpSpeed += GRAVITY; //速度 += 加速度
 	transform_.position_.y += jumpSpeed; //座標 += 速度
-
-	if (animType == 3)
-	{
-		if (jumpSpeed == 0) {
-			animFrame = 0;
-		}
-		else {
-			animFrame = 3;
-		}
-	}
 
 	if (pField != nullptr) {
 		float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH - 5.0f;
@@ -333,18 +389,20 @@ void Player::Update()
 		pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
 	}
 	
-
-	std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
-	for (Enemy* pEnemy : pEnemies) {
-		if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, PLAYER_WIDTH/2.0f,PLAYER_HEIGHT/2.0f)) {
-			animType = 5;
-			animFrame = 0;
-			state = DEAD;
-			scene->StartDead();
-			if (pBall != nullptr)
-				pBall->KillMe();
-			/*SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-			pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);*/
+	if (state != DEAD) {
+		std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
+		for (Enemy* pEnemy : pEnemies) {
+			if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
+				canMove = false;
+				animType = 5;
+				animFrame = 0;
+				state = DEAD;
+				scene->StartDead();
+				if (pBall != nullptr)
+					pBall->KillMe();
+				/*SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+				pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);*/
+			}
 		}
 	}
 
