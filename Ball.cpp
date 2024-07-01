@@ -58,8 +58,8 @@ void Ball::Update()
 	XMStoreFloat3(&nextPosFloat, nextPos);
 
 	if (pField != nullptr) {
-		float cx = BALL_WIDTH / 2.0f;
-		float cy = BALL_HEIGHT / 2.0f;
+		float cx = 13.0f;
+		float cy = 13.0f;
 		// ’nŒ`‚Æ‚ÌÕ“Ë”»’è‚ÆˆÊ’u•â³
 		float pushRTop = pField->CollisionRight(nextPosFloat.x + cx, nextPosFloat.y - cy + CORRECT_VALUE);
 		float pushRBottom = pField->CollisionRight(nextPosFloat.x + cx, nextPosFloat.y + cy - CORRECT_VALUE);
@@ -180,15 +180,10 @@ void Ball::Draw()
 		x -= cam->GetValueX();
 		y -= cam->GetValueY();
 	}
-	/*XMVECTOR v = XMVector3Length(moveVec);
-	float length = XMVectorGetX(v);
-	SetAfterImagePos(length,BallPosX,BallPosY,AFT_IMG_NUM);*/
-	/*if (isAlive) {
-		for (int i = AFT_IMG_NUM - 1; i >= 0; i -= 8) {*/
-			DrawRotaGraph(x, y, 1.0, 0, hImage, TRUE);
-	/*		DrawRotaGraph(BallPosX[i], BallPosY[i], 1.0, 0, hImage, TRUE);
-		}
-	}*/
+	
+	if (isAlive) {
+		DrawRotaGraph(x, y, 1.0, 0, hImage, TRUE);
+	}
 }
 
 void Ball::SetPosition(float x,float y)
@@ -240,7 +235,7 @@ bool Ball::IsBallCatch(float x,float y)
 	float lenX = x - transform_.position_.x;
 	float lenY = y - transform_.position_.y;
 	float len = sqrt(lenX * lenX + lenY * lenY);
-	if (len < 25.0f) {
+	if (len < 20.0f) {
 		isAlive = false;
 		return true;
 	}
@@ -251,37 +246,3 @@ int Ball::GetBallSize()
 {
 	return BALL_WIDTH;
 }
-
-//
-//bool Ball::IsHighSpeed(float speed)
-//{
-//	if (speed >= 1.0f)
-//		return true;
-//	return false;
-//}
-//
-//void Ball::SetAfterImagePos(float speed, float* posX, float* posY, int arrlen)
-//{
-//	float x = (int)transform_.position_.x;
-//	float y = (int)transform_.position_.y;
-//	Camera* cam = GetParent()->FindGameObject<Camera>();
-//	if (cam != nullptr) {
-//		x -= cam->GetValueX();
-//		y -= cam->GetValueY();
-//	}
-//	if (IsHighSpeed(speed)) {
-//		for (int i = arrlen - 1; i > 0; i--)
-//		{
-//			posX[i] = posX[i - 1];
-//			posY[i] = posY[i - 1];
-//		}
-//	}
-//	else {
-//		for (int i = arrlen - 1; i > 0; i--)
-//		{
-//			posX[i] = x;
-//			posY[i] = y;
-//		}
-//	}
-//}
-

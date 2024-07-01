@@ -36,12 +36,5 @@ private:
 	float r;
 	float speed;
 	float accsel;
-
-	//float BallPosX[AFT_IMG_NUM];
-	//float BallPosY[AFT_IMG_NUM];
-
-	//Žc‘œ‚ð•\Ž¦‚·‚é‚©
-	//bool IsHighSpeed(float speed);
-	//void SetAfterImagePos(float speed,float *posX,float *posY,int arrlen);
 };
 

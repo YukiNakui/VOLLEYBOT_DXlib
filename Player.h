@@ -61,11 +61,5 @@ private:
 	bool IsTouchBall(XMFLOAT3 pos);
 	void KnockBack(XMFLOAT3& pos);//ダメージ時のノックバック
 
-//private:
-//	void UpdateNormal();
-//	void UpdateToss();
-//	void UpdateSpike();
-//	void UpdateDamage();
-//	void UpdateDead();
 };
 

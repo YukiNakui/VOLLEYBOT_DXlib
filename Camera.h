@@ -15,6 +15,11 @@ public:
     int GetValueY() { return valueY; }
 
     /// <summary>
+  /// カメラ横振動を開始する
+  /// </summary>
+  /// <param name="v">衝撃の大きさ</param>
+    void VibrationX(float v);
+    /// <summary>
     /// カメラ縦振動を開始する
     /// </summary>
     /// <param name="v">衝撃の大きさ</param>
@@ -23,8 +28,13 @@ private:
     int valueX;
     int valueY;
     //VECTOR lookTarget;
-    float vibTimer; //時間を測る変数
-    float vibParam;//引数で指定された値
-    float vibValue;//振動量、振動幅
+    float vibTimerX; //時間を測る変数
+    float vibTimerY; //時間を測る変数
+    float vibParamX;//引数で指定された値
+    float vibParamY;//引数で指定された値
+    float vibValueX;//振動量、振動幅
+    float vibValueY;//振動量、振動幅
+    bool vibXnow;
+    bool vibYnow;
 };
 

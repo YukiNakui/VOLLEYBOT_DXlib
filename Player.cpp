@@ -76,15 +76,6 @@ void Player::Update()
 	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
 	Camera* cam = GetParent()->FindGameObject<Camera>();
 
-
-	/*switch (state) {
-	case NORMAL: UpdateNormal(); break;
-	case TOSS: UpdateToss(); break;
-	case SPIKE: UpdateSpike(); break;
-	case DAMAGE: UpdateDamage(); break;
-	case DEAD: UpdateDead(); break;
-	}*/
-
 	if (state == DEAD) {
 		if (animFrame < DEAD_MAXFRAME - 1) {
 			frameCounter++;
@@ -118,8 +109,10 @@ void Player::Update()
 			}
 			if (animFrame == 1) {
 				if (tossCount == 1) {
-					if (pBall != nullptr)
+					if (pBall != nullptr) {
+					//	pBall->SetPosition(transform_.position_.x, transform_.position_.y - PLAYER_HEIGHT / 2.0f + CORRECT_TOP);
 						pBall->FirstToss();
+					}
 				}
 			}
 		}
@@ -139,11 +132,12 @@ void Player::Update()
 				frameCounter = 0;
 				animFrame++;
 			}
-			if (animFrame == 1) {
+			if (animFrame == 2) {
 				if (pBall != nullptr) {
 					SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT / 2.0f - CORRECT_TOP);
 					pBall->Spike(isRight);
-					cam->VibrationY(10.0f);
+					if (cam != nullptr)
+						cam->VibrationY(10.0f);
 				}
 			}
 		}
@@ -156,60 +150,61 @@ void Player::Update()
 		}
 	}
 	
-	if (canMove) {
-		if (CheckHitKey(KEY_INPUT_K))
-		{
-			if (!prevAttackKey) {
-				if (!isBallAlive || (pBall != nullptr && !pBall->IsBallAlive())) {
-					pBall = nullptr;
-					pBall = Instantiate<Ball>(GetParent());
-					isBallAlive = true;
-					pBall->SetPosition(transform_.position_.x, transform_.position_.y - PLAYER_HEIGHT / 2.0f + CORRECT_TOP);
-					//pBall->FirstToss();
-					canMove = false;
-					tossCount += 1;
-					animType = 2;
-					animFrame = 0;
-					frameCounter = 0;
-					state = TOSS;
-				}
-				else {
-					if (tossCount > 0) {
-						if (IsTouchBall(pBall->GetPos())) {
-							if (tossCount == 1) {
-								pBall->SecondToss();
-								canMove = false;
-								tossCount += 1;
-								animType = 2;
-								animFrame = 0;
-								state = TOSS;
-							}
-						}
-						else {
-							float lenX = pBall->GetPos().x - transform_.position_.x;
-							float lenY = pBall->GetPos().y - transform_.position_.y;
-							float len = sqrt(lenX * lenX + lenY * lenY);
-							//プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
-							if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - 64.0f) {
-								//SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT/2.0f - CORRECT_TOP);
-								//pBall->Spike(isRight);
-								tossCount = 0;
-								animType = 3;
-								animFrame = 0;
-								//cam->VibrationY(10.0f);
-								state = SPIKE;
-							}
+	
+	if (CheckHitKey(KEY_INPUT_K))
+	{
+		if (!prevAttackKey) {
+			if (!isBallAlive || (pBall != nullptr && !pBall->IsBallAlive())) {
+				pBall = nullptr;
+				pBall = Instantiate<Ball>(GetParent());
+				isBallAlive = true;
+				pBall->SetPosition(transform_.position_.x, transform_.position_.y - PLAYER_HEIGHT / 2.0f + 30.0f);
+				//pBall->FirstToss();
+				canMove = false;
+				tossCount += 1;
+				animType = 2;
+				animFrame = 0;
+				frameCounter = 0;
+				state = TOSS;
+			}
+			else {
+				if (tossCount > 0) {
+					if (IsTouchBall(pBall->GetPos())) {
+						if (tossCount == 1) {
+							pBall->SecondToss();
+							canMove = false;
+							tossCount += 1;
+							animType = 2;
+							animFrame = 0;
+							state = TOSS;
 						}
 					}
-
+					else {
+						float lenX = pBall->GetPos().x - transform_.position_.x;
+						float lenY = pBall->GetPos().y - transform_.position_.y;
+						float len = sqrt(lenX * lenX + lenY * lenY);
+						//プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
+						if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - 64.0f) {
+							//SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT/2.0f - CORRECT_TOP);
+							//pBall->Spike(isRight);
+							canMove = false;
+							tossCount = 0;
+							animType = 3;
+							animFrame = 0;
+							//cam->VibrationY(10.0f);
+							state = SPIKE;
+						}
+					}
 				}
-				prevAttackKey = true;
+
 			}
-		}
-		else {
-			prevAttackKey = false;
+			prevAttackKey = true;
 		}
 	}
+	else {
+		prevAttackKey = false;
+	}
+	
 
 
 	if (pBall != nullptr) {
@@ -225,7 +220,7 @@ void Player::Update()
 	}
 
 	if (pBall!=nullptr){ 
-		if (!pBall->IsBallAlive() || pBall->IsBallCatch(transform_.position_.x, transform_.position_.y + PLAYER_HEIGHT / 4.0f)) {
+		if (!pBall->IsBallAlive() || pBall->IsBallCatch(transform_.position_.x - 10.0f, transform_.position_.y + PLAYER_HEIGHT / 4.0f)) {
 			pBall->SetPosition(0.0f, 800.0f);
 			isBallAlive = false;
 			pBall = nullptr;
@@ -397,6 +392,8 @@ void Player::Update()
 				animType = 5;
 				animFrame = 0;
 				state = DEAD;
+				if (cam != nullptr)
+					cam->VibrationX(100.0f);
 				scene->StartDead();
 				if (pBall != nullptr)
 					pBall->KillMe();
@@ -446,7 +443,7 @@ void Player::SetPosition(int x, int y)
 bool Player::IsTouchBall(XMFLOAT3 pos)
 {
 	float cx = PLAYER_WIDTH / 2.0f;
-	float cy = PLAYER_HEIGHT / 2.0f;
+	float cy = 50.0f;
 	if ((pos.x <= transform_.position_.x + cx) && (pos.x >= transform_.position_.x - cx)) {
 		if ((pos.y <= transform_.position_.y) && (pos.y >= transform_.position_.y - cy)) {
 			return true;
@@ -454,154 +451,3 @@ bool Player::IsTouchBall(XMFLOAT3 pos)
 	}
 	return false;
 }
-
-//
-//void Player::UpdateNormal()
-//{
-//	//if (CheckHitKey(KEY_INPUT_D))
-//	//{
-//	//	if (onGround)
-//	//		animType = 1;
-//	//	transform_.position_.x += MOVE_SPEED;
-//	////	float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
-//	////	float cy = PLAYER_HEIGHT / 2.0f;
-//	//	if (++frameCounter >= WALK_MAXFRAME) {
-//	//		animFrame = (animFrame + 1) % WALK_MAXFRAME;
-//	//		frameCounter = 0;
-//	//	}
-//	//	//if (pField != nullptr) {
-//	//	//	float pushTright = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
-//	//	//	float pushBright = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM) -1.0f);
-//	//	//	float pushRight = max(pushBright, pushTright);//右側の頭と足元で当たり判定
-//	//	//	if (pushRight > 0.0f) {
-//	//	//		transform_.position_.x -= pushRight - 1.0f;
-//	//	//	}
-//	//	//}
-//	//	//for (ItemBox* pIBox : pIBoxs) {
-//	//	//	if (pIBox != nullptr) {
-//	//	//		float pushTright = pIBox->CollisionRight(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
-//	//	//		float pushBright = pIBox->CollisionRight(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM) - 1.0f);
-//	//	//		float pushRight = max(pushBright, pushTright);//右側の頭と足元で当たり判定
-//	//	//		if (pushRight > 0.0f) {
-//	//	//			transform_.position_.x -= pushRight - 1.0f;
-//	//	//		}
-//	//	//	}
-//	//	//}
-//	//	isRight = true;
-//	//}
-//	//else if (CheckHitKey(KEY_INPUT_A))
-//	//{
-//	//	if (onGround)
-//	//		animType = 1;
-//	////	float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
-//	////	float cy = PLAYER_HEIGHT / 2.0f;
-//	//	transform_.position_.x -= MOVE_SPEED;
-//	//	if (++frameCounter >= WALK_MAXFRAME) {
-//	//		animFrame = (animFrame + 1) % WALK_MAXFRAME;
-//	//		frameCounter = 0;
-//	//	}
-//	//	//if (pField != nullptr) {
-//	//	//	float pushTleft = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
-//	//	//	float pushBleft = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM) - 1.0f);
-//	//	//	float pushLeft = max(pushBleft, pushTleft);//左側の頭と足元で当たり判定
-//	//	//	if (pushLeft > 0.0f) {
-//	//	//		transform_.position_.x += pushLeft - 1.0f;
-//	//	//	}
-//	//	//}
-//	//	//for (ItemBox* pIBox : pIBoxs) {
-//	//	//	if (pIBox != nullptr) {
-//	//	//		float pushTleft = pIBox->CollisionLeft(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
-//	//	//		float pushBleft = pIBox->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM) - 1.0f);
-//	//	//		float pushLeft = max(pushBleft, pushTleft);//左側の頭と足元で当たり判定
-//	//	//		if (pushLeft > 0.0f) {
-//	//	//			transform_.position_.x += pushLeft - 1.0f;
-//	//	//		}
-//	//	//	}
-//	//	//}
-//	//	isRight = false;
-//	//}
-//	//else {
-//	//	if (onGround) {
-//	//		animType = 0;
-//	//		animFrame = 0;
-//	//		frameCounter = 0;
-//	//	}
-//	//}
-//}
-//
-//void Player::UpdateToss()
-//{
-//	//if (CheckHitKey(KEY_INPUT_K))
-//	//{
-//	//	if (!prevAttackKey){
-//	//		if (!isBallAlive ||(pBall != nullptr && !pBall->IsBallAlive())) {
-//	//			pBall = nullptr;
-//	//			pBall = Instantiate<Ball>(GetParent());
-//	//			isBallAlive = true;
-//	//			pBall->SetPosition(transform_.position_.x, transform_.position_.y - PLAYER_HEIGHT / 2.0f + CORRECT_TOP);
-//	//			pBall->FirstToss();
-//	//			tossCount += 1;
-//	//		}
-//	//		else {
-//	//			if (tossCount > 0){
-//	//				if (IsTouchBall(pBall->GetPos())){
-//	//					if (tossCount == 1) {
-//	//						pBall->SecondToss();
-//	//							tossCount += 1;
-//	//					}
-//	//				}
-//	//				else{
-//	//					//float lenX = pBall->GetPos().x - transform_.position_.x;
-//	//					//float lenY = pBall->GetPos().y - transform_.position_.y;
-//	//					//float len = sqrt(lenX * lenX + lenY * lenY);
-//	//					////プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
-//	//					//if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - 64.0f) {
-//	//					//	SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT/2.0f - CORRECT_TOP);
-//	//					//	pBall->Spike(isRight);
-//	//					//	tossCount = 0;
-//	//					//	cam->VibrationY(10.0f);
-//	//					//}
-//	//				}
-//	//			}
-//	//			
-//	//		}
-//	//		prevAttackKey = true;
-//	//	}
-//	//}
-//	//else {
-//	//	prevAttackKey = false;
-//	//}
-//}
-//
-//void Player::UpdateSpike()
-//{
-//	//float lenX = pBall->GetPos().x - transform_.position_.x;
-//	//float lenY = pBall->GetPos().y - transform_.position_.y;
-//	//float len = sqrt(lenX * lenX + lenY * lenY);
-//	////プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
-//	//if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - 64.0f) {
-//	//	SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT/2.0f - CORRECT_TOP);
-//	//	pBall->Spike(isRight);
-//	//	tossCount = 0;
-//	//	pCam->VibrationY(10.0f);
-//	//}
-//	//state = NORMAL;
-//}
-//
-//void Player::UpdateDamage()
-//{
-//}
-//
-//void Player::UpdateDead()
-//{
-//	//if (state == DEAD) {
-//	//	animType = 5;
-//	//	frameCounter++;
-//	//	if (frameCounter >= 16)
-//	//	{
-//	//		frameCounter = 0;
-//	//		animFrame = (animFrame + 1) % 2;
-//	//	}
-//	//	//return;
-//	//}
-//}

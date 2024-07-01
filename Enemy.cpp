@@ -12,6 +12,8 @@ namespace {
 	const float CORRECT_BOTTOM = 1.0f;
 	const float CORRECT_TOP = 35.0f;
 	static const int SCREEN_WIDTH = 1280;
+	const float COLLIDE_WIDTH = 45.0f;
+	const float COLLIDE_HEIGHT = 40.0f;
 }
 
 Enemy::Enemy(GameObject* scene)
@@ -170,9 +172,9 @@ void Enemy::SetPosition(int x, int y)
 bool Enemy::CollideRectToRect(float x, float y, float w, float h)
 {
 	// 敵の矩形の範囲を計算
-	float myRectRight = transform_.position_.x + ENEMY_WIDTH / 2.0f - CORRECT_WIDTH;
-	float myRectLeft = transform_.position_.x - ENEMY_WIDTH / 2.0f + CORRECT_WIDTH;
-	float myRectTop = transform_.position_.y - ENEMY_HEIGHT / 2.0f + CORRECT_TOP;
+	float myRectRight = transform_.position_.x + ENEMY_WIDTH / 2.0f - COLLIDE_WIDTH;
+	float myRectLeft = transform_.position_.x - ENEMY_WIDTH / 2.0f + COLLIDE_WIDTH;
+	float myRectTop = transform_.position_.y - ENEMY_HEIGHT / 2.0f + COLLIDE_HEIGHT;
 	float myRectBottom = transform_.position_.y + ENEMY_HEIGHT / 2.0f - CORRECT_BOTTOM;
 
 	// 指定された矩形と敵の矩形が交差しているかチェック
