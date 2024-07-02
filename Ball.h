@@ -1,9 +1,10 @@
 #pragma once
 #include "Engine/GameObject.h"
 
-namespace {
-	const int AFT_IMG_NUM = 10;
+namespace BALL_ANIMFRAME{
+	const int CHARGE_MAXFRAME = 10;
 }
+namespace BAF = BALL_ANIMFRAME;
 
 class Ball :
     public GameObject
@@ -21,20 +22,35 @@ public:
 	void Draw() override;
 
 	void SetPosition(float x,float y);
+	
 	void Spike(bool isRight);
 	void FirstToss();
 	void SecondToss();
+	
 	bool IsBallAlive();
 	XMFLOAT3 GetPos();
 	bool IsBallCatch(float x,float y);
 	void SetIsAlive(bool isalive) { isAlive = isalive; }
 	int GetBallSize();
+	void SetIsRight(bool right);
+
+	void SetCharge(bool chargenow,int tosscount);
 private:
 	int hImage;
+	int hChargeImg[BAF::CHARGE_MAXFRAME*2];
+
 	XMVECTOR moveVec;
 	bool isAlive;
 	float r;
-	float speed;
 	float accsel;
+	float rot;
+	float rotSpeed;
+	bool isRight;
+
+	bool chargeNow;
+
+	int animType;
+	int animFrame;
+	int frameCounter;
 };
 

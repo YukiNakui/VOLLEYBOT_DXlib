@@ -29,10 +29,6 @@ namespace {
 
 Player::Player(GameObject* parent) : GameObject(sceneTop)
 {
-	/*LoadDivGraph("Assets/Player/PlayerWalk.png", PAF::WALK_MAXFRAME, PAF::WALK_MAXFRAME, 1, 128, 128, hWalkImage);
-	for (int i = 0; i < PAF::WALK_MAXFRAME; i++) {
-		assert(hWalkImage[i] > 0);
-	}*/
 	hAnimImage = LoadGraph("Assets/Player/Player.png");
 	assert(hAnimImage > 0);
 
@@ -45,6 +41,7 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 
 	pBall = nullptr;
 	isBallAlive = false;
+	canSpike = false;
 	tossCount = 0;
 
 	animFrame = 0;
@@ -62,12 +59,6 @@ Player::~Player()
 	{
 		DeleteGraph(hAnimImage);
 	}
-	/*for (int i = 0; i < PAF::WALK_MAXFRAME; i++) {
-		if (hWalkImage[i] > 0)
-		{
-			DeleteGraph(hWalkImage[i]);
-		}
-	}*/
 }
 
 void Player::Update()
@@ -149,8 +140,13 @@ void Player::Update()
 			state = NORMAL;
 		}
 	}
-	
-	
+	float len = 0.0f;
+	if (pBall != nullptr) {
+		float lenX = pBall->GetPos().x - transform_.position_.x;
+		float lenY = pBall->GetPos().y - transform_.position_.y;
+		len = sqrt(lenX * lenX + lenY * lenY);
+	}
+
 	if (CheckHitKey(KEY_INPUT_K))
 	{
 		if (!prevAttackKey) {
@@ -159,6 +155,7 @@ void Player::Update()
 				pBall = Instantiate<Ball>(GetParent());
 				isBallAlive = true;
 				pBall->SetPosition(transform_.position_.x, transform_.position_.y - PLAYER_HEIGHT / 2.0f + 30.0f);
+				pBall->SetIsRight(isRight);
 				//pBall->FirstToss();
 				canMove = false;
 				tossCount += 1;
@@ -171,6 +168,7 @@ void Player::Update()
 				if (tossCount > 0) {
 					if (IsTouchBall(pBall->GetPos())) {
 						if (tossCount == 1) {
+							pBall->SetIsRight(isRight);
 							pBall->SecondToss();
 							canMove = false;
 							tossCount += 1;
@@ -180,9 +178,6 @@ void Player::Update()
 						}
 					}
 					else {
-						float lenX = pBall->GetPos().x - transform_.position_.x;
-						float lenY = pBall->GetPos().y - transform_.position_.y;
-						float len = sqrt(lenX * lenX + lenY * lenY);
 						//プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
 						if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - 64.0f) {
 							//SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT/2.0f - CORRECT_TOP);
@@ -191,6 +186,7 @@ void Player::Update()
 							tossCount = 0;
 							animType = 3;
 							animFrame = 0;
+							pBall->SetIsRight(isRight);
 							//cam->VibrationY(10.0f);
 							state = SPIKE;
 						}
@@ -208,9 +204,14 @@ void Player::Update()
 
 
 	if (pBall != nullptr) {
-		float lenX = pBall->GetPos().x - transform_.position_.x;
-		float lenY = pBall->GetPos().y - transform_.position_.y;
-		float len = sqrt(lenX * lenX + lenY * lenY);
+		if (tossCount > 0) {
+			if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - 64.0f)
+				canSpike = true;
+			else {
+				canSpike = false;
+			}
+		}
+		pBall->SetCharge(canSpike, tossCount);
 		if (len > 600) {
 			pBall->SetPosition(0.0f, 800.0f);
 			isBallAlive = false;

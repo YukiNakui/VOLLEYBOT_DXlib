@@ -46,15 +46,18 @@ private:
 	bool prevAttackKey;
 	float jumpSpeed;
 	bool onGround;
+
 	int animType;//èÛãµ
 	int animFrame;//ÉRÉ}
 	int frameCounter;
+	
 	bool isRight;
 	bool canMove;
 
 	Ball* pBall;
 
 	bool isBallAlive;
+	bool canSpike;
 	int tossCount;
 	float cdTimer;
 	

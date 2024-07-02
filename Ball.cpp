@@ -23,16 +23,22 @@ Ball::Ball(GameObject* parent)
 {
 	hImage = LoadGraph("Assets/ball.png");
 	assert(hImage > 0);
+	LoadDivGraph("Assets/Effects/ChargeEffects.png", BAF::CHARGE_MAXFRAME * 2, BAF::CHARGE_MAXFRAME, 2, 120, 120, hChargeImg);
+	for (int i = 0; i < BAF::CHARGE_MAXFRAME*2; i++) {
+		assert(hChargeImg[i] > 0);
+	}
+
 	moveVec = XMVectorZero();
 	isAlive = true;
 	r = 32.0f;
-	speed = 0.0f;
 	accsel = 0.0f;
-	/*for (int i = 0; i < AFT_IMG_NUM; i++)
-	{
-		BallPosX[i] = transform_.position_.x;
-		BallPosY[i] = transform_.position_.y;
-	}*/
+	rot = 0.0f;
+	rotSpeed = 0.0f;
+	isRight = true;
+	animType = 0;
+	animFrame = 0;
+	frameCounter = 0;
+	chargeNow = false;
 }
 
 Ball::~Ball()
@@ -57,6 +63,22 @@ void Ball::Update()
 	XMFLOAT3 nextPosFloat;
 	XMStoreFloat3(&nextPosFloat, nextPos);
 
+	if (chargeNow) {
+		if (animFrame < BAF::CHARGE_MAXFRAME - 1) {
+			frameCounter++;
+			if (frameCounter >= 5) {
+				frameCounter = 0;
+				animFrame++;
+			}
+		}
+		else
+			animFrame = 0;
+	}
+	else {
+		animFrame = 0;
+		frameCounter = 0;
+	}
+
 	if (pField != nullptr) {
 		float cx = 13.0f;
 		float cy = 13.0f;
@@ -67,6 +89,8 @@ void Ball::Update()
 		if (pushR > 0.0f) {
 			transform_.position_.x -= pushR - 1.0f;
 			move.x = -move.x * BALL_E;
+			rotSpeed = rotSpeed * BALL_E;
+			isRight = false;
 		}
 		float pushLTop = pField->CollisionLeft(nextPosFloat.x - cx, nextPosFloat.y - cy + CORRECT_VALUE);
 		float pushLBottom = pField->CollisionLeft(nextPosFloat.x - cx, nextPosFloat.y + cy - CORRECT_VALUE);
@@ -74,6 +98,8 @@ void Ball::Update()
 		if (pushL > 0.0f) {
 			transform_.position_.x += pushL - 1.0f;
 			move.x = -move.x * BALL_E;
+			rotSpeed = rotSpeed * BALL_E;
+			isRight = true;
 		}
 
 		float pushTRight = pField->CollisionUp(nextPosFloat.x + cx - CORRECT_VALUE, nextPosFloat.y - cy);
@@ -82,6 +108,7 @@ void Ball::Update()
 		if (pushT > 0.0f) {
 			transform_.position_.y += pushT - 1.0f;
 			move.y = -move.y * BALL_E;
+			rotSpeed = rotSpeed * BALL_E;
 		}
 		float pushBRight = pField->CollisionDown(nextPosFloat.x + cx - CORRECT_VALUE, nextPosFloat.y + cy);
 		float pushBLeft = pField->CollisionDown(nextPosFloat.x - cx + CORRECT_VALUE, nextPosFloat.y + cy);
@@ -89,6 +116,7 @@ void Ball::Update()
 		if (pushB > 0.0f) {
 			transform_.position_.y -= pushB - 1.0f;
 			move.y = -move.y * BALL_E;
+			rotSpeed = rotSpeed * BALL_E;
 			XMVECTOR v = XMVector3Length(moveVec);
 			float length = XMVectorGetX(v);
 			if (length < 5.0f)
@@ -109,6 +137,8 @@ void Ball::Update()
 		if (pushR > 0.0f) {
 			transform_.position_.x -= pushR - 1.0f;
 			move.x = -move.x * BALL_E;
+			rotSpeed = rotSpeed * BALL_E;
+			isRight = false;
 		}
 		float pushLTop = pIBox->CollisionLeft(nextPosFloat.x - cx, nextPosFloat.y - cy + CORRECT_VALUE);
 		float pushLBottom = pIBox->CollisionLeft(nextPosFloat.x - cx, nextPosFloat.y + cy - CORRECT_VALUE);
@@ -116,6 +146,8 @@ void Ball::Update()
 		if (pushL > 0.0f) {
 			transform_.position_.x += pushL - 1.0f;
 			move.x = -move.x * BALL_E;
+			rotSpeed = rotSpeed * BALL_E;
+			isRight = true;
 		}
 
 		float pushTRight = pIBox->CollisionUp(nextPosFloat.x + cx - CORRECT_VALUE, nextPosFloat.y - cy);
@@ -124,6 +156,7 @@ void Ball::Update()
 		if (pushT > 0.0f) {
 			transform_.position_.y += pushT - 1.0f;
 			move.y = -move.y * BALL_E;
+			rotSpeed = rotSpeed * BALL_E;
 		}
 		float pushBRight = pIBox->CollisionDown(nextPosFloat.x + cx - CORRECT_VALUE, nextPosFloat.y + cy);
 		float pushBLeft = pIBox->CollisionDown(nextPosFloat.x - cx + CORRECT_VALUE, nextPosFloat.y + cy);
@@ -131,6 +164,7 @@ void Ball::Update()
 		if (pushB > 0.0f) {
 			transform_.position_.y -= pushB - 1.0f;
 			move.y = -move.y * BALL_E;
+			rotSpeed = rotSpeed * BALL_E;
 			XMVECTOR v = XMVector3Length(moveVec);
 			float length = XMVectorGetX(v);
 			if (length < 5.0f)
@@ -146,6 +180,12 @@ void Ball::Update()
 	moveVec += XMVectorSet(0.0f, GRAVITY, 0.0f, 0.0f);
 	vBall += moveVec;
 	XMStoreFloat3(&transform_.position_, vBall);
+	if (rotSpeed <= 0)
+		rotSpeed = 0;
+	if (isRight)
+		rot += rotSpeed;
+	else
+		rot -= rotSpeed;
 
 	std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
 	for (Enemy* pEnemy : pEnemies) {
@@ -180,9 +220,13 @@ void Ball::Draw()
 		x -= cam->GetValueX();
 		y -= cam->GetValueY();
 	}
-	
+
 	if (isAlive) {
-		DrawRotaGraph(x, y, 1.0, 0, hImage, TRUE);
+		DrawRotaGraph(x, y, 1.0, rot, hImage, TRUE);
+	}
+
+	if (chargeNow) {
+		DrawRotaGraph(x, y, 0.8, 0, hChargeImg[BAF::CHARGE_MAXFRAME * animType + animFrame], TRUE);
 	}
 }
 
@@ -195,20 +239,23 @@ void Ball::SetPosition(float x,float y)
 void Ball::Spike(bool isRight)
 {
 	isAlive = true;
+	float spikeSpeed = 10.0f;
+	rotSpeed = 1.0f;
 
 	if (isRight)
 	{
-		moveVec = { 10.0f,10.0f,0.0f,0.0f };
+		moveVec = { spikeSpeed,spikeSpeed,0.0f,0.0f };
 	}
 	else
 	{
-		moveVec = { -10.0f,10.0f,0.0f,0.0f };
+		moveVec = { -spikeSpeed,spikeSpeed,0.0f,0.0f };
 	}
 }
 
 void Ball::FirstToss()
 {
 	isAlive = true;
+	rotSpeed = 0.4f;
 	float tossSpeed = -sqrt(2 * GRAVITY * MAX_TOSS_HEIGHT / 2.0f);
 	moveVec = { 0.0f,  tossSpeed, 0.0f,0.0f};
 }
@@ -216,6 +263,7 @@ void Ball::FirstToss()
 void Ball::SecondToss()
 {
 	isAlive = true;
+	rotSpeed = 0.4f;
 	float tossSpeed = -sqrt(2 * GRAVITY * MAX_TOSS_HEIGHT);
 	moveVec = { 0.0f,  tossSpeed, 0.0f,0.0f };
 }
@@ -245,4 +293,15 @@ bool Ball::IsBallCatch(float x,float y)
 int Ball::GetBallSize()
 {
 	return BALL_WIDTH;
+}
+
+void Ball::SetIsRight(bool right)
+{
+	isRight = right;
+}
+
+void Ball::SetCharge(bool chargenow,int tosscount)
+{
+	chargeNow = chargenow;
+	animType = tosscount - 1;
 }

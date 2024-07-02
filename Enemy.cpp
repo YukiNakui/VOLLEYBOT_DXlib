@@ -11,7 +11,7 @@ namespace {
 	const float CORRECT_WIDTH = 35.0f;
 	const float CORRECT_BOTTOM = 1.0f;
 	const float CORRECT_TOP = 35.0f;
-	static const int SCREEN_WIDTH = 1280;
+	static const int SCREEN_WIDTH = 1300;
 	const float COLLIDE_WIDTH = 45.0f;
 	const float COLLIDE_HEIGHT = 40.0f;
 }
@@ -57,7 +57,6 @@ void Enemy::Update()
 	if (x > SCREEN_WIDTH)//‰æ–ÊŠO‚É“G‚ª‚¢‚½‚ç“®‚©‚³‚È‚¢
 		return;
 	else if (x < -64) {
-		KillMe();
 		return;
 	}
 
