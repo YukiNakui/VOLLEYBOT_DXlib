@@ -16,6 +16,8 @@ class Enemy :
 	int frameCounter;
 	bool isRight;
 	bool onGround;
+
+	float jumpSpeed;
 public:
 	Enemy(GameObject* scene);
 	~Enemy();

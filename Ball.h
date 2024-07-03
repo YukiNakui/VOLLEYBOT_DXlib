@@ -35,6 +35,7 @@ public:
 	void SetIsRight(bool right);
 
 	void SetCharge(bool chargenow,int tosscount);
+	bool IsTouchGround();
 private:
 	int hImage;
 	int hChargeImg[BAF::CHARGE_MAXFRAME*2];
@@ -48,6 +49,7 @@ private:
 	bool isRight;
 
 	bool chargeNow;
+	bool isTouchGround;
 
 	int animType;
 	int animFrame;

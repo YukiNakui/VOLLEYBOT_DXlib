@@ -31,6 +31,8 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 {
 	hAnimImage = LoadGraph("Assets/Player/Player.png");
 	assert(hAnimImage > 0);
+	hBallImg = LoadGraph("Assets/Ball.png");
+	assert(hBallImg > 0);
 
 	transform_.position_.x = 128.0f;
 	transform_.position_.y = GROUND;
@@ -58,6 +60,9 @@ Player::~Player()
 	if (hAnimImage > 0)
 	{
 		DeleteGraph(hAnimImage);
+	}
+	if (hBallImg > 0) {
+		DeleteGraph(hBallImg);
 	}
 }
 
@@ -140,6 +145,7 @@ void Player::Update()
 			state = NORMAL;
 		}
 	}
+
 	float len = 0.0f;
 	if (pBall != nullptr) {
 		float lenX = pBall->GetPos().x - transform_.position_.x;
@@ -179,20 +185,18 @@ void Player::Update()
 					}
 					else {
 						//プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
-						if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - 64.0f) {
-							//SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT/2.0f - CORRECT_TOP);
-							//pBall->Spike(isRight);
-							canMove = false;
-							tossCount = 0;
-							animType = 3;
-							animFrame = 0;
-							pBall->SetIsRight(isRight);
-							//cam->VibrationY(10.0f);
-							state = SPIKE;
+						if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - PLAYER_HEIGHT) {
+							if (!pBall->IsTouchGround()) {
+								canMove = false;
+								tossCount = 0;
+								animType = 3;
+								animFrame = 0;
+								pBall->SetIsRight(isRight);
+								state = SPIKE;
+							}
 						}
 					}
 				}
-
 			}
 			prevAttackKey = true;
 		}
@@ -200,13 +204,14 @@ void Player::Update()
 	else {
 		prevAttackKey = false;
 	}
-	
-
 
 	if (pBall != nullptr) {
 		if (tossCount > 0) {
-			if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - 64.0f)
-				canSpike = true;
+			if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - PLAYER_HEIGHT)
+				if (!pBall->IsTouchGround())
+					canSpike = true;
+				else
+					canSpike = false;
 			else {
 				canSpike = false;
 			}
@@ -431,6 +436,14 @@ void Player::Draw()
 	DrawRectGraph(x - PLAYER_WIDTH/2.0, y-PLAYER_HEIGHT/2.0-CORRECT_BOTTOM, animFrame * PLAYER_WIDTH, animType * PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT, hAnimImage, TRUE,!isRight);
 	//DrawRotaGraph(x, y, 1.0, 0, hWalkImage[animFrame], TRUE, !isRight);
 	
+	if (!isBallAlive && state!=DEAD) {
+		int crrX = 0;
+		if (isRight)
+			crrX = 15;
+		else
+			crrX = -15;
+		DrawRotaGraph(x + crrX, y + 20, 0.9, 0, hBallImg, TRUE, !isRight);
+	}
 	unsigned int Cr = GetColor(0, 0, 255);
 	DrawCircle(10, 10, 10,Cr, isBallAlive);
 }

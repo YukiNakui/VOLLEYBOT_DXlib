@@ -31,6 +31,7 @@ private:
 	
 	//int hWalkImage[PAF::WALK_MAXFRAME];
 	int hAnimImage;
+	int hBallImg;
 	
 	enum State {
 		NORMAL = 0,

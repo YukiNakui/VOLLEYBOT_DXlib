@@ -16,6 +16,8 @@ namespace {
 	const float BALL_WIDTH = 32.0f;
 	const float BALL_HEIGHT = 32.0f;
 	const float CORRECT_VALUE = 5.0f;
+	static const int WINDOW_WIDTH = 1280;
+	static const int WINDOW_HEIGHT = 720;
 }
 
 Ball::Ball(GameObject* parent)
@@ -39,6 +41,7 @@ Ball::Ball(GameObject* parent)
 	animFrame = 0;
 	frameCounter = 0;
 	chargeNow = false;
+	isTouchGround = false;
 }
 
 Ball::~Ball()
@@ -109,6 +112,7 @@ void Ball::Update()
 			transform_.position_.y += pushT - 1.0f;
 			move.y = -move.y * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
+			isTouchGround = true;
 		}
 		float pushBRight = pField->CollisionDown(nextPosFloat.x + cx - CORRECT_VALUE, nextPosFloat.y + cy);
 		float pushBLeft = pField->CollisionDown(nextPosFloat.x - cx + CORRECT_VALUE, nextPosFloat.y + cy);
@@ -117,6 +121,7 @@ void Ball::Update()
 			transform_.position_.y -= pushB - 1.0f;
 			move.y = -move.y * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
+			isTouchGround = true;
 			XMVECTOR v = XMVector3Length(moveVec);
 			float length = XMVectorGetX(v);
 			if (length < 5.0f)
@@ -157,6 +162,7 @@ void Ball::Update()
 			transform_.position_.y += pushT - 1.0f;
 			move.y = -move.y * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
+			isTouchGround = true;
 		}
 		float pushBRight = pIBox->CollisionDown(nextPosFloat.x + cx - CORRECT_VALUE, nextPosFloat.y + cy);
 		float pushBLeft = pIBox->CollisionDown(nextPosFloat.x - cx + CORRECT_VALUE, nextPosFloat.y + cy);
@@ -165,6 +171,7 @@ void Ball::Update()
 			transform_.position_.y -= pushB - 1.0f;
 			move.y = -move.y * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
+			isTouchGround = true;
 			XMVECTOR v = XMVector3Length(moveVec);
 			float length = XMVectorGetX(v);
 			if (length < 5.0f)
@@ -205,7 +212,8 @@ void Ball::Update()
 		pSceneManager->ChangeScene(SCENE_ID_CLEAR);
 	}
 
-	if (transform_.position_.y > 720.0f) {
+	if ((transform_.position_.y < 0 || transform_.position_.y > WINDOW_HEIGHT) ||
+		(transform_.position_.x < 0 || transform_.position_.x > WINDOW_WIDTH)) {
 		isAlive = false;
 		KillMe();
 	}
@@ -304,4 +312,9 @@ void Ball::SetCharge(bool chargenow,int tosscount)
 {
 	chargeNow = chargenow;
 	animType = tosscount - 1;
+}
+
+bool Ball::IsTouchGround()
+{
+	return isTouchGround;
 }

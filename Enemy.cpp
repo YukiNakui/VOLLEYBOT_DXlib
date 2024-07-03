@@ -7,11 +7,11 @@ namespace {
 	const float ENEMY_WIDTH = 128.0f;
 	const float ENEMY_HEIGHT = 128.0f;
 	const float MOVE_SPEED = 1.5f;
-	const float GRAVITY = 15.0f / 60.0f;//重力加速度
+	const float GRAVITY = 9.8f / 60.0f;//重力加速度
 	const float CORRECT_WIDTH = 35.0f;
 	const float CORRECT_BOTTOM = 1.0f;
 	const float CORRECT_TOP = 35.0f;
-	static const int SCREEN_WIDTH = 1300;
+	static const int SCREEN_WIDTH = 1280;
 	const float COLLIDE_WIDTH = 45.0f;
 	const float COLLIDE_HEIGHT = 40.0f;
 }
@@ -32,6 +32,7 @@ Enemy::Enemy(GameObject* scene)
 	frameCounter = 0;
 	isRight = false;
 	onGround = true;
+	jumpSpeed = 0.0f;
 }
 
 Enemy::~Enemy()
@@ -54,9 +55,9 @@ void Enemy::Update()
 	if (cam != nullptr) {
 		x -= cam->GetValueX();
 	}
-	if (x > SCREEN_WIDTH)//画面外に敵がいたら動かさない
+	if (x > SCREEN_WIDTH+ENEMY_WIDTH)//画面外に敵がいたら動かさない
 		return;
-	else if (x < -64) {
+	else if (x < -ENEMY_WIDTH) {
 		return;
 	}
 
@@ -94,13 +95,15 @@ void Enemy::Update()
 			transform_.position_.x += pushLeft - 1.0f;
 		}
 
-		transform_.position_.y += GRAVITY;
+		jumpSpeed += GRAVITY;
+		transform_.position_.y += jumpSpeed;
 
 		int pushRbottom = pField->CollisionDown(transform_.position_.x + cx - 1.0f, transform_.position_.y + cy - CORRECT_BOTTOM);
 		int pushLbottom = pField->CollisionDown(transform_.position_.x - cx + 1.0f, transform_.position_.y + cy - CORRECT_BOTTOM);
 		int pushBottom = max(pushRbottom, pushLbottom);//2つの足元のめり込みの大きいほう
 		if (pushBottom > 0.0f) {
 			transform_.position_.y -= pushBottom - 1.0f;
+			jumpSpeed = 0.0f;
 		}
 
 		int pushRtop = pField->CollisionUp(transform_.position_.x + cx - 1.0f, transform_.position_.y - cy + CORRECT_TOP);
@@ -108,6 +111,7 @@ void Enemy::Update()
 		int pushTop = max(pushRtop, pushLtop);//2つの頭のめり込みの大きいほう
 		if (pushTop > 0.0f) {
 			transform_.position_.y += pushTop - 1.0f;
+			jumpSpeed = 0.0f;
 		}
 	}
 
@@ -138,6 +142,7 @@ void Enemy::Update()
 		int pushBottom = max(pushRbottom, pushLbottom);//2つの足元のめり込みの大きいほう
 		if (pushBottom > 0.0f) {
 			transform_.position_.y -= pushBottom - 1.0f;
+			jumpSpeed = 0.0f;
 		}
 
 		int pushRtop = pIBox->CollisionUp(transform_.position_.x + cx - 1.0f, transform_.position_.y - cy + CORRECT_TOP);
@@ -145,7 +150,7 @@ void Enemy::Update()
 		int pushTop = max(pushRtop, pushLtop);//2つの頭のめり込みの大きいほう
 		if (pushTop > 0.0f) {
 			transform_.position_.y += pushTop - 1.0f;
-
+			jumpSpeed = 0.0f;
 		}
 	}
 }
