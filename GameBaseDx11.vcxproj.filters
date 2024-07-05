@@ -46,7 +46,7 @@
     <ClCompile Include="BackGround.cpp" />
     <ClCompile Include="ItemBox.cpp" />
     <ClCompile Include="GoalObj.cpp" />
-    <ClCompile Include="Enemy.cpp">
+    <ClCompile Include="Wolf.cpp">
       <Filter>Characters</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
@@ -60,6 +60,15 @@
     </ClCompile>
     <ClCompile Include="GameOverScene.cpp">
       <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Bird.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Skeleton.cpp">
+      <Filter>Characters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -87,7 +96,7 @@
     <ClInclude Include="BackGround.h" />
     <ClInclude Include="ItemBox.h" />
     <ClInclude Include="GoalObj.h" />
-    <ClInclude Include="Enemy.h">
+    <ClInclude Include="Wolf.h">
       <Filter>Characters</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
@@ -101,6 +110,15 @@
     </ClInclude>
     <ClInclude Include="GameOverScene.h">
       <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Bird.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Skeleton.h">
+      <Filter>Characters</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

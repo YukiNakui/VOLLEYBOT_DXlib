@@ -2,15 +2,6 @@
 #include "Engine/GameObject.h"
 #include"Ball.h"
 
-//namespace PLAYER_ANIMFRAME {
-//	const int IDLE_MAXFRAME{ 6 };
-//	const int WALK_MAXFRAME{ 6 };
-//	const int TOSS_MAXFRAME{ 4 };
-//	const int SPIKE_MAXFRAME{ 4 };
-//	const int DEAD_MAXFRAME{ 5 };
-//}
-//namespace PAF = PLAYER_ANIMFRAME;
-
 class Player :
     public GameObject
 {

@@ -130,13 +130,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bird.cpp" />
     <ClCompile Include="ClearScene.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="ItemBox.cpp" />
     <ClCompile Include="BackGround.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Skeleton.cpp" />
+    <ClCompile Include="Wolf.cpp" />
     <ClCompile Include="Engine\CsvReader.cpp" />
     <ClCompile Include="Engine\GameObject.cpp" />
     <ClCompile Include="Engine\Main.cpp" />
@@ -149,13 +152,16 @@
     <ClCompile Include="PlayScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bird.h" />
     <ClInclude Include="ClearScene.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="ItemBox.h" />
     <ClInclude Include="BackGround.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Skeleton.h" />
+    <ClInclude Include="Wolf.h" />
     <ClInclude Include="Engine\CsvReader.h" />
     <ClInclude Include="Engine\GameObject.h" />
     <ClInclude Include="Engine\Global.h" />

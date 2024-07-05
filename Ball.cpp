@@ -2,6 +2,7 @@
 #include"Field.h"
 #include <DxLib.h>
 #include <assert.h>
+//#include"Wolf.h"
 #include"Enemy.h"
 #include"Player.h"
 #include"Camera.h"
@@ -197,7 +198,7 @@ void Ball::Update()
 	std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
 	for (Enemy* pEnemy : pEnemies) {
 		if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, BALL_WIDTH / 2.0f, BALL_HEIGHT / 2.0f)) {
-			pEnemy->KillMe();
+			pEnemy->KillEnemy();
 			isAlive = false;
 			transform_.position_.y = 720.0f;
 		}
@@ -212,8 +213,15 @@ void Ball::Update()
 		pSceneManager->ChangeScene(SCENE_ID_CLEAR);
 	}
 
-	if ((transform_.position_.y < 0 || transform_.position_.y > WINDOW_HEIGHT) ||
-		(transform_.position_.x < 0 || transform_.position_.x > WINDOW_WIDTH)) {
+	float x = (int)transform_.position_.x;
+	float y = (int)transform_.position_.y;
+	Camera* cam = GetParent()->FindGameObject<Camera>();
+	if (cam != nullptr) {
+		x -= cam->GetValueX();
+		y -= cam->GetValueY();
+	}
+	if ((y < 0 || y > WINDOW_HEIGHT) ||
+		(x < 0 || x > WINDOW_WIDTH)) {
 		isAlive = false;
 		KillMe();
 	}

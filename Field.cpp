@@ -1,7 +1,7 @@
 #include "Field.h"
 #include <assert.h>
 #include"Player.h"
-#include"Enemy.h"
+#include"Wolf.h"
 #include"ItemBox.h"
 #include"GoalObj.h"
 #include"Engine/CsvReader.h"
@@ -72,8 +72,8 @@ void Field::Reset()
 			break;
 			case 11://Enemy
 			{
-				Enemy* pEnemy = Instantiate<Enemy>(GetParent());
-				pEnemy->SetPosition(w * 32, h * 32);
+				Wolf* pWolf = Instantiate<Wolf>(GetParent());
+				pWolf->SetPosition(w * 32, h * 32);
 			}
 			break;
 			}
