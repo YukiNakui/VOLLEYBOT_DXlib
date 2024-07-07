@@ -17,7 +17,7 @@ public:
 	/// <param name="x">X座標（左）</param>
 	/// <param name="y">Y座標（上）</param>
 	void SetPosition(int x, int y);
-	
+	XMFLOAT3 GetPosition();
 private:
 	
 	//int hWalkImage[PAF::WALK_MAXFRAME];

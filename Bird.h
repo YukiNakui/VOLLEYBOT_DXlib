@@ -13,6 +13,7 @@ class Bird :
 
 	enum State {
 		NORMAL,
+		ATTACK,
 		DEAD,
 	};
 	State state;
@@ -20,6 +21,8 @@ class Bird :
 	float jumpSpeed;
 
 	float cdTimer;
+
+	XMFLOAT3 targetPos;
 public:
 	Bird(GameObject* parent);
 	~Bird();
@@ -28,5 +31,7 @@ public:
 	void SetPosition(int x, int y);
 	bool CollideRectToRect(float x, float y, float w, float h) override;
 	void KillEnemy() override;
+private:
+	bool IsCanAttack(XMFLOAT3 pos);
 };
 

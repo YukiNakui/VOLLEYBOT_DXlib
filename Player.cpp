@@ -486,6 +486,11 @@ void Player::SetPosition(int x, int y)
 	transform_.position_.y = y;
 }
 
+XMFLOAT3 Player::GetPosition()
+{
+	return transform_.position_;
+}
+
 bool Player::IsTouchBall(XMFLOAT3 pos)
 {
 	float cx = PLAYER_WIDTH / 2.0f;

@@ -41,6 +41,9 @@ public:
 	/// <param name="y">Y座標</param>
 	/// <returns>めり込んだ量（ドット）</returns>
 	float CollisionUp(float x, float y);
+
+	void SetNextStage();//次のステージをセットする
+	bool CanNextStageChange();//次のステージに変更できるか
 private:
 	int hImage;
 
@@ -48,6 +51,6 @@ private:
 	int* Map;
 	int width;
 	int height;
-
+	int stageNum;
 };
 

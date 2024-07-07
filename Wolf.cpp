@@ -171,7 +171,7 @@ void Wolf::Update()
 			transform_.position_.x += pushLeft - 1.0f;
 		}
 
-		transform_.position_.y += GRAVITY;
+		//transform_.position_.y += GRAVITY;
 
 		int pushRbottom = pIBox->CollisionDown(transform_.position_.x + cx - 1.0f, transform_.position_.y + cy - CORRECT_BOTTOM);
 		int pushLbottom = pIBox->CollisionDown(transform_.position_.x - cx + 1.0f, transform_.position_.y + cy - CORRECT_BOTTOM);

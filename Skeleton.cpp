@@ -4,8 +4,8 @@
 #include"ItemBox.h"
 
 namespace {
-	const int WALK_MAXFRAME{ 11 };
-	const int DEAD_MAXFRAME{ 2 };
+	const int WALK_MAXFRAME{ 15 };
+	const int DEAD_MAXFRAME{ 5 };
 
 	const float SKELETON_WIDTH = 128.0f;
 	const float SKELETON_HEIGHT = 128.0f;
@@ -13,7 +13,7 @@ namespace {
 	const float MOVE_SPEED = 1.5f;
 	const float GRAVITY = 9.8f / 60.0f;//d—Í‰Á‘¬“x
 
-	const float CORRECT_WIDTH = 35.0f;
+	const float CORRECT_WIDTH = 50.0f;
 	const float CORRECT_BOTTOM = 1.0f;
 	const float CORRECT_TOP = 35.0f;
 	static const int WINDOW_WIDTH = 1280;
@@ -140,7 +140,7 @@ void Skeleton::Update()
 			transform_.position_.x += pushLeft - 1.0f;
 		}
 
-		transform_.position_.y += GRAVITY;
+		//transform_.position_.y += GRAVITY;
 
 		int pushRbottom = pIBox->CollisionDown(transform_.position_.x + cx - 1.0f, transform_.position_.y + cy - CORRECT_BOTTOM);
 		int pushLbottom = pIBox->CollisionDown(transform_.position_.x - cx + 1.0f, transform_.position_.y + cy - CORRECT_BOTTOM);
@@ -170,7 +170,7 @@ void Skeleton::Draw()
 		y -= cam->GetValueY();
 	}
 	//DrawRotaGraph(x, y,1.0f, 0, hWalkImage[animFrame], TRUE,!isRight);
-	DrawRectGraph(x - SKELETON_WIDTH / 2.0, y - SKELETON_HEIGHT / 2.0 - CORRECT_BOTTOM, animFrame * WOLF_WIDTH, animType * WOLF_HEIGHT, WOLF_WIDTH, WOLF_HEIGHT, hAnimImg, TRUE, !isRight);
+	DrawRectGraph(x - SKELETON_WIDTH / 2.0, y - SKELETON_HEIGHT / 2.0 - CORRECT_BOTTOM, animFrame * SKELETON_WIDTH, animType * SKELETON_HEIGHT, SKELETON_WIDTH, SKELETON_HEIGHT, hAnimImg, TRUE, !isRight);
 }
 
 void Skeleton::SetPosition(int x, int y)

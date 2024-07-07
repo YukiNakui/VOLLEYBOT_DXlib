@@ -2,6 +2,8 @@
 #include <assert.h>
 #include"Player.h"
 #include"Wolf.h"
+#include"Skeleton.h"
+#include"Bird.h"
 #include"ItemBox.h"
 #include"GoalObj.h"
 #include"Engine/CsvReader.h"
@@ -12,6 +14,7 @@ Field::Field(GameObject* scene) :GameObject(scene)
 	Map = nullptr;//ポインタ変数はコンストラクタでnullを入れておく
 	hImage = LoadGraph("Assets/bgchar2.png");
 	assert(hImage > 0);
+	stageNum = 1;
 }
 
 Field::~Field()
@@ -70,10 +73,22 @@ void Field::Reset()
 				pPlayer->SetPosition(w * 32, h * 32);
 			}
 			break;
-			case 11://Enemy
+			case 11://Wolf
 			{
 				Wolf* pWolf = Instantiate<Wolf>(GetParent());
 				pWolf->SetPosition(w * 32, h * 32);
+			}
+			break;
+			case 12://Skeleton
+			{
+				Skeleton* pSkeleton = Instantiate<Skeleton>(GetParent());
+				pSkeleton->SetPosition(w * 32, h * 32);
+			}
+			break;
+			case 13://Bird
+			{
+				Bird* pBird = Instantiate<Bird>(GetParent());
+				pBird->SetPosition(w * 32, h * 32);
 			}
 			break;
 			}
@@ -148,6 +163,7 @@ bool Field::IsWallBlock(int x, int y)
 	case 19:
 	case 20:
 	case 21:
+	case 31:
 	case 32:
 	case 33:
 	case 34:
