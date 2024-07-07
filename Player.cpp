@@ -259,7 +259,8 @@ void Player::Update()
 				float pushBright = pField->CollisionRight(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 				float pushRight = max(pushBright, pushTright);//‰E‘¤‚Ì“ª‚Æ‘«Œ³‚Å“–‚½‚è”»’è
 				if (pushRight > 0.0f) {
-					transform_.position_.x -= pushRight - 1.0f;
+				//	transform_.position_.x -= pushRight - 1.0f;
+					nextPos_x -= pushRight - 1.0f;
 				}
 			}
 			for (ItemBox* pIBox : pIBoxs) {
@@ -270,7 +271,8 @@ void Player::Update()
 					float pushBright = pIBox->CollisionRight(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 					float pushRight = max(pushBright, pushTright);//‰E‘¤‚Ì“ª‚Æ‘«Œ³‚Å“–‚½‚è”»’è
 					if (pushRight > 0.0f) {
-						transform_.position_.x -= pushRight - 1.0f;
+					//	transform_.position_.x -= pushRight - 1.0f;
+						nextPos_x -= pushRight - 1.0f;
 					}
 				}
 			}
@@ -294,7 +296,8 @@ void Player::Update()
 				float pushBleft = pField->CollisionLeft(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 				float pushLeft = max(pushBleft, pushTleft);//¶‘¤‚Ì“ª‚Æ‘«Œ³‚Å“–‚½‚è”»’è
 				if (pushLeft > 0.0f) {
-					transform_.position_.x += pushLeft - 1.0f;
+				//	transform_.position_.x += pushLeft - 1.0f;
+					nextPos_x += pushLeft - 1.0f;
 				}
 			}
 			for (ItemBox* pIBox : pIBoxs) {
@@ -305,7 +308,8 @@ void Player::Update()
 					float pushBleft = pIBox->CollisionLeft(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 					float pushLeft = max(pushBleft, pushTleft);//¶‘¤‚Ì“ª‚Æ‘«Œ³‚Å“–‚½‚è”»’è
 					if (pushLeft > 0.0f) {
-						transform_.position_.x += pushLeft - 1.0f;
+					//	transform_.position_.x += pushLeft - 1.0f;
+						nextPos_x += pushLeft - 1.0f;
 					}
 				}
 			}
@@ -351,11 +355,14 @@ void Player::Update()
 		float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH - 5.0f;
 		float cy = PLAYER_HEIGHT / 2.0f;
 
-		float pushRbottom = pField->CollisionDown(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
-		float pushLbottom = pField->CollisionDown(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
+	//	float pushRbottom = pField->CollisionDown(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
+	//	float pushLbottom = pField->CollisionDown(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
+		float pushRbottom = pField->CollisionDown(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM));
+		float pushLbottom = pField->CollisionDown(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM));
 		float pushBottom = max(pushRbottom, pushLbottom);//2‚Â‚Ì‘«Œ³‚Ì‚ß‚èž‚Ý‚Ì‘å‚«‚¢‚Ù‚¤
 		if (pushBottom > 0.0f) {
-			transform_.position_.y -= pushBottom - 1.0f;
+		//	transform_.position_.y -= pushBottom - 1.0f;
+			nextPos_y -= pushBottom - 1.0f;
 			jumpSpeed = 0.0f;
 			onGround = true;
 			//animType = 0;
@@ -363,11 +370,14 @@ void Player::Update()
 		else {
 			onGround = false;
 		}
-		float pushRtop = pField->CollisionUp(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP));
-		float pushLtop = pField->CollisionUp(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP));
+	//	float pushRtop = pField->CollisionUp(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP));
+	//	float pushLtop = pField->CollisionUp(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP));
+		float pushRtop = pField->CollisionUp(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP));
+		float pushLtop = pField->CollisionUp(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP));
 		float pushTop = max(pushRtop, pushLtop);//2‚Â‚Ì“ª‚Ì‚ß‚èž‚Ý‚Ì‘å‚«‚¢‚Ù‚¤
 		if (pushTop > 0.0f) {
-			transform_.position_.y += pushTop - 1.0f;
+		//	transform_.position_.y += pushTop - 1.0f;
+			nextPos_y += pushTop - 1.0f;
 			jumpSpeed = 0.0f;
 		}
 	}
@@ -377,20 +387,26 @@ void Player::Update()
 			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH - 5.0f;
 			float cy = PLAYER_HEIGHT / 2.0f;
 
-			float pushRbottom = pIBox->CollisionDown(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
-			float pushLbottom = pIBox->CollisionDown(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
+		//	float pushRbottom = pIBox->CollisionDown(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
+		//	float pushLbottom = pIBox->CollisionDown(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
+			float pushRbottom = pIBox->CollisionDown(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM));
+			float pushLbottom = pIBox->CollisionDown(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM));
 			float pushBottom = max(pushRbottom, pushLbottom);//2‚Â‚Ì‘«Œ³‚Ì‚ß‚èž‚Ý‚Ì‘å‚«‚¢‚Ù‚¤
 			if (pushBottom > 0.0f) {
-				transform_.position_.y -= pushBottom - 1.0f;
+			//	transform_.position_.y -= pushBottom - 1.0f;
+				nextPos_y -= pushBottom - 1.0f;
 				jumpSpeed = 0.0f;
 				onGround = true;
 				//animType = 0;
 			}
-			float pushRtop = pIBox->CollisionUp(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP));
-			float pushLtop = pIBox->CollisionUp(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP));
+		//	float pushRtop = pIBox->CollisionUp(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP));
+		//	float pushLtop = pIBox->CollisionUp(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP));
+			float pushRtop = pIBox->CollisionUp(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP));
+			float pushLtop = pIBox->CollisionUp(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP));
 			float pushTop = max(pushRtop, pushLtop);//2‚Â‚Ì“ª‚Ì‚ß‚èž‚Ý‚Ì‘å‚«‚¢‚Ù‚¤
 			if (pushTop > 0.0f) {
-				transform_.position_.y += pushTop;
+			//	transform_.position_.y += pushTop;
+				nextPos_y += pushTop;
 				jumpSpeed = 0.0f;
 			}
 		}
