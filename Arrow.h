@@ -1,32 +1,24 @@
 #pragma once
 #include "Enemy.h"
 
-class Skeleton :
+class Arrow :
     public Enemy
 {
-	int hAnimImg;
-	int animFrame;
-	int frameCounter;
-	int animType;
-	bool isRight;
-	bool onGround;
+    int hImage;
+    bool isRight;
+    float cdTimer;
 
 	enum State {
 		NORMAL,
-		SHOT,
-		DEAD,
+		HIT,
 	};
 	State state;
-
-	float jumpSpeed;
-
-	float cdTimer;
 public:
-	Skeleton(GameObject* parent);
-	~Skeleton();
+	Arrow(GameObject* parent);
+	~Arrow();
 	void Update() override;
 	void Draw() override;
-	void SetPosition(int x, int y);
+	void SetArrow(int x, int y,bool isright);
 	bool CollideRectToRect(float x, float y, float w, float h) override;
 	void KillEnemy() override;
 	bool IsSteppedOnHead(float x, float y, float w, float h) override;

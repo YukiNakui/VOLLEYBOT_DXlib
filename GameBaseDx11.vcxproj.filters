@@ -70,6 +70,9 @@
     <ClCompile Include="Skeleton.cpp">
       <Filter>Characters</Filter>
     </ClCompile>
+    <ClCompile Include="Arrow.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\GameObject.h">
@@ -118,6 +121,9 @@
       <Filter>Characters</Filter>
     </ClInclude>
     <ClInclude Include="Skeleton.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Arrow.h">
       <Filter>Characters</Filter>
     </ClInclude>
   </ItemGroup>

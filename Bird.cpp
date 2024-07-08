@@ -245,7 +245,7 @@ void Bird::KillEnemy()
 	frameCounter = 0;
 }
 
-bool Bird::IsSteppedOnHead(XMFLOAT3 pos)
+bool Bird::IsSteppedOnHead(float x, float y, float w, float h)
 {
 	return false;
 }

@@ -2,6 +2,8 @@
 #include"Field.h"
 #include"Camera.h"
 #include"ItemBox.h"
+#include"Player.h"
+#include"Arrow.h"
 
 namespace {
 	const int WALK_MAXFRAME{ 15 };
@@ -13,13 +15,13 @@ namespace {
 	const float MOVE_SPEED = 1.5f;
 	const float GRAVITY = 9.8f / 60.0f;//重力加速度
 
-	const float CORRECT_WIDTH = 50.0f;
+	const float CORRECT_WIDTH = 35.0f;
 	const float CORRECT_BOTTOM = 1.0f;
 	const float CORRECT_TOP = 35.0f;
 	static const int WINDOW_WIDTH = 1280;
 	static const int WINDOW_HEIGHT = 720;
-	const float COLLIDE_WIDTH = 45.0f;
-	const float COLLIDE_HEIGHT = 40.0f;
+	const float COLLIDE_WIDTH = 60.0f;
+	const float COLLIDE_HEIGHT = 50.0f;
 }
 
 Skeleton::Skeleton(GameObject* parent):Enemy(parent)
@@ -50,6 +52,7 @@ void Skeleton::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();
 	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
+	Player* pPlayer = GetParent()->FindGameObject<Player>();
 
 	float x = (int)transform_.position_.x;
 	float y = (int)transform_.position_.y;
@@ -78,6 +81,24 @@ void Skeleton::Update()
 			cdTimer++;
 		if (cdTimer > 100.0f)
 			KillMe();
+	}
+
+	VECTOR targetVec = { pPlayer->GetPosition().x - transform_.position_.x,pPlayer->GetPosition().y - transform_.position_.y,0.0f };//相手へのベクトル
+	targetVec = VNorm(targetVec);
+	VECTOR forward = VGet(1, 0, 0);//自分の右ベクトル
+	float ip = VDot(targetVec, forward);//２つのベクトルの内積
+	if (ip > 0)
+		isRight = true;
+	else
+		isRight = false;
+
+	if (state == NORMAL) {
+		cdTimer++;
+		if (cdTimer > 200.0f) {
+			Arrow* pArrow = Instantiate<Arrow>(GetParent());
+			pArrow->SetArrow(transform_.position_.x, transform_.position_.y + SKELETON_HEIGHT/4.0f, isRight);
+			cdTimer = 0.0f;
+		}
 	}
 
 	if (pField != nullptr) {
@@ -206,9 +227,10 @@ void Skeleton::KillEnemy()
 	animType = 1;
 	animFrame = 0;
 	frameCounter = 0;
+	cdTimer = 0.0f;
 }
 
-bool Skeleton::IsSteppedOnHead(XMFLOAT3 pos)
+bool Skeleton::IsSteppedOnHead(float x, float y, float w, float h)
 {
 	return false;
 }
