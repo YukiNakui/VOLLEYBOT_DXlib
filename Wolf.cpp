@@ -238,3 +238,24 @@ void Wolf::KillEnemy()
 	animFrame = 0;
 	frameCounter = 0;
 }
+
+bool Wolf::IsSteppedOnHead(float x, float y, float w, float h)
+{
+	if (state != DEAD) {
+		// 敵の矩形の範囲を計算
+		float myHeadRight = transform_.position_.x + WOLF_WIDTH / 2.0f - COLLIDE_WIDTH;
+		float myHeadLeft = transform_.position_.x - WOLF_WIDTH / 2.0f + COLLIDE_WIDTH;
+		float myHeadTop = transform_.position_.y - WOLF_HEIGHT / 2.0f + COLLIDE_HEIGHT;
+		float myHeadBottom = transform_.position_.y - 30.0f;
+
+		// 指定された矩形と敵の矩形が交差しているかチェック
+		if ((x - w / 2.0f < myHeadRight && x + w / 2.0f > myHeadLeft) &&
+			(y - h / 2.0f < myHeadBottom && y + h / 2.0f > myHeadTop)) {
+			return true;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+}

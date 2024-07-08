@@ -245,6 +245,11 @@ void Bird::KillEnemy()
 	frameCounter = 0;
 }
 
+bool Bird::IsSteppedOnHead(XMFLOAT3 pos)
+{
+	return false;
+}
+
 bool Bird::IsCanAttack(XMFLOAT3 pos)
 {
 	float len = sqrt((pos.x - transform_.position_.x) * (pos.x - transform_.position_.x))+ 

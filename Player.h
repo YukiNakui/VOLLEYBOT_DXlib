@@ -36,6 +36,7 @@ private:
 	GameObject* sceneTop;
 	bool prevSpaceKey;
 	bool prevAttackKey;
+	float moveSpeed;
 	float jumpSpeed;
 	bool onGround;
 

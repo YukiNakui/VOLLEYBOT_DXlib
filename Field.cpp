@@ -9,6 +9,10 @@
 #include"Engine/CsvReader.h"
 #include"Camera.h"
 
+namespace {
+	const int STAGE_NUM = 3;
+}
+
 Field::Field(GameObject* scene) :GameObject(scene)
 {
 	Map = nullptr;//ポインタ変数はコンストラクタでnullを入れておく
@@ -35,7 +39,9 @@ void Field::Reset()
 		Map = nullptr;
 	}
 	CsvReader csv;//データを読むクラスのインスタンスを作成
-	bool ret = csv.Load("Assets/stage1.csv");
+	char s[20];
+	sprintf_s<20>(s, "Assets/stage%d.csv", stageNum);
+	bool ret = csv.Load(s);
 	assert(ret);
 	width = csv.GetWidth(0);
 	height = csv.GetHeight();
@@ -150,6 +156,18 @@ float Field::CollisionUp(float x, float y)
 		//当たっているので、めり込んだ量を返す
 		return 32 - ((int)y % 32);
 	return 0;
+}
+
+void Field::SetNextStage()
+{
+	stageNum += 1;
+}
+
+bool Field::CanNextStageChange()
+{
+	if (stageNum < STAGE_NUM)
+		return true;
+	return false;
 }
 
 bool Field::IsWallBlock(int x, int y)

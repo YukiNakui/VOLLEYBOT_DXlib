@@ -43,6 +43,8 @@ Ball::Ball(GameObject* parent)
 	frameCounter = 0;
 	chargeNow = false;
 	isTouchGround = false;
+
+	state = NORMAL;
 }
 
 Ball::~Ball()
@@ -113,7 +115,7 @@ void Ball::Update()
 			transform_.position_.y += pushT - 1.0f;
 			move.y = -move.y * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
-			isTouchGround = true;
+			//isTouchGround = true;
 		}
 		float pushBRight = pField->CollisionDown(nextPosFloat.x + cx - CORRECT_VALUE, nextPosFloat.y + cy);
 		float pushBLeft = pField->CollisionDown(nextPosFloat.x - cx + CORRECT_VALUE, nextPosFloat.y + cy);
@@ -123,6 +125,7 @@ void Ball::Update()
 			move.y = -move.y * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
 			isTouchGround = true;
+			state = NORMAL;
 			XMVECTOR v = XMVector3Length(moveVec);
 			float length = XMVectorGetX(v);
 			if (length < 5.0f)
@@ -206,11 +209,12 @@ void Ball::Update()
 
 	GoalObj* pGoal = GetParent()->FindGameObject<GoalObj>();
 	if (pGoal->CollideRectToRect(transform_.position_.x, transform_.position_.y, BALL_WIDTH / 2.0f, BALL_HEIGHT / 2.0f)) {
-		pGoal->Goal();
-		isAlive = false;
-		transform_.position_.y = 720.0f;
-		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_CLEAR);
+		if (state == SPIKE) {
+			pGoal->Goal();
+			isAlive = false;
+			transform_.position_.y = 720.0f;
+			
+		}
 	}
 
 	float x = (int)transform_.position_.x;
@@ -258,6 +262,8 @@ void Ball::Spike(bool isRight)
 	float spikeSpeed = 10.0f;
 	rotSpeed = 1.0f;
 
+	state = SPIKE;
+
 	if (isRight)
 	{
 		moveVec = { spikeSpeed,spikeSpeed,0.0f,0.0f };
@@ -274,6 +280,7 @@ void Ball::FirstToss()
 	rotSpeed = 0.4f;
 	float tossSpeed = -sqrt(2 * GRAVITY * MAX_TOSS_HEIGHT / 2.0f);
 	moveVec = { 0.0f,  tossSpeed, 0.0f,0.0f};
+	state = TOSS;
 }
 
 void Ball::SecondToss()
@@ -282,6 +289,7 @@ void Ball::SecondToss()
 	rotSpeed = 0.4f;
 	float tossSpeed = -sqrt(2 * GRAVITY * MAX_TOSS_HEIGHT);
 	moveVec = { 0.0f,  tossSpeed, 0.0f,0.0f };
+	state = TOSS;
 }
 
 bool Ball::IsBallAlive()

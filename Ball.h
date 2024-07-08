@@ -54,5 +54,12 @@ private:
 	int animType;
 	int animFrame;
 	int frameCounter;
+
+	enum State {
+		NORMAL,
+		TOSS,
+		SPIKE,
+	};
+	State state;
 };
 

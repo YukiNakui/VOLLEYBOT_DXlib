@@ -207,3 +207,8 @@ void Skeleton::KillEnemy()
 	animFrame = 0;
 	frameCounter = 0;
 }
+
+bool Skeleton::IsSteppedOnHead(XMFLOAT3 pos)
+{
+	return false;
+}

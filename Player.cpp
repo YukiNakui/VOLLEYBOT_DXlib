@@ -17,7 +17,7 @@ namespace {
 	const int SPIKE_MAXFRAME{ 4 };
 	const int DEAD_MAXFRAME{ 5 };
 
-	const float MOVE_SPEED = 2.5f;
+	const float MAX_MOVE_SPEED = 3.5f;
 	const float GROUND = 600.0f;
 	const float JUMP_HIGHT = 64.0f * 1.5f;//ジャンプの高さ
 	const float GRAVITY = 8.0f / 60.0f;//重力加速度
@@ -39,6 +39,8 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 
 	transform_.position_.x = 128.0f;
 	transform_.position_.y = GROUND;
+
+	moveSpeed = 0.0;
 	jumpSpeed = 0.0f;
 	onGround = true;
 	isRight = true;
@@ -91,7 +93,6 @@ void Player::Update()
 				pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
 			}
 		}
-		//return;
 	}
 
 	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
@@ -109,7 +110,6 @@ void Player::Update()
 			if (animFrame == 1) {
 				if (tossCount == 1) {
 					if (pBall != nullptr) {
-					//	pBall->SetPosition(transform_.position_.x, transform_.position_.y - PLAYER_HEIGHT / 2.0f + CORRECT_TOP);
 						pBall->FirstToss();
 					}
 				}
@@ -124,6 +124,9 @@ void Player::Update()
 		}
 	}
 
+	float nextPos_x = transform_.position_.x;
+	float nextPos_y = transform_.position_.y;
+
 	if (state == SPIKE) {
 		if (animFrame < SPIKE_MAXFRAME - 1) {
 			frameCounter++;
@@ -133,7 +136,11 @@ void Player::Update()
 			}
 			if (animFrame == 2) {
 				if (pBall != nullptr) {
-					SetPosition(pBall->GetPos().x, pBall->GetPos().y + PLAYER_HEIGHT / 2.0f - CORRECT_TOP);
+					if (isRight)
+						nextPos_x = pBall->GetPos().x - 10.0f;
+					else
+						nextPos_x = pBall->GetPos().x + 10.0f;
+					nextPos_y = pBall->GetPos().y + PLAYER_HEIGHT / 2.0f - CORRECT_TOP;
 					pBall->Spike(isRight);
 					if (cam != nullptr)
 						cam->VibrationY(10.0f);
@@ -237,15 +244,18 @@ void Player::Update()
 		}
 	}
 	
-	float nextPos_x = transform_.position_.x;
-	float nextPos_y = transform_.position_.y;
+	
 	if (canMove) {
 		if (CheckHitKey(KEY_INPUT_D))
 		{
 			if (onGround)
 				animType = 1;
-		//	transform_.position_.x += MOVE_SPEED;
-			nextPos_x += MOVE_SPEED;
+			if (moveSpeed < 0)
+				moveSpeed = 0.0f;
+			moveSpeed += 0.1f;
+			if (moveSpeed >= MAX_MOVE_SPEED)
+				moveSpeed = MAX_MOVE_SPEED;
+			nextPos_x += moveSpeed;
 			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
 			float cy = PLAYER_HEIGHT / 2.0f;
 			if (++frameCounter >= WALK_MAXFRAME) {
@@ -253,25 +263,19 @@ void Player::Update()
 				frameCounter = 0;
 			}
 			if (pField != nullptr) {
-			//	float pushTright = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
-			//	float pushBright = pField->CollisionRight(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM) - 1.0f);
 				float pushTright = pField->CollisionRight(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
 				float pushBright = pField->CollisionRight(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 				float pushRight = max(pushBright, pushTright);//右側の頭と足元で当たり判定
 				if (pushRight > 0.0f) {
-				//	transform_.position_.x -= pushRight - 1.0f;
 					nextPos_x -= pushRight - 1.0f;
 				}
 			}
 			for (ItemBox* pIBox : pIBoxs) {
 				if (pIBox != nullptr) {
-				//	float pushTright = pIBox->CollisionRight(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
-				//	float pushBright = pIBox->CollisionRight(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM) - 1.0f);
 					float pushTright = pIBox->CollisionRight(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
 					float pushBright = pIBox->CollisionRight(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 					float pushRight = max(pushBright, pushTright);//右側の頭と足元で当たり判定
 					if (pushRight > 0.0f) {
-					//	transform_.position_.x -= pushRight - 1.0f;
 						nextPos_x -= pushRight - 1.0f;
 					}
 				}
@@ -282,33 +286,32 @@ void Player::Update()
 		{
 			if (onGround)
 				animType = 1;
+			if (moveSpeed > 0)
+				moveSpeed = 0.0f;
+			moveSpeed -= 0.1f;
+			if (moveSpeed <= -MAX_MOVE_SPEED)
+				moveSpeed = -MAX_MOVE_SPEED;
+			nextPos_x += moveSpeed;
 			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
 			float cy = PLAYER_HEIGHT / 2.0f;
-			nextPos_x -= MOVE_SPEED;
 			if (++frameCounter >= WALK_MAXFRAME) {
 				animFrame = (animFrame + 1) % WALK_MAXFRAME;
 				frameCounter = 0;
 			}
 			if (pField != nullptr) {
-			//	float pushTleft = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
-			//	float pushBleft = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM) - 1.0f);
 				float pushTleft = pField->CollisionLeft(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
 				float pushBleft = pField->CollisionLeft(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 				float pushLeft = max(pushBleft, pushTleft);//左側の頭と足元で当たり判定
 				if (pushLeft > 0.0f) {
-				//	transform_.position_.x += pushLeft - 1.0f;
 					nextPos_x += pushLeft - 1.0f;
 				}
 			}
 			for (ItemBox* pIBox : pIBoxs) {
 				if (pIBox != nullptr) {
-				//	float pushTleft = pIBox->CollisionLeft(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f);
-				//	float pushBleft = pIBox->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM) - 1.0f);
 					float pushTleft = pIBox->CollisionLeft(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
 					float pushBleft = pIBox->CollisionLeft(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 					float pushLeft = max(pushBleft, pushTleft);//左側の頭と足元で当たり判定
 					if (pushLeft > 0.0f) {
-					//	transform_.position_.x += pushLeft - 1.0f;
 						nextPos_x += pushLeft - 1.0f;
 					}
 				}
@@ -316,6 +319,7 @@ void Player::Update()
 			isRight = false;
 		}
 		else {
+			moveSpeed = 0.0f;
 			if (onGround) {
 				animType = 0;
 				animFrame = 0;
@@ -348,35 +352,27 @@ void Player::Update()
 	
 
 	jumpSpeed += GRAVITY; //速度 += 加速度
-	//transform_.position_.y += jumpSpeed; //座標 += 速度
-	nextPos_y += jumpSpeed;
+	nextPos_y += jumpSpeed;//座標 += 速度
 
 	if (pField != nullptr) {
 		float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH - 5.0f;
 		float cy = PLAYER_HEIGHT / 2.0f;
 
-	//	float pushRbottom = pField->CollisionDown(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
-	//	float pushLbottom = pField->CollisionDown(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
 		float pushRbottom = pField->CollisionDown(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM));
 		float pushLbottom = pField->CollisionDown(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM));
 		float pushBottom = max(pushRbottom, pushLbottom);//2つの足元のめり込みの大きいほう
 		if (pushBottom > 0.0f) {
-		//	transform_.position_.y -= pushBottom - 1.0f;
 			nextPos_y -= pushBottom - 1.0f;
 			jumpSpeed = 0.0f;
 			onGround = true;
-			//animType = 0;
 		}
 		else {
 			onGround = false;
 		}
-	//	float pushRtop = pField->CollisionUp(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP));
-	//	float pushLtop = pField->CollisionUp(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP));
 		float pushRtop = pField->CollisionUp(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP));
 		float pushLtop = pField->CollisionUp(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP));
 		float pushTop = max(pushRtop, pushLtop);//2つの頭のめり込みの大きいほう
 		if (pushTop > 0.0f) {
-		//	transform_.position_.y += pushTop - 1.0f;
 			nextPos_y += pushTop - 1.0f;
 			jumpSpeed = 0.0f;
 		}
@@ -387,25 +383,18 @@ void Player::Update()
 			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH - 5.0f;
 			float cy = PLAYER_HEIGHT / 2.0f;
 
-		//	float pushRbottom = pIBox->CollisionDown(transform_.position_.x + cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
-		//	float pushLbottom = pIBox->CollisionDown(transform_.position_.x - cx, transform_.position_.y + (cy - CORRECT_BOTTOM));
 			float pushRbottom = pIBox->CollisionDown(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM));
 			float pushLbottom = pIBox->CollisionDown(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM));
 			float pushBottom = max(pushRbottom, pushLbottom);//2つの足元のめり込みの大きいほう
 			if (pushBottom > 0.0f) {
-			//	transform_.position_.y -= pushBottom - 1.0f;
 				nextPos_y -= pushBottom - 1.0f;
 				jumpSpeed = 0.0f;
 				onGround = true;
-				//animType = 0;
 			}
-		//	float pushRtop = pIBox->CollisionUp(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP));
-		//	float pushLtop = pIBox->CollisionUp(transform_.position_.x - cx, transform_.position_.y - (cy - CORRECT_TOP));
 			float pushRtop = pIBox->CollisionUp(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP));
 			float pushLtop = pIBox->CollisionUp(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP));
 			float pushTop = max(pushRtop, pushLtop);//2つの頭のめり込みの大きいほう
 			if (pushTop > 0.0f) {
-			//	transform_.position_.y += pushTop;
 				nextPos_y += pushTop;
 				jumpSpeed = 0.0f;
 			}
@@ -435,8 +424,6 @@ void Player::Update()
 				scene->StartDead();
 				if (pBall != nullptr)
 					pBall->KillMe();
-				/*SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-				pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);*/
 			}
 		}
 	}
@@ -466,7 +453,6 @@ void Player::Draw()
 		y -= cam->GetValueY();
 	}
 	DrawRectGraph(x - PLAYER_WIDTH/2.0, y-PLAYER_HEIGHT/2.0-CORRECT_BOTTOM, animFrame * PLAYER_WIDTH, animType * PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT, hAnimImage, TRUE,!isRight);
-	//DrawRotaGraph(x, y, 1.0, 0, hWalkImage[animFrame], TRUE, !isRight);
 	
 	if (!isBallAlive && state!=DEAD) {
 		int crrX = 0;

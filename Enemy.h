@@ -8,5 +8,6 @@ public:
 	virtual ~Enemy() {}
 	virtual bool CollideRectToRect(float x, float y, float w, float h) = 0;
 	virtual void KillEnemy() = 0;
+	virtual bool IsSteppedOnHead(float x, float y, float w, float h) = 0;
 };
 

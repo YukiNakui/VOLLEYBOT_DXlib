@@ -1,21 +1,33 @@
 #pragma once
 #include "Engine/GameObject.h"
 
-namespace GOAL_ANIMFRAME {
-	const int GOAL_MAXFRAME = 3;
-}
-namespace GAF = GOAL_ANIMFRAME;
+//namespace GOAL_ANIMFRAME {
+//	const int GOAL_MAXFRAME = 3;
+//}
+//namespace GAF = GOAL_ANIMFRAME;
 
 class GoalObj :
     public GameObject
 {
-	int hImage[GAF::GOAL_MAXFRAME];
-	int animFrame;
-	int frameCounter;
+//	int hImage[GAF::GOAL_MAXFRAME];
+	int hAnimImage;
+	
 	float gRectTop;
 	float gRectBottom;
 	float gRectLeft;
 	float gRectRight;
+
+	//int animType;//èÛãµ
+	int animFrame;//ÉRÉ}
+	int frameCounter;
+
+	float cdTimer;
+
+	enum State {
+		NOTBRAKE,
+		BRAKE,
+	};
+	State state;
 public:
 	GoalObj(GameObject* scene);
 	~GoalObj();

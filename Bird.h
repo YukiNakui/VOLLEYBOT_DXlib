@@ -31,6 +31,7 @@ public:
 	void SetPosition(int x, int y);
 	bool CollideRectToRect(float x, float y, float w, float h) override;
 	void KillEnemy() override;
+	bool IsSteppedOnHead(float x, float y, float w, float h) override;
 private:
 	bool IsCanAttack(XMFLOAT3 pos);
 };
