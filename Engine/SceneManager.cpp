@@ -4,6 +4,10 @@
 #include"../GameOverScene.h"
 #include"../ClearScene.h"
 
+namespace {
+	const int MAX_STAGE_NUM = 3;
+}
+
 //コンストラクタ
 SceneManager::SceneManager(GameObject * parent)
 	: GameObject(parent, "SceneManager")

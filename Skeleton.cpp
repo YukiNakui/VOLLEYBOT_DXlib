@@ -83,18 +83,17 @@ void Skeleton::Update()
 			KillMe();
 	}
 
-	VECTOR targetVec = { pPlayer->GetPosition().x - transform_.position_.x,pPlayer->GetPosition().y - transform_.position_.y,0.0f };//相手へのベクトル
-	targetVec = VNorm(targetVec);
-	VECTOR forward = VGet(1, 0, 0);//自分の右ベクトル
-	float ip = VDot(targetVec, forward);//２つのベクトルの内積
-	if (ip > 0)
-		isRight = true;
-	else
-		isRight = false;
-
 	if (state == NORMAL) {
+		VECTOR targetVec = { pPlayer->GetPosition().x - transform_.position_.x,pPlayer->GetPosition().y - transform_.position_.y,0.0f };//相手へのベクトル
+		targetVec = VNorm(targetVec);
+		VECTOR forward = VGet(1, 0, 0);//自分の右ベクトル
+		float ip = VDot(targetVec, forward);//２つのベクトルの内積
+		if (ip > 0)
+			isRight = true;
+		else
+			isRight = false;
 		cdTimer++;
-		if (cdTimer > 200.0f) {
+		if (cdTimer > 150.0f) {
 			Arrow* pArrow = Instantiate<Arrow>(GetParent());
 			pArrow->SetArrow(transform_.position_.x, transform_.position_.y + SKELETON_HEIGHT/4.0f, isRight);
 			cdTimer = 0.0f;

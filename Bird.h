@@ -22,7 +22,9 @@ class Bird :
 
 	float cdTimer;
 
+	XMFLOAT3 firstPos;
 	XMFLOAT3 targetPos;
+	float moveRate;
 public:
 	Bird(GameObject* parent);
 	~Bird();

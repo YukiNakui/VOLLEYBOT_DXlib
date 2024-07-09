@@ -3,7 +3,6 @@
 #include <assert.h>
 #include"PlayScene.h"
 #include"Ball.h"
-//#include"Wolf.h"
 #include"Enemy.h"
 #include"Field.h"
 #include"ItemBox.h"
@@ -414,6 +413,12 @@ void Player::Update()
 	if (state != DEAD) {
 		std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
 		for (Enemy* pEnemy : pEnemies) {
+			if (pEnemy->IsSteppedOnHead(transform_.position_.x, transform_.position_.y+30.0f, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
+				jumpSpeed = -sqrt(2 * GRAVITY * JUMP_HIGHT);
+				onGround = false;
+				animType = 3;
+				pEnemy->KillEnemy();
+			}
 			if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
 				canMove = false;
 				animType = 5;

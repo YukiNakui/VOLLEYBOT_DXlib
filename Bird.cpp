@@ -38,7 +38,9 @@ Bird::Bird(GameObject* parent):Enemy(parent)
 	jumpSpeed = 0.0f;
 	cdTimer = 0.0f;
 
+	firstPos = { 0.0f,0.0f,0.0f };
 	targetPos = { 0.0f,0.0f,0.0f };
+	moveRate = 0.0f;
 
 	state = NORMAL;
 }
@@ -87,38 +89,58 @@ void Bird::Update()
 			KillMe();
 	}
 
-	/*if (pPlayer != nullptr) {
-		if (IsCanAttack(pPlayer->GetPosition())) {
-			frameCounter = 0;
-			animType = 0;
-			animFrame = 14;
-			state = ATTACK;
-		}
-	}
-
-	if (state == ATTACK) {
-		if (isRight) {
-			transform_.position_.x += MOVE_SPEED;
-		}
-		else {
-			transform_.position_.x -= MOVE_SPEED;
-		}
-		float yValue = targetPos.y - transform_.position_.y;
-		float rate = yValue / transform_.position_.y;
-		transform_.position_.y += sinf(rate);
-	}*/
-
 	if (state == NORMAL) {
 		frameCounter++;
 		if (frameCounter > 6) {
 			animFrame = (animFrame + 1) % WALK_MAXFRAME;
 			frameCounter = 0;
 		}
+
+		float len = 0.0f;
+		if (pPlayer != nullptr) {
+			float lenX = pPlayer->GetPosition().x - transform_.position_.x;
+			float lenY = pPlayer->GetPosition().y - transform_.position_.y;
+			len = sqrt(lenX * lenX + lenY * lenY);
+		}
+
+		if (len < 300.0f && pPlayer->GetPosition().y > transform_.position_.y) {
+			if ((isRight && pPlayer->GetPosition().x > transform_.position_.x) ||
+				(!isRight && pPlayer->GetPosition().x < transform_.position_.x)) {
+				targetPos = pPlayer->GetPosition();
+				firstPos.x = transform_.position_.x;
+				animFrame = 13;
+				moveRate = 0.0f;
+				state = ATTACK;
+			}
+		}
 		if (isRight) {
 			transform_.position_.x += MOVE_SPEED;
 		}
 		else {
 			transform_.position_.x -= MOVE_SPEED;
+		}
+	}
+
+	if (state == ATTACK) {
+		if (moveRate >= 1.0f) {
+			moveRate = 1.0f;
+			transform_.position_.y -= 1.5f;
+			if (transform_.position_.y <= firstPos.y) {
+				transform_.position_.y = firstPos.y;
+				state = NORMAL;
+			}
+		}
+		else {
+			moveRate += 0.01f;
+			float r = sinf(moveRate * XM_PIDIV2);
+			transform_.position_.y = (targetPos.y - firstPos.y) * r + firstPos.y;
+		//	transform_.position_.x = (targetPos.x - firstPos.x) * r + firstPos.x;
+			if (isRight) {
+				transform_.position_.x += MOVE_SPEED;
+			}
+			else {
+				transform_.position_.x -= MOVE_SPEED;
+			}
 		}
 	}
 
@@ -214,6 +236,7 @@ void Bird::SetPosition(int x, int y)
 {
 	transform_.position_.x = x;
 	transform_.position_.y = y;
+	firstPos = { 0.0f,(float)y,0.0f };
 }
 
 bool Bird::CollideRectToRect(float x, float y, float w, float h)

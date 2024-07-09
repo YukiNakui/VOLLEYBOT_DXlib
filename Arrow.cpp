@@ -159,7 +159,7 @@ void Arrow::SetArrow(int x, int y, bool isright)
 {
 	transform_.position_.x = x;
 	transform_.position_.y = y;
-	isright = isRight;
+	isRight = isright;
 }
 
 bool Arrow::CollideRectToRect(float x, float y, float w, float h)
