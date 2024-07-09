@@ -1,5 +1,10 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include"Player.h"
+#include"GoalObj.h"
+#include"Field.h"
+#include"Camera.h"
+#include"BackGround.h"
 
 //テストシーンを管理するクラス
 class PlayScene : public GameObject
@@ -22,23 +27,35 @@ public:
 	void Release() override;
 
 	bool CanMove();
+	void GameObjectsReset();
 private:
+	Camera* pCam;
+	BackGround* pBG;
+	Field* pField;
+	GoalObj* pGObj;
+	Player* pPlayer;
+
 	enum State {
 		s_Ready,
 		s_Play,
 		s_Clear,
 		s_Dead,
+		s_Stop,
 	};
 	State state;
 	
-	void StartReady();
 	void UpdateReady();
 	void StartPlay();
 	void UpdatePlay();
 	void UpdateClear();
+	void UpdateStop();
 public:
+	void StartReady();
+	void StartClear();
+	void StartStop(float time);
 	void StartDead();
 private:
 	void UpdateDead();
 	float readyTimer;
+	float timerEnd;
 };

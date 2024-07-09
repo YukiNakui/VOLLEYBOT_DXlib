@@ -4,6 +4,7 @@
 #include"ItemBox.h"
 #include"Player.h"
 #include"Arrow.h"
+#include"PlayScene.h"
 
 namespace {
 	const int WALK_MAXFRAME{ 15 };
@@ -53,6 +54,10 @@ void Skeleton::Update()
 	Field* pField = GetParent()->FindGameObject<Field>();
 	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
 	Player* pPlayer = GetParent()->FindGameObject<Player>();
+
+	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
+	if (!scene->CanMove())
+		return;
 
 	float x = (int)transform_.position_.x;
 	float y = (int)transform_.position_.y;

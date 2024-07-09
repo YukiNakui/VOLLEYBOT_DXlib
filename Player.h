@@ -23,6 +23,8 @@ private:
 	//int hWalkImage[PAF::WALK_MAXFRAME];
 	int hAnimImage;
 	int hBallImg;
+
+	int hp;
 	
 	enum State {
 		NORMAL = 0,
@@ -54,8 +56,12 @@ private:
 	int tossCount;
 	float cdTimer;
 	
+	float damageTimer;
+	bool nowDamage;
+	bool blink;
+	
 	bool IsTouchBall(XMFLOAT3 pos);
-	void KnockBack(XMFLOAT3& pos);//ダメージ時のノックバック
+	
 
 };
 

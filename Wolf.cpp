@@ -2,6 +2,7 @@
 #include"Field.h"
 #include"Camera.h"
 #include"ItemBox.h"
+#include"PlayScene.h"
 
 namespace {
 	const int WALK_MAXFRAME{ 11 };
@@ -24,16 +25,6 @@ namespace {
 
 Wolf::Wolf(GameObject* parent):Enemy(parent)
 {
-	/*LoadDivGraph("Assets/Enemy/WolfWalk.png", WAF::WALK_MAXFRAME, WAF::WALK_MAXFRAME, 1, 128, 128, hWalkImage);
-	for (int i = 0; i < WAF::WALK_MAXFRAME; i++) {
-		assert(hWalkImage[i] > 0);
-	}
-	hWalkImage[WAF::DEAD_MAXFRAME];
-	LoadDivGraph("Assets/Enemy/WolfDead.png", WAF::DEAD_MAXFRAME, WAF::DEAD_MAXFRAME, 1, 128, 128, hDeadImage);
-	for (int i = 0; i < WAF::DEAD_MAXFRAME; i++) {
-		assert(hDeadImage[i] > 0);
-	}*/
-
 	hAnimImg = LoadGraph("Assets/Enemy/Wolf.png");
 	assert(hAnimImg > 0);
 
@@ -51,12 +42,6 @@ Wolf::Wolf(GameObject* parent):Enemy(parent)
 
 Wolf::~Wolf()
 {
-	/*for (int i = 0; i < WAF::WALK_MAXFRAME; i++) {
-		if (hWalkImage[i] > 0)
-		{
-			DeleteGraph(hWalkImage[i]);
-		}
-	}*/
 	if (hAnimImg > 0) {
 		DeleteGraph(hAnimImg);
 	}
@@ -66,6 +51,10 @@ void Wolf::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();
 	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
+
+	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
+	if (!scene->CanMove())
+		return;
 
 	float x = (int)transform_.position_.x;
 	float y = (int)transform_.position_.y;

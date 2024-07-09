@@ -1,6 +1,7 @@
 #include "GoalObj.h"
 #include"Camera.h"
 #include"Field.h"
+#include"PlayScene.h"
 #include"Engine/SceneManager.h"
 
 namespace {
@@ -33,12 +34,6 @@ GoalObj::GoalObj(GameObject* scene)
 
 GoalObj::~GoalObj()
 {
-	/*for (int i = 0; i < GAF::GOAL_MAXFRAME; i++) {
-		if (hImage[i] > 0)
-		{
-			DeleteGraph(hImage[i]);
-		}
-	}*/
 	if (hAnimImage > 0)
 	{
 		DeleteGraph(hAnimImage);
@@ -47,6 +42,7 @@ GoalObj::~GoalObj()
 
 void GoalObj::Update()
 {
+	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
 	Field* pField = GetParent()->FindGameObject<Field>();
 	if (state == BRAKE) {//ゴールしたら
 		if (animFrame < GOAL_MAXFRAME - 1) {
@@ -59,15 +55,16 @@ void GoalObj::Update()
 		else {
 			cdTimer++;
 			if (cdTimer > 60.0f) {
-				if (pField->CanNextStageChange()) {//次のステージがあったら
-					pField->SetNextStage();//ステージ番号を進める
-					pField->Reset();//ステージの再読み込み
-					state = NOTBRAKE;
-				}
-				else {//次のステージがなかったらクリアシーンへ
+				//if (pField->CanNextStageChange()) {//次のステージがあったら
+				//	//pField->SetNextStage();//ステージ番号を進める
+				//	//pField->Reset();//ステージの再読み込み
+				//	scene->StartClear();
+				//	state = NOTBRAKE;
+				//}
+				//else {//次のステージがなかったらクリアシーンへ
 					SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 					pSceneManager->ChangeScene(SCENE_ID_CLEAR);
-				}
+				//}
 				animFrame = 0;
 				frameCounter = 0;
 				cdTimer = 0;

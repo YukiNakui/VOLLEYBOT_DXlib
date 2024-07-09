@@ -3,6 +3,7 @@
 #include"Camera.h"
 #include"ItemBox.h"
 #include"Player.h"
+#include"PlayScene.h"
 
 namespace {
 	const int WALK_MAXFRAME{ 15 };
@@ -57,6 +58,10 @@ void Bird::Update()
 	Player* pPlayer = GetParent()->FindGameObject<Player>();
 	Field* pField = GetParent()->FindGameObject<Field>();
 	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
+
+	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
+	if (!scene->CanMove())
+		return;
 
 	float x = (int)transform_.position_.x;
 	float y = (int)transform_.position_.y;

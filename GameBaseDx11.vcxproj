@@ -133,6 +133,7 @@
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="Bird.cpp" />
     <ClCompile Include="ClearScene.cpp" />
+    <ClCompile Include="Continue.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="ItemBox.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Skeleton.cpp" />
+    <ClCompile Include="StageClear.cpp" />
     <ClCompile Include="Wolf.cpp" />
     <ClCompile Include="Engine\CsvReader.cpp" />
     <ClCompile Include="Engine\GameObject.cpp" />
@@ -156,6 +158,7 @@
     <ClInclude Include="Arrow.h" />
     <ClInclude Include="Bird.h" />
     <ClInclude Include="ClearScene.h" />
+    <ClInclude Include="Continue.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="ItemBox.h" />
@@ -163,6 +166,7 @@
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Skeleton.h" />
+    <ClInclude Include="StageClear.h" />
     <ClInclude Include="Wolf.h" />
     <ClInclude Include="Engine\CsvReader.h" />
     <ClInclude Include="Engine\GameObject.h" />

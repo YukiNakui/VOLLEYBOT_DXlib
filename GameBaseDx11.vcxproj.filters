@@ -73,6 +73,8 @@
     <ClCompile Include="Arrow.cpp">
       <Filter>Characters</Filter>
     </ClCompile>
+    <ClCompile Include="Continue.cpp" />
+    <ClCompile Include="StageClear.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\GameObject.h">
@@ -126,5 +128,7 @@
     <ClInclude Include="Arrow.h">
       <Filter>Characters</Filter>
     </ClInclude>
+    <ClInclude Include="Continue.h" />
+    <ClInclude Include="StageClear.h" />
   </ItemGroup>
 </Project>

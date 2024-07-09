@@ -8,7 +8,7 @@
 #include"Camera.h"
 #include"ItemBox.h"
 #include"GoalObj.h"
-#include"Engine/SceneManager.h"
+#include"PlayScene.h"
 
 namespace {
 	const float BALL_E = 0.8f;
@@ -59,6 +59,10 @@ void Ball::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();
 	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
+
+	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
+	if (!scene->CanMove())
+		return;
 	
 	XMVECTOR vBall = XMLoadFloat3(&transform_.position_);
 	XMFLOAT3 move;

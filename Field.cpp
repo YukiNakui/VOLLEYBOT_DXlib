@@ -1,11 +1,11 @@
 #include "Field.h"
 #include <assert.h>
-#include"Player.h"
-#include"Wolf.h"
-#include"Skeleton.h"
-#include"Bird.h"
-#include"ItemBox.h"
-#include"GoalObj.h"
+//#include"Player.h"
+//#include"Wolf.h"
+//#include"Skeleton.h"
+//#include"Bird.h"
+//#include"ItemBox.h"
+//#include"GoalObj.h"
 #include"Engine/CsvReader.h"
 #include"Camera.h"
 
@@ -38,6 +38,7 @@ void Field::Reset()
 		delete[] Map;
 		Map = nullptr;
 	}
+//	GameObjectsReset();
 	CsvReader csv;//データを読むクラスのインスタンスを作成
 	char s[20];
 	sprintf_s<20>(s, "Assets/stage%d.csv", stageNum);
@@ -63,37 +64,37 @@ void Field::Reset()
 			{
 			case 0:
 			{
-				GoalObj* pGoal = GetParent()->FindGameObject<GoalObj>();
+				pGoal = GetParent()->FindGameObject<GoalObj>();
 				pGoal->SetPosition(w * 32, h * 32);
 			}
 			break;
 			case 1:
 			{
-				ItemBox* pIBox = Instantiate<ItemBox>(GetParent());
+				pIBox = Instantiate<ItemBox>(GetParent());
 				pIBox->SetPosition(w * 32, h * 32);
 			}
 			break;
 			case 10://Player
 			{//switch caseのなかでは変数の宣言できないが{}のなかならできる
-				Player* pPlayer = GetParent()->FindGameObject<Player>();
+				pPlayer = GetParent()->FindGameObject<Player>();
 				pPlayer->SetPosition(w * 32, h * 32);
 			}
 			break;
 			case 11://Wolf
 			{
-				Wolf* pWolf = Instantiate<Wolf>(GetParent());
+				pWolf = Instantiate<Wolf>(GetParent());
 				pWolf->SetPosition(w * 32, h * 32);
 			}
 			break;
 			case 12://Skeleton
 			{
-				Skeleton* pSkeleton = Instantiate<Skeleton>(GetParent());
+				pSkeleton = Instantiate<Skeleton>(GetParent());
 				pSkeleton->SetPosition(w * 32, h * 32);
 			}
 			break;
 			case 13://Bird
 			{
-				Bird* pBird = Instantiate<Bird>(GetParent());
+				pBird = Instantiate<Bird>(GetParent());
 				pBird->SetPosition(w * 32, h * 32);
 			}
 			break;
@@ -104,8 +105,8 @@ void Field::Reset()
 
 void Field::Update()
 {
-	if (CheckHitKey(KEY_INPUT_R))
-		Reset();
+	/*if (CheckHitKey(KEY_INPUT_R))
+		Reset();*/
 }
 
 void Field::Draw()
@@ -168,6 +169,28 @@ bool Field::CanNextStageChange()
 	if (stageNum < STAGE_NUM)
 		return true;
 	return false;
+}
+
+void Field::GameObjectsReset()
+{
+	if (pGoal != nullptr) {
+		pGoal = nullptr;
+	}
+	if (pIBox != nullptr) {
+		pIBox = nullptr;
+	}
+	if (pPlayer != nullptr) {
+		pPlayer = nullptr;
+	}
+	if (pWolf != nullptr) {
+		pWolf = nullptr;
+	}
+	if (pSkeleton != nullptr) {
+		pSkeleton = nullptr;
+	}
+	if (pBird != nullptr) {
+		pBird = nullptr;
+	}
 }
 
 bool Field::IsWallBlock(int x, int y)

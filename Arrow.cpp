@@ -2,6 +2,7 @@
 #include"Camera.h"
 #include"Field.h"
 #include"ItemBox.h"
+#include"PlayScene.h"
 
 namespace {
 	const float ARROW_WIDTH = 48.0f;
@@ -14,8 +15,8 @@ namespace {
 	const float CORRECT_HEIGHT = 21.0f;
 	static const int WINDOW_WIDTH = 1280;
 	static const int WINDOW_HEIGHT = 720;
-	const float COLLIDE_WIDTH = 0.0f;
-	const float COLLIDE_HEIGHT = 21.0f;
+	const float COLLIDE_WIDTH = 5.0f;
+	const float COLLIDE_HEIGHT = 5.0f;
 }
 
 Arrow::Arrow(GameObject* parent):Enemy(parent)
@@ -39,6 +40,10 @@ void Arrow::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();
 	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
+
+	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
+	if (!scene->CanMove())
+		return;
 
 	if (state == HIT) {
 		cdTimer++;

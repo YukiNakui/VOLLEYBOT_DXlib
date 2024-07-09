@@ -1,5 +1,12 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include"Player.h"
+#include"Wolf.h"
+#include"Skeleton.h"
+#include"Bird.h"
+#include"ItemBox.h"
+#include"GoalObj.h"
+
 class Field :
     public GameObject
 {
@@ -44,6 +51,7 @@ public:
 
 	void SetNextStage();//次のステージをセットする
 	bool CanNextStageChange();//次のステージに変更できるか
+	void GameObjectsReset();
 private:
 	int hImage;
 
@@ -52,5 +60,12 @@ private:
 	int width;
 	int height;
 	int stageNum;
+
+	GoalObj* pGoal;
+	ItemBox* pIBox;
+	Player* pPlayer;
+	Wolf* pWolf;
+	Skeleton* pSkeleton;
+	Bird* pBird;
 };
 

@@ -33,7 +33,7 @@ void BackGround::Draw()
     Camera* cam = GetParent()->FindGameObject<Camera>();
     if (cam != nullptr) {
         x -= cam->GetValueX()/2;
-        y -= cam->GetValueY()/2;
+        //y -= cam->GetValueY()/2;
     }
 
     while (x < 0) {

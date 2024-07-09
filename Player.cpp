@@ -14,6 +14,7 @@ namespace {
 	const int WALK_MAXFRAME{ 6 };
 	const int TOSS_MAXFRAME{ 4 };
 	const int SPIKE_MAXFRAME{ 4 };
+	const int DAMAGE_MAXFRAME{ 4 };
 	const int DEAD_MAXFRAME{ 5 };
 
 	const float MAX_MOVE_SPEED = 3.5f;
@@ -39,6 +40,7 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	transform_.position_.x = 128.0f;
 	transform_.position_.y = GROUND;
 
+	hp = 3;
 	moveSpeed = 0.0;
 	jumpSpeed = 0.0f;
 	onGround = true;
@@ -49,6 +51,10 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	isBallAlive = false;
 	canSpike = false;
 	tossCount = 0;
+	
+	damageTimer = 0.0f;
+	nowDamage = false;
+	blink = true;
 
 	animFrame = 0;
 	animType = 0;
@@ -72,9 +78,53 @@ Player::~Player()
 
 void Player::Update()
 {
+	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
 	Field* pField = GetParent()->FindGameObject<Field>();
 	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
 	Camera* cam = GetParent()->FindGameObject<Camera>();
+
+
+	if (state == DAMAGE) {
+		cdTimer += 1.0f / 60.0f;
+		if (animFrame < DAMAGE_MAXFRAME - 1) {
+			frameCounter++;
+			if (frameCounter >= 5) {
+				frameCounter = 0;
+				animFrame++;
+			}
+		}
+		else {
+			animFrame = 0;
+		}
+		if (cdTimer >= 1.0f) {
+			cdTimer = 0.0f;
+			canMove = true;
+			animType = 0;
+			animFrame = 0;
+			frameCounter = 0;
+			nowDamage = true;
+			state = NORMAL;
+		}
+	}
+
+	if (!scene->CanMove()) {
+		return;
+	}
+
+	if (nowDamage) {
+		damageTimer -= 1.0f / 60.0f;
+		if (damageTimer <= 0.0f) {
+			damageTimer = 0.0f;
+			nowDamage = false;
+		}
+		if (0 == (int)(damageTimer * 30.0f) % 2)
+			blink = false;
+		else
+			blink = true;
+	}
+	else
+		blink = true;
+
 
 	if (state == DEAD) {
 		if (animFrame < DEAD_MAXFRAME - 1) {
@@ -92,11 +142,6 @@ void Player::Update()
 				pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
 			}
 		}
-	}
-
-	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
-	if (!scene->CanMove()) {
-		canMove = false;
 	}
 
 	if (state == TOSS) {
@@ -133,12 +178,12 @@ void Player::Update()
 				frameCounter = 0;
 				animFrame++;
 			}
-			if (animFrame == 2) {
+			if (animFrame == 2 && frameCounter==0) {
 				if (pBall != nullptr) {
 					if (isRight)
-						nextPos_x = pBall->GetPos().x - 10.0f;
+						nextPos_x = pBall->GetPos().x;
 					else
-						nextPos_x = pBall->GetPos().x + 10.0f;
+						nextPos_x = pBall->GetPos().x;
 					nextPos_y = pBall->GetPos().y + PLAYER_HEIGHT / 2.0f - CORRECT_TOP;
 					pBall->Spike(isRight);
 					if (cam != nullptr)
@@ -406,29 +451,44 @@ void Player::Update()
 		if (pBall != nullptr) {
 			pBall->KillMe();
 		}
-		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
+		scene->StartDead();
+		/*SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);*/
 	}
 	
-	if (state != DEAD) {
-		std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
-		for (Enemy* pEnemy : pEnemies) {
-			if (pEnemy->IsSteppedOnHead(transform_.position_.x, transform_.position_.y+30.0f, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
-				jumpSpeed = -sqrt(2 * GRAVITY * JUMP_HIGHT);
-				onGround = false;
-				animType = 3;
-				pEnemy->KillEnemy();
-			}
-			if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
-				canMove = false;
-				animType = 5;
-				animFrame = 0;
-				state = DEAD;
-				if (cam != nullptr)
-					cam->VibrationX(100.0f);
-				scene->StartDead();
-				if (pBall != nullptr)
-					pBall->KillMe();
+	if (damageTimer <= 0.0f) {
+		if (state != DEAD && state != DAMAGE) {
+			std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
+			for (Enemy* pEnemy : pEnemies) {
+				if (pEnemy->IsSteppedOnHead(transform_.position_.x, transform_.position_.y + 30.0f, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
+					jumpSpeed = -sqrt(2 * GRAVITY * JUMP_HIGHT);
+					onGround = false;
+					animType = 3;
+					pEnemy->KillEnemy();
+				}
+				if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
+					hp--;
+					if (hp <= 0) {
+						canMove = false;
+						animType = 5;
+						animFrame = 0;
+
+						scene->StartDead();
+						state = DEAD;
+					}
+					else {
+						scene->StartStop(0.5f);
+						damageTimer = 2.0f;
+						canMove = false;
+						animType = 4;
+						animFrame = 0;
+						state = DAMAGE;
+					}
+					if (cam != nullptr)
+						cam->VibrationX(100.0f);
+					if (pBall != nullptr)
+						pBall->KillMe();
+				}
 			}
 		}
 	}
@@ -444,6 +504,15 @@ void Player::Update()
 			x = 320;
 			cam->SetValueX((int)transform_.position_.x - x);
 		}
+		int y = (int)transform_.position_.y - cam->GetValueY();
+		if (y > 700) {
+			y = 700;
+			cam->SetValueY((int)transform_.position_.y - y);//カメラの値を出すには上の式を移項する
+		}
+		else if (y < 30) {
+			y = 30;
+			cam->SetValueY((int)transform_.position_.y - y);
+		}
 	}
 	
 }
@@ -457,6 +526,7 @@ void Player::Draw()
 		x -= cam->GetValueX();//プレイヤーの位置からカメラ分引く
 		y -= cam->GetValueY();
 	}
+	if(blink)
 	DrawRectGraph(x - PLAYER_WIDTH/2.0, y-PLAYER_HEIGHT/2.0-CORRECT_BOTTOM, animFrame * PLAYER_WIDTH, animType * PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT, hAnimImage, TRUE,!isRight);
 	
 	if (!isBallAlive && state!=DEAD) {
