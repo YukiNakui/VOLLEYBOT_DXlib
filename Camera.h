@@ -36,6 +36,7 @@ private:
     float vibParamY;//引数で指定された値
     float vibValueX;//振動量、振動幅
     float vibValueY;//振動量、振動幅
+    float firstValue;
     bool vibXnow;
     bool vibYnow;
     bool vibNow;

@@ -55,6 +55,7 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	damageTimer = 0.0f;
 	nowDamage = false;
 	blink = true;
+	fallNow = false;
 
 	animFrame = 0;
 	animType = 0;
@@ -196,8 +197,8 @@ void Player::Update()
 						nextPos_x = pBall->GetPos().x;
 					nextPos_y = pBall->GetPos().y + PLAYER_HEIGHT / 2.0f - CORRECT_TOP;
 					pBall->Spike(isRight);
-					if (cam != nullptr)
-						cam->VibrationY(10.0f);
+					//if (cam != nullptr)
+						//cam->VibrationY(10.0f);
 				}
 			}
 		}
@@ -472,16 +473,16 @@ void Player::Update()
 		if (state != DEAD && state != DAMAGE) {
 			std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
 			for (Enemy* pEnemy : pEnemies) {
-				if (pEnemy->IsSteppedOnHead(transform_.position_.x, transform_.position_.y + 30.0f, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
+				if (pEnemy->IsSteppedOnHead(transform_.position_.x, transform_.position_.y + 40.0f, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0)) {
 					jumpSpeed = -sqrt(2 * GRAVITY * JUMP_HIGHT);
 					onGround = false;
 					animType = 3;
 					pEnemy->KillEnemy();
 				}
-				if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
+				if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y + 20, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
 					hp--;
-					if (cam != nullptr)
-						cam->VibrationX(100.0f);
+					/*if (cam != nullptr)
+						cam->VibrationX(1.0f);*/
 					//scene->StartStop(0.5f);
 					damageTimer = 2.0f;
 					canMove = false;
@@ -496,20 +497,36 @@ void Player::Update()
 		}
 	}
 
+	float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH - 5.0f;
+	float cy = PLAYER_HEIGHT / 2.0f;
+	if (pField->IsFall(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f)) {
+		fallNow = true;
+	}
+	if (fallNow) {
+		cdTimer++;
+		if (cdTimer > 10000) {
+			cdTimer = 0.0f;
+			SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+			pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
+		}
+	}
+
 	//ここでカメラ位置を調整
 	if (cam != nullptr) {
-		int x = (int)transform_.position_.x - cam->GetValueX();
+		
 		if (cam->IsVibNow()) {
-			if (x > 1000) {
-				x = 1000;
-				cam->SetValueX((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
-			}
-			else if (x < 280) {
-				x = 280;
-				cam->SetValueX((int)transform_.position_.x - x);
-			}
+			int x = (int)transform_.position_.x - cam->GetValueX();
+			//if (x > 1000) {
+			//	x = 1000;
+			//	cam->SetValueX((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
+			//}
+			//else if (x < 280) {
+			//	x = 280;
+			//	cam->SetValueX((int)transform_.position_.x - x);
+			//}
 		}
 		else {
+			int x = (int)transform_.position_.x - cam->GetValueX();
 			if (x > 960) {
 				x = 960;
 				cam->SetValueX((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
@@ -517,6 +534,17 @@ void Player::Update()
 			else if (x < 320) {
 				x = 320;
 				cam->SetValueX((int)transform_.position_.x - x);
+			}
+			int y = (int)transform_.position_.y - cam->GetValueY();
+			if (!fallNow) {
+				if (y > 592) {
+					y = 592;
+					cam->SetValueY((int)transform_.position_.y - y);//カメラの値を出すには上の式を移項する
+				}
+				else if (y < 32) {
+					y = 32;
+					cam->SetValueY((int)transform_.position_.y - y);
+				}
 			}
 		}
 	}
