@@ -14,11 +14,11 @@ PlayScene::PlayScene(GameObject * parent)
 //èâä˙âª 
 void PlayScene::Initialize()
 {
-	/*Instantiate<Camera>(this);
-	Instantiate<BackGround>(this);
+	pCam = Instantiate<Camera>(this);
+	pBG = Instantiate<BackGround>(this);
 	pField = Instantiate<Field>(this);
-	Instantiate<GoalObj>(this);
-	Instantiate<Player>(this);*/
+	pGObj = Instantiate<GoalObj>(this);
+	pPlayer = Instantiate<Player>(this);
 	StartReady();
 }
 
@@ -84,12 +84,6 @@ void PlayScene::GameObjectsReset()
 void PlayScene::StartReady()
 {
 	state = s_Ready;
-	//GameObjectsReset();
-	pCam = Instantiate<Camera>(this);
-	pBG = Instantiate<BackGround>(this);
-	pField = Instantiate<Field>(this);
-	pGObj = Instantiate<GoalObj>(this);
-	pPlayer = Instantiate<Player>(this);
 	pField->Reset();
 	readyTimer = 2.0f;
 }
@@ -101,6 +95,7 @@ void PlayScene::StartClear()
 
 void PlayScene::StartStop(float time)
 {
+	pCam->VibrationX(100.0f);
 	state = s_Stop;
 	timerEnd = time;
 }
@@ -139,6 +134,7 @@ void PlayScene::UpdateStop()
 
 void PlayScene::StartDead()
 {
+	pCam->VibrationX(100.0f);
 	state = s_Dead;
 	readyTimer = 1.0f;
 }

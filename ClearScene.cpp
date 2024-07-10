@@ -15,7 +15,7 @@ void ClearScene::Update()
 {
 	if (CheckHitKey(KEY_INPUT_C)) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_PLAY);
+		pSceneManager->ChangeScene(SCENE_ID_TITLE);
 	}
 }
 

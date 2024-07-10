@@ -96,14 +96,24 @@ void Player::Update()
 		else {
 			animFrame = 0;
 		}
-		if (cdTimer >= 1.0f) {
-			cdTimer = 0.0f;
-			canMove = true;
-			animType = 0;
-			animFrame = 0;
-			frameCounter = 0;
-			nowDamage = true;
-			state = NORMAL;
+		if (cdTimer >= 0.5f) {
+			if (hp <= 0) {
+				canMove = false;
+				animType = 5;
+				animFrame = 0;
+
+				//scene->StartDead();
+				state = DEAD;
+			}
+			else {
+				cdTimer = 0.0f;
+				canMove = true;
+				animType = 0;
+				animFrame = 0;
+				frameCounter = 0;
+				nowDamage = true;
+				state = NORMAL;
+			}
 		}
 	}
 
@@ -129,7 +139,7 @@ void Player::Update()
 	if (state == DEAD) {
 		if (animFrame < DEAD_MAXFRAME - 1) {
 			frameCounter++;
-			if (frameCounter >= 10) {
+			if (frameCounter >= 20) {
 				frameCounter = 0;
 				animFrame++;
 			}
@@ -394,16 +404,17 @@ void Player::Update()
 		}
 	}
 	
-
-	jumpSpeed += GRAVITY; //速度 += 加速度
-	nextPos_y += jumpSpeed;//座標 += 速度
+	if (state != DAMAGE) {
+		jumpSpeed += GRAVITY; //速度 += 加速度
+		nextPos_y += jumpSpeed;//座標 += 速度
+	}
 
 	if (pField != nullptr) {
 		float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH - 5.0f;
 		float cy = PLAYER_HEIGHT / 2.0f;
 
-		float pushRbottom = pField->CollisionDown(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM));
-		float pushLbottom = pField->CollisionDown(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM));
+		float pushRbottom = pField->CollisionDown(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM) + 1.0f);
+		float pushLbottom = pField->CollisionDown(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 		float pushBottom = max(pushRbottom, pushLbottom);//2つの足元のめり込みの大きいほう
 		if (pushBottom > 0.0f) {
 			nextPos_y -= pushBottom - 1.0f;
@@ -413,8 +424,8 @@ void Player::Update()
 		else {
 			onGround = false;
 		}
-		float pushRtop = pField->CollisionUp(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP));
-		float pushLtop = pField->CollisionUp(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP));
+		float pushRtop = pField->CollisionUp(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
+		float pushLtop = pField->CollisionUp(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP) - 1.0f);
 		float pushTop = max(pushRtop, pushLtop);//2つの頭のめり込みの大きいほう
 		if (pushTop > 0.0f) {
 			nextPos_y += pushTop - 1.0f;
@@ -427,16 +438,16 @@ void Player::Update()
 			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH - 5.0f;
 			float cy = PLAYER_HEIGHT / 2.0f;
 
-			float pushRbottom = pIBox->CollisionDown(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM));
-			float pushLbottom = pIBox->CollisionDown(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM));
+			float pushRbottom = pIBox->CollisionDown(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM) + 1.0f);
+			float pushLbottom = pIBox->CollisionDown(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 			float pushBottom = max(pushRbottom, pushLbottom);//2つの足元のめり込みの大きいほう
 			if (pushBottom > 0.0f) {
 				nextPos_y -= pushBottom - 1.0f;
 				jumpSpeed = 0.0f;
 				onGround = true;
 			}
-			float pushRtop = pIBox->CollisionUp(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP));
-			float pushLtop = pIBox->CollisionUp(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP));
+			float pushRtop = pIBox->CollisionUp(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
+			float pushLtop = pIBox->CollisionUp(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP) - 1.0f);
 			float pushTop = max(pushRtop, pushLtop);//2つの頭のめり込みの大きいほう
 			if (pushTop > 0.0f) {
 				nextPos_y += pushTop;
@@ -448,12 +459,13 @@ void Player::Update()
 	transform_.position_ = { nextPos_x,nextPos_y,0.0f };
 
 	if (transform_.position_.y > 720.0f) {
+		state = DEAD;
 		if (pBall != nullptr) {
 			pBall->KillMe();
 		}
-		scene->StartDead();
-		/*SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);*/
+		//scene->StartDead();
+		//SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		//pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
 	}
 	
 	if (damageTimer <= 0.0f) {
@@ -468,24 +480,15 @@ void Player::Update()
 				}
 				if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
 					hp--;
-					if (hp <= 0) {
-						canMove = false;
-						animType = 5;
-						animFrame = 0;
-
-						scene->StartDead();
-						state = DEAD;
-					}
-					else {
-						scene->StartStop(0.5f);
-						damageTimer = 2.0f;
-						canMove = false;
-						animType = 4;
-						animFrame = 0;
-						state = DAMAGE;
-					}
 					if (cam != nullptr)
 						cam->VibrationX(100.0f);
+					//scene->StartStop(0.5f);
+					damageTimer = 2.0f;
+					canMove = false;
+					animType = 4;
+					animFrame = 0;
+					state = DAMAGE;
+					
 					if (pBall != nullptr)
 						pBall->KillMe();
 				}
@@ -496,22 +499,25 @@ void Player::Update()
 	//ここでカメラ位置を調整
 	if (cam != nullptr) {
 		int x = (int)transform_.position_.x - cam->GetValueX();
-		if (x > 960) {
-			x = 960;
-			cam->SetValueX((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
+		if (cam->IsVibNow()) {
+			if (x > 1000) {
+				x = 1000;
+				cam->SetValueX((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
+			}
+			else if (x < 280) {
+				x = 280;
+				cam->SetValueX((int)transform_.position_.x - x);
+			}
 		}
-		else if(x<320){
-			x = 320;
-			cam->SetValueX((int)transform_.position_.x - x);
-		}
-		int y = (int)transform_.position_.y - cam->GetValueY();
-		if (y > 700) {
-			y = 700;
-			cam->SetValueY((int)transform_.position_.y - y);//カメラの値を出すには上の式を移項する
-		}
-		else if (y < 30) {
-			y = 30;
-			cam->SetValueY((int)transform_.position_.y - y);
+		else {
+			if (x > 960) {
+				x = 960;
+				cam->SetValueX((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
+			}
+			else if (x < 320) {
+				x = 320;
+				cam->SetValueX((int)transform_.position_.x - x);
+			}
 		}
 	}
 	
@@ -537,8 +543,8 @@ void Player::Draw()
 			crrX = -15;
 		DrawRotaGraph(x + crrX, y + 20, 0.9, 0, hBallImg, TRUE, !isRight);
 	}
-	unsigned int Cr = GetColor(0, 0, 255);
-	DrawCircle(10, 10, 10,Cr, isBallAlive);
+	//unsigned int Cr = GetColor(0, 0, 255);
+	//DrawCircle(10, 10, 10,Cr, isBallAlive);
 }
 
 void Player::SetPosition(int x, int y)

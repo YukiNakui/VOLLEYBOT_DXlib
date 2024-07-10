@@ -24,6 +24,8 @@ public:
     /// </summary>
     /// <param name="v">ÕŒ‚‚Ì‘å‚«‚³</param>
     void VibrationY(float v);
+
+    bool IsVibNow();
 private:
     int valueX;
     int valueY;
@@ -36,5 +38,6 @@ private:
     float vibValueY;//U“®—ÊAU“®•
     bool vibXnow;
     bool vibYnow;
+    bool vibNow;
 };
 

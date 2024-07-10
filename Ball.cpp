@@ -148,6 +148,8 @@ void Ball::Update()
 		float pushRBottom = pIBox->CollisionRight(nextPosFloat.x + cx, nextPosFloat.y + cy - CORRECT_VALUE);
 		float pushR = max(pushRBottom, pushRTop);
 		if (pushR > 0.0f) {
+			if (state == SPIKE)
+				pIBox->KillMe();
 			transform_.position_.x -= pushR - 1.0f;
 			move.x = -move.x * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
@@ -157,6 +159,8 @@ void Ball::Update()
 		float pushLBottom = pIBox->CollisionLeft(nextPosFloat.x - cx, nextPosFloat.y + cy - CORRECT_VALUE);
 		float pushL = max(pushLBottom, pushLTop);
 		if (pushL > 0.0f) {
+			if (state == SPIKE)
+				pIBox->KillMe();
 			transform_.position_.x += pushL - 1.0f;
 			move.x = -move.x * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
@@ -167,6 +171,8 @@ void Ball::Update()
 		float pushTLeft = pIBox->CollisionUp(nextPosFloat.x - cx + CORRECT_VALUE, nextPosFloat.y - cy);
 		float pushT = max(pushTRight, pushTLeft);
 		if (pushT > 0.0f) {
+			if (state != NORMAL)
+				pIBox->KillMe();
 			transform_.position_.y += pushT - 1.0f;
 			move.y = -move.y * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
@@ -176,6 +182,8 @@ void Ball::Update()
 		float pushBLeft = pIBox->CollisionDown(nextPosFloat.x - cx + CORRECT_VALUE, nextPosFloat.y + cy);
 		float pushB = max(pushBRight, pushBLeft);
 		if (pushB > 0.0f) {
+			if (state == SPIKE)
+				pIBox->KillMe();
 			transform_.position_.y -= pushB - 1.0f;
 			move.y = -move.y * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;

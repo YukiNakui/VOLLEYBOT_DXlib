@@ -108,7 +108,7 @@ void Bird::Update()
 			len = sqrt(lenX * lenX + lenY * lenY);
 		}
 
-		if (len < 300.0f && pPlayer->GetPosition().y > transform_.position_.y) {
+		if (len < 200.0f && pPlayer->GetPosition().y > transform_.position_.y) {
 			if ((isRight && pPlayer->GetPosition().x > transform_.position_.x) ||
 				(!isRight && pPlayer->GetPosition().x < transform_.position_.x)) {
 				targetPos = pPlayer->GetPosition();
@@ -275,7 +275,23 @@ void Bird::KillEnemy()
 
 bool Bird::IsSteppedOnHead(float x, float y, float w, float h)
 {
-	return false;
+	if (state != DEAD) {
+		// 敵の矩形の範囲を計算
+		float myHeadRight = transform_.position_.x + BIRD_WIDTH / 2.0f - COLLIDE_WIDTH;
+		float myHeadLeft = transform_.position_.x - BIRD_WIDTH / 2.0f + COLLIDE_WIDTH;
+		float myHeadTop = transform_.position_.y - BIRD_HEIGHT / 2.0f + COLLIDE_HEIGHT;
+		float myHeadBottom = transform_.position_.y - 30.0f;
+
+		// 指定された矩形と敵の矩形が交差しているかチェック
+		if ((x - w / 2.0f < myHeadRight && x + w / 2.0f > myHeadLeft) &&
+			(y - h / 2.0f < myHeadBottom && y + h / 2.0f > myHeadTop)) {
+			return true;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
 }
 
 bool Bird::IsCanAttack(XMFLOAT3 pos)
