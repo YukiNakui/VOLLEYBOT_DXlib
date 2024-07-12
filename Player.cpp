@@ -190,10 +190,7 @@ void Player::Update()
 			}
 			if (animFrame == 2 && frameCounter==0) {
 				if (pBall != nullptr) {
-					if (isRight)
-						nextPos_x = pBall->GetPos().x;
-					else
-						nextPos_x = pBall->GetPos().x;
+					nextPos_x = pBall->GetPos().x;
 					nextPos_y = pBall->GetPos().y + PLAYER_HEIGHT / 2.0f - CORRECT_TOP;
 					pBall->Spike(isRight);
 					if (cam != nullptr)
