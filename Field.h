@@ -52,6 +52,7 @@ public:
 	void SetNextStage();//次のステージをセットする
 	bool CanNextStageChange();//次のステージに変更できるか
 	void GameObjectsReset();
+	bool IsFall(float x, float y);
 private:
 	int hImage;
 

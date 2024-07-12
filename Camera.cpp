@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include"Player.h"
 
 Camera::Camera(GameObject* parent)
 {
@@ -11,6 +12,7 @@ Camera::Camera(GameObject* parent)
 
 void Camera::Update()
 {
+	Player* pPlayer = GetParent()->FindGameObject<Player>();
 	if (vibXnow) {
 		if (vibTimerX > 0.0f) {
 			vibTimerX -= 0.1f;
@@ -48,7 +50,7 @@ void Camera::Update()
 		else
 			val = 0;
 		vibValueY = vibParamY * val;
-		SetValueY(vibValueY);
+		SetValueY(firstValue + vibValueY);
 	}
 }
 

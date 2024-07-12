@@ -193,6 +193,17 @@ void Field::GameObjectsReset()
 	}
 }
 
+bool Field::IsFall(float x, float y)
+{
+	int chipX = x / 32;
+	int chipY = y / 32;
+	switch (Map[chipY * width + chipX]) {
+	case 47:
+		return true;
+	}
+	return false;
+}
+
 bool Field::IsWallBlock(int x, int y)
 {
 	int chipX = x / 32;

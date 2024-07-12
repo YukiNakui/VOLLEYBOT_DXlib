@@ -59,6 +59,7 @@ private:
 	float damageTimer;
 	bool nowDamage;
 	bool blink;
+	bool fallNow;
 	
 	bool IsTouchBall(XMFLOAT3 pos);
 	

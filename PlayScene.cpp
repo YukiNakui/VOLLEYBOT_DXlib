@@ -95,7 +95,7 @@ void PlayScene::StartClear()
 
 void PlayScene::StartStop(float time)
 {
-	pCam->VibrationX(100.0f);
+	//pCam->VibrationX(100.0f);
 	state = s_Stop;
 	timerEnd = time;
 }
@@ -134,7 +134,7 @@ void PlayScene::UpdateStop()
 
 void PlayScene::StartDead()
 {
-	pCam->VibrationX(100.0f);
+	//pCam->VibrationX(100.0f);
 	state = s_Dead;
 	readyTimer = 1.0f;
 }

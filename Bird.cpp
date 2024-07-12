@@ -20,8 +20,9 @@ namespace {
 	const float CORRECT_TOP = 35.0f;
 	static const int WINDOW_WIDTH = 1280;
 	static const int WINDOW_HEIGHT = 720;
-	const float COLLIDE_WIDTH = 45.0f;
+	const float COLLIDE_WIDTH = 50.0f;
 	const float COLLIDE_HEIGHT = 40.0f;
+	const float COLLIDE_BOTTOM = 10.0f;
 	const float CAN_ATTACK_LENGTH = 64.0f;
 }
 
@@ -251,7 +252,7 @@ bool Bird::CollideRectToRect(float x, float y, float w, float h)
 		float myRectRight = transform_.position_.x + BIRD_WIDTH / 2.0f - COLLIDE_WIDTH;
 		float myRectLeft = transform_.position_.x - BIRD_WIDTH / 2.0f + COLLIDE_WIDTH;
 		float myRectTop = transform_.position_.y - BIRD_HEIGHT / 2.0f + COLLIDE_HEIGHT;
-		float myRectBottom = transform_.position_.y + BIRD_HEIGHT / 2.0f - CORRECT_BOTTOM;
+		float myRectBottom = transform_.position_.y + BIRD_HEIGHT / 2.0f - COLLIDE_BOTTOM;
 
 		// 指定された矩形と敵の矩形が交差しているかチェック
 		if ((x - w / 2.0f < myRectRight && x + w / 2.0f > myRectLeft) &&
