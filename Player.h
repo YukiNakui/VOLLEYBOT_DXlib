@@ -60,6 +60,12 @@ private:
 	bool nowDamage;
 	bool blink;
 	bool fallNow;
+
+	VECTOR currentPos;
+	VECTOR target;
+	float moveTime;
+	VECTOR start;
+	float currentTime;
 	
 	bool IsTouchBall(XMFLOAT3 pos);
 	
