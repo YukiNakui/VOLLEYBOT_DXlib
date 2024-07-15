@@ -58,4 +58,6 @@ private:
 	void UpdateDead();
 	float readyTimer;
 	float timerEnd;
+
+	int playBGM;
 };

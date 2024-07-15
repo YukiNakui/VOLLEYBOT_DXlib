@@ -63,6 +63,12 @@ private:
 	
 	bool IsTouchBall(XMFLOAT3 pos);
 	
-
+	int spikeSound;
+	int tossSound;
+	int catchSound;
+	int walkSound;
+	int jumpSound;
+	int damageSound;
+	int deathSound;
 };
 

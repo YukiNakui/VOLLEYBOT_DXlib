@@ -37,6 +37,22 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	hBallImg = LoadGraph("Assets/Ball.png");
 	assert(hBallImg > 0);
 
+	spikeSound = LoadSoundMem("Assets/Sounds/Explosion04-1(Short).mp3");
+	assert(spikeSound > 0);
+	tossSound = LoadSoundMem("Assets/Sounds/Onoma-Button-Click03-1(High).mp3");
+	assert(tossSound > 0);
+	catchSound = LoadSoundMem("Assets/Sounds/Motion-Grab02-1(Low).mp3");
+	assert(catchSound > 0);
+	walkSound = LoadSoundMem("Assets/Sounds/Retro_Anime-Switch04-2(High).mp3");
+	assert(walkSound > 0);
+	jumpSound = LoadSoundMem("Assets/Sounds/SNES-Action01-01(Jump).mp3");
+	assert(jumpSound > 0);
+	damageSound = LoadSoundMem("Assets/Sounds/GB-Action01-05(Damage).mp3");
+	assert(damageSound > 0);
+	deathSound = LoadSoundMem("Assets/Sounds/Retro_Anime-Robot03-3(Low-Long).mp3");
+	assert(deathSound > 0);
+
+
 	transform_.position_.x = 128.0f;
 	transform_.position_.y = GROUND;
 
@@ -75,6 +91,27 @@ Player::~Player()
 	if (hBallImg > 0) {
 		DeleteGraph(hBallImg);
 	}
+	if (spikeSound > 0) {
+		DeleteSoundMem(spikeSound);
+	}
+	if (tossSound > 0) {
+		DeleteSoundMem(tossSound);
+	}
+	if (catchSound > 0) {
+		DeleteSoundMem(catchSound);
+	}
+	if (walkSound > 0) {
+		DeleteSoundMem(walkSound);
+	}
+	if (jumpSound > 0) {
+		DeleteSoundMem(jumpSound);
+	}
+	if (damageSound > 0) {
+		DeleteSoundMem(damageSound);
+	}
+	if (deathSound > 0) {
+		DeleteSoundMem(deathSound);
+	}
 }
 
 void Player::Update()
@@ -104,6 +141,7 @@ void Player::Update()
 				animFrame = 0;
 
 				//scene->StartDead();
+				PlaySoundMem(deathSound, DX_PLAYTYPE_BACK);
 				state = DEAD;
 			}
 			else {
@@ -165,6 +203,7 @@ void Player::Update()
 			if (animFrame == 1) {
 				if (tossCount == 1) {
 					if (pBall != nullptr) {
+						PlaySoundMem(tossSound, DX_PLAYTYPE_BACK);
 						pBall->FirstToss();
 					}
 				}
@@ -193,6 +232,7 @@ void Player::Update()
 				if (pBall != nullptr) {
 					nextPos_x = pBall->GetPos().x;
 					nextPos_y = pBall->GetPos().y + PLAYER_HEIGHT / 2.0f - CORRECT_TOP;
+					PlaySoundMem(spikeSound, DX_PLAYTYPE_BACK);
 					pBall->Spike(isRight);
 					//if (cam != nullptr)
 						//cam->VibrationY(10.0f);
@@ -237,6 +277,7 @@ void Player::Update()
 					if (IsTouchBall(pBall->GetPos())) {
 						if (tossCount == 1) {
 							pBall->SetIsRight(isRight);
+							PlaySoundMem(tossSound, DX_PLAYTYPE_BACK);
 							pBall->SecondToss();
 							canMove = false;
 							tossCount += 1;
@@ -289,6 +330,7 @@ void Player::Update()
 
 	if (pBall!=nullptr){ 
 		if (!pBall->IsBallAlive() || pBall->IsBallCatch(transform_.position_.x - 10.0f, transform_.position_.y + PLAYER_HEIGHT / 4.0f)) {
+			PlaySoundMem(catchSound, DX_PLAYTYPE_BACK);
 			pBall->SetPosition(0.0f, 800.0f);
 			isBallAlive = false;
 			pBall = nullptr;
@@ -311,6 +353,8 @@ void Player::Update()
 			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
 			float cy = PLAYER_HEIGHT / 2.0f;
 			if (++frameCounter >= WALK_MAXFRAME) {
+				if (animFrame % 2 == 1&&onGround)
+					PlaySoundMem(walkSound, DX_PLAYTYPE_BACK);
 				animFrame = (animFrame + 1) % WALK_MAXFRAME;
 				frameCounter = 0;
 			}
@@ -347,6 +391,8 @@ void Player::Update()
 			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
 			float cy = PLAYER_HEIGHT / 2.0f;
 			if (++frameCounter >= WALK_MAXFRAME) {
+				if (animFrame % 2 == 1&&onGround)
+					PlaySoundMem(walkSound, DX_PLAYTYPE_BACK);
 				animFrame = (animFrame + 1) % WALK_MAXFRAME;
 				frameCounter = 0;
 			}
@@ -383,6 +429,7 @@ void Player::Update()
 		{
 			if (prevSpaceKey == false) {
 				if (onGround) {
+					PlaySoundMem(jumpSound, DX_PLAYTYPE_BACK);
 					jumpSpeed = -sqrt(2 * GRAVITY * JUMP_HIGHT);
 					onGround = false;
 					animType = 3;
@@ -481,6 +528,7 @@ void Player::Update()
 					/*if (cam != nullptr)
 						cam->VibrationX(1.0f);*/
 					//scene->StartStop(0.5f);
+					PlaySoundMem(damageSound, DX_PLAYTYPE_BACK);
 					damageTimer = 2.0f;
 					canMove = false;
 					animType = 4;

@@ -14,6 +14,8 @@ PlayScene::PlayScene(GameObject * parent)
 //‰Šú‰» 
 void PlayScene::Initialize()
 {
+	playBGM = LoadSoundMem("Assets/Sounds/GB-Action-D05-1(Stage3).mp3");
+	assert(playBGM > 0);
 	pCam = Instantiate<Camera>(this);
 	pBG = Instantiate<BackGround>(this);
 	pField = Instantiate<Field>(this);
@@ -41,6 +43,8 @@ void PlayScene::Update()
 	case s_Dead:
 		UpdateDead();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -52,6 +56,9 @@ void PlayScene::Draw()
 //ŠJ•ú
 void PlayScene::Release()
 {
+	if (playBGM > 0) {
+		DeleteSoundMem(playBGM);
+	}
 }
 
 bool PlayScene::CanMove()
@@ -111,6 +118,8 @@ void PlayScene::UpdateReady()
 void PlayScene::StartPlay()
 {
 	state = s_Play;
+	ChangeVolumeSoundMem(255 * 50 / 100, playBGM);
+	PlaySoundMem(playBGM, DX_PLAYTYPE_LOOP);
 }
 
 void PlayScene::UpdatePlay()
