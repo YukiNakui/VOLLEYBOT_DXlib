@@ -132,10 +132,12 @@
   <ItemGroup>
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="Bird.cpp" />
+    <ClCompile Include="BlackLoad.cpp" />
     <ClCompile Include="ClearScene.cpp" />
     <ClCompile Include="Continue.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
+    <ClCompile Include="HPBar.cpp" />
     <ClCompile Include="ItemBox.cpp" />
     <ClCompile Include="BackGround.cpp" />
     <ClCompile Include="Ball.cpp" />
@@ -158,10 +160,12 @@
   <ItemGroup>
     <ClInclude Include="Arrow.h" />
     <ClInclude Include="Bird.h" />
+    <ClInclude Include="BlackLoad.h" />
     <ClInclude Include="ClearScene.h" />
     <ClInclude Include="Continue.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameOverScene.h" />
+    <ClInclude Include="HPBar.h" />
     <ClInclude Include="ItemBox.h" />
     <ClInclude Include="BackGround.h" />
     <ClInclude Include="Ball.h" />
