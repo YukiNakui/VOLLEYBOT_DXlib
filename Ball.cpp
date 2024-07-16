@@ -319,7 +319,7 @@ bool Ball::IsBallCatch(float x,float y)
 	float lenX = x - transform_.position_.x;
 	float lenY = y - transform_.position_.y;
 	float len = sqrt(lenX * lenX + lenY * lenY);
-	if (len < 20.0f) {
+	if (len < 25.0f) {
 		isAlive = false;
 		return true;
 	}

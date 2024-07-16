@@ -77,6 +77,9 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	animType = 0;
 	frameCounter = 0;
 
+	currentTime = 0.5f;
+	moveTime = currentTime;
+
 	cdTimer = 0.0f;
 	
 	state = NORMAL;
@@ -157,6 +160,26 @@ void Player::Update()
 	}
 
 	if (!scene->CanMove()) {
+		int x = (int)transform_.position_.x - cam->GetValueX();
+		if (x > 960) {
+			x = 960;
+			cam->SetValueX((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
+		}
+		else if (x < 320) {
+			x = 320;
+			cam->SetValueX((int)transform_.position_.x - x);
+		}
+		int y = (int)transform_.position_.y - cam->GetValueY();
+		if (!fallNow) {
+			if (y > 592) {
+				y = 592;
+				cam->SetValueY((int)transform_.position_.y - y);//カメラの値を出すには上の式を移項する
+			}
+			else if (y < 32) {
+				y = 32;
+				cam->SetValueY((int)transform_.position_.y - y);
+			}
+		}
 		return;
 	}
 
@@ -224,10 +247,28 @@ void Player::Update()
 	if (state == SPIKE) {
 		if (animFrame < SPIKE_MAXFRAME - 1) {
 			frameCounter++;
-			if (frameCounter >= 10) {
-				frameCounter = 0;
-				animFrame++;
+/*			if (animFrame == 1 || animFrame == 2) {
+				if (frameCounter >= 20) {
+					frameCounter = 0;
+					animFrame++;
+				}
 			}
+			else */{
+				if (frameCounter >= 10) {
+					frameCounter = 0;
+					animFrame++;
+				}
+			}
+			/*if (animFrame == 1) {
+				if (currentTime >= moveTime)
+					return;
+				currentTime += 3.0f / 60.0f;
+				if (currentTime > moveTime)
+					currentTime = moveTime;
+				float rate = currentTime / moveTime;
+				transform_.position_.x = (target.x - firstPos.x) * rate + firstPos.x;
+				transform_.position_.y = (target.y - firstPos.y) * rate + firstPos.y;
+			}*/
 			if (animFrame == 2 && frameCounter==0) {
 				if (pBall != nullptr) {
 					nextPos_x = pBall->GetPos().x;
@@ -241,8 +282,8 @@ void Player::Update()
 		}
 		else {
 			canMove = true;
-			animType = 0;
-			animFrame = 0;
+			animType = 3;
+			animFrame = 3;
 			frameCounter = 0;
 			state = NORMAL;
 		}
@@ -275,7 +316,7 @@ void Player::Update()
 			else {
 				if (tossCount > 0) {
 					if (IsTouchBall(pBall->GetPos())) {
-						if (tossCount == 1) {
+						if (tossCount == 1&&state!=TOSS) {
 							pBall->SetIsRight(isRight);
 							PlaySoundMem(tossSound, DX_PLAYTYPE_BACK);
 							pBall->SecondToss();
@@ -290,6 +331,13 @@ void Player::Update()
 						//プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
 						if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - PLAYER_HEIGHT) {
 							if (!pBall->IsTouchGround()) {
+								firstPos.x = transform_.position_.x;
+								firstPos.y = transform_.position_.y;
+								moveTime = 1.0f;
+								target.x = pBall->GetPos().x;
+								target.y = pBall->GetPos().y;
+								currentTime = 0.0f;
+
 								canMove = false;
 								tossCount = 0;
 								animType = 3;
@@ -329,7 +377,7 @@ void Player::Update()
 	}
 
 	if (pBall!=nullptr){ 
-		if (!pBall->IsBallAlive() || pBall->IsBallCatch(transform_.position_.x - 10.0f, transform_.position_.y + PLAYER_HEIGHT / 4.0f)) {
+		if (!pBall->IsBallAlive() || pBall->IsBallCatch(transform_.position_.x, transform_.position_.y + PLAYER_HEIGHT / 4.0f)) {
 			PlaySoundMem(catchSound, DX_PLAYTYPE_BACK);
 			pBall->SetPosition(0.0f, 800.0f);
 			isBallAlive = false;
@@ -449,7 +497,7 @@ void Player::Update()
 		}
 	}
 	
-	if (state != DAMAGE) {
+	if (state != DAMAGE && state != SPIKE) {
 		jumpSpeed += GRAVITY; //速度 += 加速度
 		nextPos_y += jumpSpeed;//座標 += 速度
 	}
@@ -634,7 +682,7 @@ XMFLOAT3 Player::GetPosition()
 bool Player::IsTouchBall(XMFLOAT3 pos)
 {
 	float cx = PLAYER_WIDTH / 2.0f;
-	float cy = 50.0f;
+	float cy = 60.0f;
 	if ((pos.x <= transform_.position_.x + cx) && (pos.x >= transform_.position_.x - cx)) {
 		if ((pos.y <= transform_.position_.y) && (pos.y >= transform_.position_.y - cy)) {
 			return true;

@@ -61,7 +61,7 @@ private:
 	bool blink;
 	bool fallNow;
 
-	VECTOR currentPos;
+	VECTOR firstPos;
 	VECTOR target;
 	float moveTime;
 	VECTOR start;

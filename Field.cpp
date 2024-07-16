@@ -77,7 +77,7 @@ void Field::Reset()
 			case 10://Player
 			{//switch case‚Ì‚È‚©‚Å‚Í•Ï”‚ÌéŒ¾‚Å‚«‚È‚¢‚ª{}‚Ì‚È‚©‚È‚ç‚Å‚«‚é
 				pPlayer = GetParent()->FindGameObject<Player>();
-				pPlayer->SetPosition(w * 32, h * 32);
+				pPlayer->SetPosition(w * 32, h * 32 + 2.0f);
 			}
 			break;
 			case 11://Wolf
