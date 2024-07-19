@@ -247,28 +247,29 @@ void Player::Update()
 	if (state == SPIKE) {
 		if (animFrame < SPIKE_MAXFRAME - 1) {
 			frameCounter++;
-/*			if (animFrame == 1 || animFrame == 2) {
+			if (animFrame == 1 || animFrame == 2) {
 				if (frameCounter >= 20) {
 					frameCounter = 0;
 					animFrame++;
 				}
 			}
-			else */{
+			else {
 				if (frameCounter >= 10) {
 					frameCounter = 0;
 					animFrame++;
 				}
 			}
-			/*if (animFrame == 1) {
+			if (animFrame == 1) {
 				if (currentTime >= moveTime)
 					return;
-				currentTime += 3.0f / 60.0f;
+				currentTime += 1.0f / 60.0f;
 				if (currentTime > moveTime)
 					currentTime = moveTime;
 				float rate = currentTime / moveTime;
-				transform_.position_.x = (target.x - firstPos.x) * rate + firstPos.x;
-				transform_.position_.y = (target.y - firstPos.y) * rate + firstPos.y;
-			}*/
+				rate = pow(rate, 0.1f);
+				nextPos_x = (target.x - firstPos.x) * rate + firstPos.x;
+				nextPos_y = (target.y - firstPos.y) * rate + firstPos.y;
+			}
 			if (animFrame == 2 && frameCounter==0) {
 				if (pBall != nullptr) {
 					nextPos_x = pBall->GetPos().x;
@@ -333,7 +334,7 @@ void Player::Update()
 							if (!pBall->IsTouchGround()) {
 								firstPos.x = transform_.position_.x;
 								firstPos.y = transform_.position_.y;
-								moveTime = 1.0f;
+								moveTime = 0.5f;
 								target.x = pBall->GetPos().x;
 								target.y = pBall->GetPos().y;
 								currentTime = 0.0f;
