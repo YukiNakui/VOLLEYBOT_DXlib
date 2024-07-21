@@ -4,6 +4,7 @@
 ////#include"Field.h"
 //#include"Camera.h"
 //#include"BackGround.h"
+#include"BlackLoad.h"
 
 //コンストラクタ
 PlayScene::PlayScene(GameObject * parent)
@@ -21,6 +22,8 @@ void PlayScene::Initialize()
 	pField = Instantiate<Field>(this);
 	pGObj = Instantiate<GoalObj>(this);
 	pPlayer = Instantiate<Player>(this);
+	pField->Reset();
+	Instantiate<BlackLoad>(this);
 	StartReady();
 }
 
@@ -91,8 +94,9 @@ void PlayScene::GameObjectsReset()
 void PlayScene::StartReady()
 {
 	state = s_Ready;
-	pField->Reset();
 	readyTimer = 2.0f;
+	BlackLoad* bl = FindGameObject<BlackLoad>();
+	bl->Load(BlackLoad::LoadID::L_Start,pPlayer->GetPosition().x, pPlayer->GetPosition().y);
 }
 
 void PlayScene::StartClear()
@@ -118,6 +122,8 @@ void PlayScene::UpdateReady()
 void PlayScene::StartPlay()
 {
 	state = s_Play;
+	BlackLoad* bl = FindGameObject<BlackLoad>();
+	bl->Load(BlackLoad::LoadID::L_Nothing, pPlayer->GetPosition().x, pPlayer->GetPosition().y);
 	ChangeVolumeSoundMem(255 * 50 / 100, playBGM);
 	PlaySoundMem(playBGM, DX_PLAYTYPE_LOOP);
 }
@@ -146,6 +152,8 @@ void PlayScene::StartDead()
 	//pCam->VibrationX(100.0f);
 	state = s_Dead;
 	readyTimer = 1.0f;
+	BlackLoad* bl = FindGameObject<BlackLoad>();
+	bl->Load(BlackLoad::LoadID::L_GameOver, pPlayer->GetPosition().x, pPlayer->GetPosition().y);
 }
 
 void PlayScene::UpdateDead()

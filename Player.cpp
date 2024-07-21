@@ -291,9 +291,11 @@ void Player::Update()
 	}
 
 	float len = 0.0f;
+	float lenX = 0.0f;
+	float lenY = 0.0f;
 	if (pBall != nullptr) {
-		float lenX = pBall->GetPos().x - transform_.position_.x;
-		float lenY = pBall->GetPos().y - transform_.position_.y;
+		lenX = pBall->GetPos().x - transform_.position_.x;
+		lenY = pBall->GetPos().y - transform_.position_.y;
 		len = sqrt(lenX * lenX + lenY * lenY);
 	}
 
@@ -332,19 +334,21 @@ void Player::Update()
 						//プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
 						if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - PLAYER_HEIGHT) {
 							if (!pBall->IsTouchGround()) {
-								firstPos.x = transform_.position_.x;
-								firstPos.y = transform_.position_.y;
-								moveTime = 0.5f;
-								target.x = pBall->GetPos().x;
-								target.y = pBall->GetPos().y;
-								currentTime = 0.0f;
+								if (sqrt(lenX*lenX) < 64.0f) {
+									firstPos.x = transform_.position_.x;
+									firstPos.y = transform_.position_.y;
+									moveTime = 0.5f;
+									target.x = pBall->GetPos().x;
+									target.y = pBall->GetPos().y;
+									currentTime = 0.0f;
 
-								canMove = false;
-								tossCount = 0;
-								animType = 3;
-								animFrame = 0;
-								pBall->SetIsRight(isRight);
-								state = SPIKE;
+									canMove = false;
+									tossCount = 0;
+									animType = 3;
+									animFrame = 0;
+									pBall->SetIsRight(isRight);
+									state = SPIKE;
+								}
 							}
 						}
 					}
