@@ -7,6 +7,7 @@
 #include"Field.h"
 #include"ItemBox.h"
 #include"Camera.h"
+#include"HPBar.h"
 #include"Engine/SceneManager.h"
 
 namespace {
@@ -72,6 +73,7 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	nowDamage = false;
 	blink = true;
 	fallNow = false;
+	tossNow = false;
 
 	animFrame = 0;
 	animType = 0;
@@ -123,6 +125,7 @@ void Player::Update()
 	Field* pField = GetParent()->FindGameObject<Field>();
 	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
 	Camera* cam = GetParent()->FindGameObject<Camera>();
+	HPBar* pHPBar = GetParent()->FindGameObject<HPBar>();
 
 
 	if (state == DAMAGE) {
@@ -199,6 +202,7 @@ void Player::Update()
 
 
 	if (state == DEAD) {
+		canMove = false;
 		if (animFrame < DEAD_MAXFRAME - 1) {
 			frameCounter++;
 			if (frameCounter >= 20) {
@@ -245,6 +249,9 @@ void Player::Update()
 	float nextPos_y = transform_.position_.y;
 
 	if (state == SPIKE) {
+		tossNow = true;
+		target.x = pBall->GetPos().x;
+		target.y = pBall->GetPos().y;
 		if (animFrame < SPIKE_MAXFRAME - 1) {
 			frameCounter++;
 			if (animFrame == 1 || animFrame == 2) {
@@ -338,8 +345,6 @@ void Player::Update()
 									firstPos.x = transform_.position_.x;
 									firstPos.y = transform_.position_.y;
 									moveTime = 0.5f;
-									target.x = pBall->GetPos().x;
-									target.y = pBall->GetPos().y;
 									currentTime = 0.0f;
 
 									canMove = false;
@@ -381,7 +386,7 @@ void Player::Update()
 		}
 	}
 
-	if (pBall!=nullptr){ 
+	if (pBall!=nullptr && !tossNow){ 
 		if (!pBall->IsBallAlive() || pBall->IsBallCatch(transform_.position_.x, transform_.position_.y + PLAYER_HEIGHT / 4.0f)) {
 			PlaySoundMem(catchSound, DX_PLAYTYPE_BACK);
 			pBall->SetPosition(0.0f, 800.0f);
@@ -518,6 +523,7 @@ void Player::Update()
 			nextPos_y -= pushBottom - 1.0f;
 			jumpSpeed = 0.0f;
 			onGround = true;
+			tossNow = false;
 		}
 		else {
 			onGround = false;
@@ -543,6 +549,7 @@ void Player::Update()
 				nextPos_y -= pushBottom - 1.0f;
 				jumpSpeed = 0.0f;
 				onGround = true;
+				tossNow = false;
 			}
 			float pushRtop = pIBox->CollisionUp(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
 			float pushLtop = pIBox->CollisionUp(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP) - 1.0f);
@@ -599,15 +606,19 @@ void Player::Update()
 	float cy = PLAYER_HEIGHT / 2.0f;
 	if (pField->IsFall(transform_.position_.x + cx, transform_.position_.y - (cy - CORRECT_TOP) + 1.0f)) {
 		fallNow = true;
+		state = DEAD;
 	}
-	if (fallNow) {
+	/*if (fallNow) {
 		cdTimer++;
 		if (cdTimer > 10000) {
 			cdTimer = 0.0f;
 			SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 			pSceneManager->ChangeScene(SCENE_ID_GAMEOVER);
 		}
-	}
+	}*/
+
+	if (pHPBar != nullptr)
+		pHPBar->SetHP(hp);
 
 	//‚±‚±‚ÅƒJƒƒ‰ˆÊ’u‚ğ’²®
 	if (cam != nullptr) {

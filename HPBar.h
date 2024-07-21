@@ -12,11 +12,8 @@ public:
 	~HPBar();
 	void Update() override;
 	void Draw() override;
-	void GetHP(int hp);
+	void SetHP(int hp);
 private:
-	float hpBarPosX;
-	float hpBarPosY;
-	float hartPosX;
-	float hartPosY;
+	int playerHP;
 };
 

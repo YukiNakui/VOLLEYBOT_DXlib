@@ -60,6 +60,7 @@ private:
 	bool nowDamage;
 	bool blink;
 	bool fallNow;
+	bool tossNow;
 
 	VECTOR firstPos;
 	VECTOR target;

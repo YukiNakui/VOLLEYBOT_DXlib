@@ -5,6 +5,7 @@
 //#include"Camera.h"
 //#include"BackGround.h"
 #include"BlackLoad.h"
+#include"HPBar.h"
 
 //コンストラクタ
 PlayScene::PlayScene(GameObject * parent)
@@ -23,6 +24,7 @@ void PlayScene::Initialize()
 	pGObj = Instantiate<GoalObj>(this);
 	pPlayer = Instantiate<Player>(this);
 	pField->Reset();
+	Instantiate<HPBar>(this);
 	Instantiate<BlackLoad>(this);
 	StartReady();
 }
