@@ -3,9 +3,9 @@
 namespace {
 	const float HPBAR_POSX = 200.0f;
 	const float HPBAR_POSY = 50.0f;
-	const float hartPosX = 200.0f;
+	const float hartPosX = 180.0f;
 	const float hartPosY = 50.0f;
-	const float HART_SPACE = 50.0f;
+	const float HART_SPACE = 80.0f;
 	const int MAX_HP = 3;
 }
 

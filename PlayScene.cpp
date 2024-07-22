@@ -104,6 +104,8 @@ void PlayScene::StartReady()
 void PlayScene::StartClear()
 {
 	state = s_Clear;
+	BlackLoad* bl = FindGameObject<BlackLoad>();
+	bl->Load(BlackLoad::LoadID::L_Nothing, pPlayer->GetPosition().x, pPlayer->GetPosition().y);
 }
 
 void PlayScene::StartStop(float time)
