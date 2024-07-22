@@ -75,9 +75,11 @@
     </ClCompile>
     <ClCompile Include="Continue.cpp" />
     <ClCompile Include="StageClear.cpp" />
-    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="HPBar.cpp" />
     <ClCompile Include="BlackLoad.cpp" />
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\GameObject.h">
@@ -133,8 +135,10 @@
     </ClInclude>
     <ClInclude Include="Continue.h" />
     <ClInclude Include="StageClear.h" />
-    <ClInclude Include="TitleScene.h" />
     <ClInclude Include="HPBar.h" />
     <ClInclude Include="BlackLoad.h" />
+    <ClInclude Include="TitleScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -10,6 +10,7 @@ class Skeleton :
 	int animType;
 	bool isRight;
 	bool onGround;
+	bool afterShot;
 
 	enum State {
 		NORMAL,

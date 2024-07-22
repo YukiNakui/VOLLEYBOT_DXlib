@@ -3,7 +3,10 @@
 class TitleScene :
     public GameObject
 {
-	int hImage;
+	int hBallImage;
+	int hBGImage;
+	int hPlessImage;
+	int hTitleImage;
 public:
 	TitleScene(GameObject* parent);
 
@@ -18,5 +21,9 @@ public:
 
 	//ŠJ•ú
 	void Release() override;
+private:
+	float bgPosX;
+	float bgPosY;
+	float rotAngle;
 };
 

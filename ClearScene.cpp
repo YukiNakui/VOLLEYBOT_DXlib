@@ -3,7 +3,7 @@
 
 ClearScene::ClearScene(GameObject* parent)
 {
-	hImage = LoadGraph("Assets/Clear.png");
+	hImage = LoadGraph("Assets/Scenes/GAMECLEAR.png");
 	assert(hImage > 0);
 }
 
@@ -13,7 +13,7 @@ void ClearScene::Initialize()
 
 void ClearScene::Update()
 {
-	if (CheckHitKey(KEY_INPUT_C)) {
+	if (CheckHitKey(KEY_INPUT_SPACE)) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_TITLE);
 	}
@@ -26,4 +26,7 @@ void ClearScene::Draw()
 
 void ClearScene::Release()
 {
+	if (hImage > 0) {
+		DeleteGraph(hImage);
+	}
 }

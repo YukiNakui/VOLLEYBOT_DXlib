@@ -7,7 +7,7 @@
 #include"PlayScene.h"
 
 namespace {
-	const int WALK_MAXFRAME{ 15 };
+	const int SHOT_MAXFRAME{ 15 };
 	const int DEAD_MAXFRAME{ 5 };
 
 	const float SKELETON_WIDTH = 128.0f;
@@ -19,9 +19,10 @@ namespace {
 	const float CORRECT_WIDTH = 35.0f;
 	const float CORRECT_BOTTOM = 1.0f;
 	const float CORRECT_TOP = 35.0f;
+	const float SHOT_HEIGHT = 17.0f;
 	static const int WINDOW_WIDTH = 1280;
 	static const int WINDOW_HEIGHT = 720;
-	const float COLLIDE_WIDTH = 40.0f;
+	const float COLLIDE_WIDTH = 65.0f;
 	const float COLLIDE_HEIGHT = 70.0f;
 }
 
@@ -38,6 +39,7 @@ Skeleton::Skeleton(GameObject* parent):Enemy(parent)
 	onGround = true;
 	jumpSpeed = 0.0f;
 	cdTimer = 0.0f;
+	afterShot = false;
 
 	state = NORMAL;
 }
@@ -97,11 +99,42 @@ void Skeleton::Update()
 			isRight = true;
 		else
 			isRight = false;
-		cdTimer++;
-		if (cdTimer > 150.0f) {
-			Arrow* pArrow = Instantiate<Arrow>(GetParent());
-			pArrow->SetArrow(transform_.position_.x, transform_.position_.y + SKELETON_HEIGHT/4.0f, isRight);
+
+		cdTimer+=1.0f/60.0f;
+
+		if (cdTimer > 5.0f) {
+			state = SHOT;
+			animFrame = 0;
 			cdTimer = 0.0f;
+		}
+	}
+
+	if (state == SHOT) {
+		if (animFrame < SHOT_MAXFRAME - 1) {
+			frameCounter++;
+			if (animFrame == 11) {
+				if (frameCounter >= 50) {
+					frameCounter = 0;
+					animFrame++;
+				}
+			}
+			else {
+				if (frameCounter >= 10) {
+					frameCounter = 0;
+					animFrame++;
+				}
+			}
+			if (animFrame >= 12 && !afterShot) {
+				afterShot = true;
+				Arrow* pArrow = Instantiate<Arrow>(GetParent());
+				pArrow->SetArrow(transform_.position_.x, transform_.position_.y + SHOT_HEIGHT, isRight);
+			}
+		}
+		else {
+			state = NORMAL;
+			animFrame = 0;
+			frameCounter = 0;
+			afterShot = false;
 		}
 	}
 

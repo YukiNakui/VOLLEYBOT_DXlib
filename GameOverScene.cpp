@@ -3,7 +3,7 @@
 
 GameOverScene::GameOverScene(GameObject* parent)
 {
-	hImage = LoadGraph("Assets/GameOver.png");
+	hImage = LoadGraph("Assets/Scenes/GAMEOVER.png");
 	assert(hImage > 0);
 }
 
@@ -30,4 +30,7 @@ void GameOverScene::Draw()
 
 void GameOverScene::Release()
 {
+	if (hImage > 0) {
+		DeleteGraph(hImage);
+	}
 }
