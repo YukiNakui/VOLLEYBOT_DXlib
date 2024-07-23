@@ -37,10 +37,13 @@ private:
 
 	GameObject* sceneTop;
 	bool prevSpaceKey;
-	bool prevAttackKey;
+	bool prevTossKey;
+	bool prevSpikeKey;
+	bool prevMoveKey;
 	float moveSpeed;
 	float jumpSpeed;
 	bool onGround;
+	float jumpTimer;
 
 	int animType;//èÛãµ
 	int animFrame;//ÉRÉ}
@@ -48,6 +51,7 @@ private:
 	
 	bool isRight;
 	bool canMove;
+	bool canWalk;
 
 	Ball* pBall;
 
@@ -55,6 +59,7 @@ private:
 	bool canSpike;
 	int tossCount;
 	float cdTimer;
+	bool spikeAfter;
 	
 	float damageTimer;
 	bool nowDamage;

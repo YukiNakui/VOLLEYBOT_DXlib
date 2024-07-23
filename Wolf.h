@@ -22,6 +22,7 @@ class Wolf :
 
 	enum State {
 		NORMAL,
+		ATTACK,
 		DEAD,
 	};
 	State state;
@@ -38,5 +39,10 @@ public:
 	bool CollideRectToRect(float x, float y, float w, float h) override;
 	void KillEnemy() override;
 	bool IsSteppedOnHead(float x, float y, float w, float h) override;
+private:
+	bool ViewInPlayer(XMFLOAT3 pos);
+	XMFLOAT3 targetPos;
+	float accel;
+	bool attackRight;
 };
 

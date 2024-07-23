@@ -3,9 +3,11 @@
 #include"Camera.h"
 #include"ItemBox.h"
 #include"PlayScene.h"
+#include"Player.h"
 
 namespace {
 	const int WALK_MAXFRAME{ 11 };
+	const int ATTACK_MAXFRAME{ 9 };
 	const int DEAD_MAXFRAME{ 2 };
 
 	const float WOLF_WIDTH = 128.0f;
@@ -25,7 +27,7 @@ namespace {
 
 Wolf::Wolf(GameObject* parent):Enemy(parent)
 {
-	hAnimImg = LoadGraph("Assets/Enemy/Wolf.png");
+	hAnimImg = LoadGraph("Assets/Enemy/Wolf2.png");
 	assert(hAnimImg > 0);
 
 	animType = 0;
@@ -36,6 +38,8 @@ Wolf::Wolf(GameObject* parent):Enemy(parent)
 	onGround = true;
 	jumpSpeed = 0.0f;
 	cdTimer = 0.0f;
+	accel = 0.0f;
+	attackRight = false;
 
 	state = NORMAL;
 }
@@ -51,6 +55,7 @@ void Wolf::Update()
 {
 	Field* pField = GetParent()->FindGameObject<Field>();
 	std::list<ItemBox*> pIBoxs = GetParent()->FindGameObjects<ItemBox>();
+	Player* pPlayer = GetParent()->FindGameObject<Player>();
 
 	PlayScene* scene = dynamic_cast<PlayScene*>(GetParent());
 	if (!scene->CanMove())
@@ -97,6 +102,50 @@ void Wolf::Update()
 		}
 		else {
 			transform_.position_.x -= MOVE_SPEED;
+		}
+		if (pPlayer != nullptr) {
+			if (ViewInPlayer(pPlayer->GetPosition())) {
+				attackRight = isRight;
+				targetPos = pPlayer->GetPosition();
+				animType = 1;
+				animFrame = 0;
+				state = ATTACK;
+			}
+		}
+	}
+
+	if (state == ATTACK) {
+		float len = targetPos.x - transform_.position_.x;
+		frameCounter++;
+		if (frameCounter > 6) {
+			animFrame = (animFrame + 1) % ATTACK_MAXFRAME;
+			frameCounter = 0;
+		}
+		if (attackRight) {
+			if (len > 0) {
+				accel += 0.05f;
+				transform_.position_.x += accel;
+			}
+			else {
+				accel -= 0.1f;
+				transform_.position_.x += accel;
+			}
+		}
+		else {
+			if (len < 0) {
+				accel += 0.05f;
+				transform_.position_.x -= accel;
+			}
+			else {
+				accel -= 0.1f;
+				transform_.position_.x -= accel;
+			}
+		}
+		if (accel <= 0.0f) {
+			accel = 0.0f;
+			animFrame = 0;
+			animType = 0;
+			state = NORMAL;
 		}
 	}
 	
@@ -202,19 +251,36 @@ void Wolf::SetPosition(int x, int y)
 bool Wolf::CollideRectToRect(float x, float y, float w, float h)
 {
 	if (state != DEAD) {
-		// 敵の矩形の範囲を計算
-		float myRectRight = transform_.position_.x + WOLF_WIDTH / 2.0f - COLLIDE_WIDTH;
-		float myRectLeft = transform_.position_.x - WOLF_WIDTH / 2.0f + COLLIDE_WIDTH;
-		float myRectTop = transform_.position_.y - WOLF_HEIGHT / 2.0f + COLLIDE_HEIGHT;
-		float myRectBottom = transform_.position_.y + WOLF_HEIGHT / 2.0f - CORRECT_BOTTOM;
+		if (state == NORMAL) {
+			// 敵の矩形の範囲を計算
+			float myRectRight = transform_.position_.x + WOLF_WIDTH / 2.0f - COLLIDE_WIDTH;
+			float myRectLeft = transform_.position_.x - WOLF_WIDTH / 2.0f + COLLIDE_WIDTH;
+			float myRectTop = transform_.position_.y - WOLF_HEIGHT / 2.0f + COLLIDE_HEIGHT;
+			float myRectBottom = transform_.position_.y + WOLF_HEIGHT / 2.0f - CORRECT_BOTTOM;
 
-		// 指定された矩形と敵の矩形が交差しているかチェック
-		if ((x - w / 2.0f < myRectRight && x + w / 2.0f > myRectLeft) &&
-			(y - h / 2.0f < myRectBottom && y + h / 2.0f > myRectTop)) {
-			return true;
+			// 指定された矩形と敵の矩形が交差しているかチェック
+			if ((x - w / 2.0f < myRectRight && x + w / 2.0f > myRectLeft) &&
+				(y - h / 2.0f < myRectBottom && y + h / 2.0f > myRectTop)) {
+				return true;
+			}
+			else
+				return false;
 		}
-		else
-			return false;
+		else if (state == ATTACK) {
+			// 敵の矩形の範囲を計算
+			float myRectRight = transform_.position_.x + WOLF_WIDTH / 2.0f - COLLIDE_WIDTH/2.0f;
+			float myRectLeft = transform_.position_.x - WOLF_WIDTH / 2.0f + COLLIDE_WIDTH/2.0f;
+			float myRectTop = transform_.position_.y;
+			float myRectBottom = transform_.position_.y + WOLF_HEIGHT / 2.0f - CORRECT_BOTTOM;
+
+			// 指定された矩形と敵の矩形が交差しているかチェック
+			if ((x - w / 2.0f < myRectRight && x + w / 2.0f > myRectLeft) &&
+				(y - h / 2.0f < myRectBottom && y + h / 2.0f > myRectTop)) {
+				return true;
+			}
+			else
+				return false;
+		}
 	}
 	else
 		return false;
@@ -223,7 +289,7 @@ bool Wolf::CollideRectToRect(float x, float y, float w, float h)
 void Wolf::KillEnemy()
 {
 	state = DEAD;
-	animType = 1;
+	animType = 2;
 	animFrame = 0;
 	frameCounter = 0;
 }
@@ -247,4 +313,25 @@ bool Wolf::IsSteppedOnHead(float x, float y, float w, float h)
 	}
 	else
 		return false;
+}
+
+bool Wolf::ViewInPlayer(XMFLOAT3 pos)
+{
+	float lenX = pos.x - transform_.position_.x;
+	float lenY = pos.y - transform_.position_.y;
+	float len = sqrt((lenX * lenX) + (lenY * lenY));
+	if (len < 200.0f) {
+		XMVECTOR playerVec = XMLoadFloat3(&pos);
+		playerVec = XMVector3Normalize(playerVec);
+		XMVECTOR eVec = XMLoadFloat3(&transform_.position_);
+		eVec = XMVector3Normalize(eVec);
+		XMVECTOR dot = XMVector3Dot(playerVec, eVec);
+		float c = XMVectorGetX(dot);
+		float angle = acos(c);
+		if (c <= 15.0f && c >= -15.0f)
+			return true;
+		else
+			return false;
+	}
+	return false;
 }

@@ -20,7 +20,7 @@ namespace {
 
 	const float MAX_MOVE_SPEED = 3.5f;
 	const float GROUND = 600.0f;
-	const float JUMP_HIGHT = 64.0f * 1.5f;//ジャンプの高さ
+	const float JUMP_HIGHT = 64.0f * 3.0f;//ジャンプの高さ
 	const float GRAVITY = 8.0f / 60.0f;//重力加速度
 	
 	const float PLAYER_WIDTH = 128.0f;
@@ -63,6 +63,8 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	onGround = true;
 	isRight = true;
 	canMove = true;
+	canWalk = true;
+	jumpTimer = 0.0f;
 
 	pBall = nullptr;
 	isBallAlive = false;
@@ -227,7 +229,7 @@ void Player::Update()
 				frameCounter = 0;
 				animFrame++;
 			}
-			if (animFrame == 1) {
+			if (animFrame == 1 && frameCounter == 0) {
 				if (tossCount == 1) {
 					if (pBall != nullptr) {
 						PlaySoundMem(tossSound, DX_PLAYTYPE_BACK);
@@ -250,6 +252,7 @@ void Player::Update()
 
 	if (state == SPIKE) {
 		tossNow = true;
+#if 0
 		target.x = pBall->GetPos().x;
 		target.y = pBall->GetPos().y;
 		if (animFrame < SPIKE_MAXFRAME - 1) {
@@ -295,6 +298,13 @@ void Player::Update()
 			frameCounter = 0;
 			state = NORMAL;
 		}
+#endif
+		spikeAfter = true;
+		if (pBall != nullptr) {
+			PlaySoundMem(spikeSound, DX_PLAYTYPE_BACK);
+			pBall->Spike(isRight, prevMoveKey);
+		}
+		state = NORMAL;
 	}
 
 	float len = 0.0f;
@@ -306,9 +316,9 @@ void Player::Update()
 		len = sqrt(lenX * lenX + lenY * lenY);
 	}
 
-	if (CheckHitKey(KEY_INPUT_K))
+	if (CheckHitKey(KEY_INPUT_J))
 	{
-		if (!prevAttackKey) {
+		if (!prevTossKey) {
 			if (!isBallAlive || (pBall != nullptr && !pBall->IsBallAlive())) {
 				pBall = nullptr;
 				pBall = Instantiate<Ball>(GetParent());
@@ -338,6 +348,7 @@ void Player::Update()
 						}
 					}
 					else {
+#if 0
 						//プレイヤーとボールが一定距離離れていて、かつプレイヤーよりも一定の高さにボールがあるとき
 						if (len > PLAYER_HEIGHT && pBall->GetPos().y <= transform_.position_.y - PLAYER_HEIGHT) {
 							if (!pBall->IsTouchGround()) {
@@ -356,14 +367,38 @@ void Player::Update()
 								}
 							}
 						}
+#endif
 					}
 				}
 			}
-			prevAttackKey = true;
+			prevTossKey = true;
 		}
 	}
 	else {
-		prevAttackKey = false;
+		prevTossKey = false;
+	}
+
+	if (CheckHitKey(KEY_INPUT_K)) {
+		if (!prevSpikeKey) {
+			if (pBall != nullptr) {
+				if (state == NORMAL && tossCount > 0) {
+					if (IsTouchBall(pBall->GetPos()) && !pBall->IsTouchGround()) {
+						if (!onGround/* && prevMoveKey*/) {
+							//canMove = false;
+							tossCount = 0;
+							animType = 3;
+							//animFrame = 0;
+							pBall->SetIsRight(isRight);
+							state = SPIKE;
+						}
+					}
+				}
+			}
+			prevSpikeKey = true;
+		}
+	}
+	else {
+		prevSpikeKey = false;
 	}
 
 	if (pBall != nullptr) {
@@ -388,98 +423,105 @@ void Player::Update()
 
 	if (pBall!=nullptr && !tossNow){ 
 		if (!pBall->IsBallAlive() || pBall->IsBallCatch(transform_.position_.x, transform_.position_.y + PLAYER_HEIGHT / 4.0f)) {
-			PlaySoundMem(catchSound, DX_PLAYTYPE_BACK);
-			pBall->SetPosition(0.0f, 800.0f);
-			isBallAlive = false;
-			pBall = nullptr;
-			tossCount = 0;
+			if (state == NORMAL) {
+				PlaySoundMem(catchSound, DX_PLAYTYPE_BACK);
+				pBall->SetPosition(0.0f, 800.0f);
+				isBallAlive = false;
+				pBall = nullptr;
+				tossCount = 0;
+			}
 		}
 	}
 	
 	
 	if (canMove) {
-		if (CheckHitKey(KEY_INPUT_D))
-		{
-			if (onGround)
-				animType = 1;
-			if (moveSpeed < 0)
-				moveSpeed = 0.0f;
-			moveSpeed += 0.1f;
-			if (moveSpeed >= MAX_MOVE_SPEED)
-				moveSpeed = MAX_MOVE_SPEED;
-			nextPos_x += moveSpeed;
-			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
-			float cy = PLAYER_HEIGHT / 2.0f;
-			if (++frameCounter >= WALK_MAXFRAME) {
-				if (animFrame % 2 == 1&&onGround)
-					PlaySoundMem(walkSound, DX_PLAYTYPE_BACK);
-				animFrame = (animFrame + 1) % WALK_MAXFRAME;
-				frameCounter = 0;
-			}
-			if (pField != nullptr) {
-				float pushTright = pField->CollisionRight(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
-				float pushBright = pField->CollisionRight(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
-				float pushRight = max(pushBright, pushTright);//右側の頭と足元で当たり判定
-				if (pushRight > 0.0f) {
-					nextPos_x -= pushRight - 1.0f;
+		if (canWalk) {
+			if (CheckHitKey(KEY_INPUT_D))
+			{
+				prevMoveKey = true;
+				if (onGround)
+					animType = 1;
+				if (moveSpeed < 0)
+					moveSpeed = 0.0f;
+				moveSpeed += 0.1f;
+				if (moveSpeed >= MAX_MOVE_SPEED)
+					moveSpeed = MAX_MOVE_SPEED;
+				nextPos_x += moveSpeed;
+				float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
+				float cy = PLAYER_HEIGHT / 2.0f;
+				if (++frameCounter >= WALK_MAXFRAME) {
+					if (animFrame % 2 == 1 && onGround)
+						PlaySoundMem(walkSound, DX_PLAYTYPE_BACK);
+					animFrame = (animFrame + 1) % WALK_MAXFRAME;
+					frameCounter = 0;
 				}
-			}
-			for (ItemBox* pIBox : pIBoxs) {
-				if (pIBox != nullptr) {
-					float pushTright = pIBox->CollisionRight(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
-					float pushBright = pIBox->CollisionRight(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
+				if (pField != nullptr) {
+					float pushTright = pField->CollisionRight(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
+					float pushBright = pField->CollisionRight(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 					float pushRight = max(pushBright, pushTright);//右側の頭と足元で当たり判定
 					if (pushRight > 0.0f) {
 						nextPos_x -= pushRight - 1.0f;
 					}
 				}
-			}
-			isRight = true;
-		}
-		else if (CheckHitKey(KEY_INPUT_A))
-		{
-			if (onGround)
-				animType = 1;
-			if (moveSpeed > 0)
-				moveSpeed = 0.0f;
-			moveSpeed -= 0.1f;
-			if (moveSpeed <= -MAX_MOVE_SPEED)
-				moveSpeed = -MAX_MOVE_SPEED;
-			nextPos_x += moveSpeed;
-			float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
-			float cy = PLAYER_HEIGHT / 2.0f;
-			if (++frameCounter >= WALK_MAXFRAME) {
-				if (animFrame % 2 == 1&&onGround)
-					PlaySoundMem(walkSound, DX_PLAYTYPE_BACK);
-				animFrame = (animFrame + 1) % WALK_MAXFRAME;
-				frameCounter = 0;
-			}
-			if (pField != nullptr) {
-				float pushTleft = pField->CollisionLeft(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
-				float pushBleft = pField->CollisionLeft(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
-				float pushLeft = max(pushBleft, pushTleft);//左側の頭と足元で当たり判定
-				if (pushLeft > 0.0f) {
-					nextPos_x += pushLeft - 1.0f;
+				for (ItemBox* pIBox : pIBoxs) {
+					if (pIBox != nullptr) {
+						float pushTright = pIBox->CollisionRight(nextPos_x + cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
+						float pushBright = pIBox->CollisionRight(nextPos_x + cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
+						float pushRight = max(pushBright, pushTright);//右側の頭と足元で当たり判定
+						if (pushRight > 0.0f) {
+							nextPos_x -= pushRight - 1.0f;
+						}
+					}
 				}
+				isRight = true;
 			}
-			for (ItemBox* pIBox : pIBoxs) {
-				if (pIBox != nullptr) {
-					float pushTleft = pIBox->CollisionLeft(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
-					float pushBleft = pIBox->CollisionLeft(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
+			else if (CheckHitKey(KEY_INPUT_A))
+			{
+				prevMoveKey = true;
+				if (onGround)
+					animType = 1;
+				if (moveSpeed > 0)
+					moveSpeed = 0.0f;
+				moveSpeed -= 0.1f;
+				if (moveSpeed <= -MAX_MOVE_SPEED)
+					moveSpeed = -MAX_MOVE_SPEED;
+				nextPos_x += moveSpeed;
+				float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
+				float cy = PLAYER_HEIGHT / 2.0f;
+				if (++frameCounter >= WALK_MAXFRAME) {
+					if (animFrame % 2 == 1 && onGround)
+						PlaySoundMem(walkSound, DX_PLAYTYPE_BACK);
+					animFrame = (animFrame + 1) % WALK_MAXFRAME;
+					frameCounter = 0;
+				}
+				if (pField != nullptr) {
+					float pushTleft = pField->CollisionLeft(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
+					float pushBleft = pField->CollisionLeft(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
 					float pushLeft = max(pushBleft, pushTleft);//左側の頭と足元で当たり判定
 					if (pushLeft > 0.0f) {
 						nextPos_x += pushLeft - 1.0f;
 					}
 				}
+				for (ItemBox* pIBox : pIBoxs) {
+					if (pIBox != nullptr) {
+						float pushTleft = pIBox->CollisionLeft(nextPos_x - cx, nextPos_y - (cy - CORRECT_TOP) + 1.0f);
+						float pushBleft = pIBox->CollisionLeft(nextPos_x - cx, nextPos_y + (cy - CORRECT_BOTTOM) - 1.0f);
+						float pushLeft = max(pushBleft, pushTleft);//左側の頭と足元で当たり判定
+						if (pushLeft > 0.0f) {
+							nextPos_x += pushLeft - 1.0f;
+						}
+					}
+				}
+				isRight = false;
 			}
-			isRight = false;
-		}
-		else {
-			moveSpeed = 0.0f;
-			if (onGround) {
-				animType = 0;
-				animFrame = 0;
-				frameCounter = 0;
+			else {
+				moveSpeed = 0.0f;
+				prevMoveKey = false;
+				if (onGround) {
+					animType = 0;
+					animFrame = 0;
+					frameCounter = 0;
+				}
 			}
 		}
 
@@ -487,27 +529,61 @@ void Player::Update()
 		{
 			if (prevSpaceKey == false) {
 				if (onGround) {
-					PlaySoundMem(jumpSound, DX_PLAYTYPE_BACK);
+					canWalk = false;
+					jumpTimer += 1.0f / 60.0f;
+					animFrame = 0;
+					animType = 3;
+					/*PlaySoundMem(jumpSound, DX_PLAYTYPE_BACK);
 					jumpSpeed = -sqrt(2 * GRAVITY * JUMP_HIGHT);
 					onGround = false;
-					animType = 3;
+					animType = 3;*/
 				}
 			}
-			prevSpaceKey = true;
+			//prevSpaceKey = true;
 		}
 		else {
-			prevSpaceKey = false;
+			if (jumpTimer > 0.0f && jumpTimer<=0.2f) {
+				prevSpaceKey = true;
+				PlaySoundMem(jumpSound, DX_PLAYTYPE_BACK);
+				jumpSpeed = -sqrt(2 * GRAVITY * (JUMP_HIGHT / 2.0f));
+				onGround = false;
+			}
+			else if (jumpTimer > 0.2f/* && jumpTimer <= 1.0f*/) {
+				prevSpaceKey = true;
+				PlaySoundMem(jumpSound, DX_PLAYTYPE_BACK);
+				jumpSpeed = -sqrt(2 * GRAVITY * JUMP_HIGHT);
+				onGround = false;
+			}
+			//prevSpaceKey = false;
+			jumpTimer = 0.0f;
+			canWalk = true;
 		}
 
 		if (!onGround) {
-			if (state == NORMAL && animType == 3)
+			/*if (state == NORMAL && animType == 3)
 			{
 				animFrame = 3;
+			}*/
+			if (state == NORMAL) {
+				if (!spikeAfter) {
+					if (jumpSpeed <= 0) {
+						if (tossCount == 0) {
+							animFrame = 3;
+						}
+						else if (tossCount > 0) {
+							animFrame = 1;
+						}
+					}
+					else
+						animFrame = 3;
+				}
+				else
+					animFrame = 2;
 			}
 		}
 	}
 	
-	if (state != DAMAGE && state != SPIKE) {
+	if (state != DAMAGE/* && state != SPIKE*/) {
 		jumpSpeed += GRAVITY; //速度 += 加速度
 		nextPos_y += jumpSpeed;//座標 += 速度
 	}
@@ -522,6 +598,8 @@ void Player::Update()
 		if (pushBottom > 0.0f) {
 			nextPos_y -= pushBottom - 1.0f;
 			jumpSpeed = 0.0f;
+			prevSpaceKey = false;
+			spikeAfter = false;
 			onGround = true;
 			tossNow = false;
 		}
@@ -548,6 +626,8 @@ void Player::Update()
 			if (pushBottom > 0.0f) {
 				nextPos_y -= pushBottom - 1.0f;
 				jumpSpeed = 0.0f;
+				prevSpaceKey = false;
+				spikeAfter = false;
 				onGround = true;
 				tossNow = false;
 			}
@@ -577,12 +657,14 @@ void Player::Update()
 		if (state != DEAD && state != DAMAGE) {
 			std::list<Enemy*> pEnemies = GetParent()->FindGameObjects<Enemy>();
 			for (Enemy* pEnemy : pEnemies) {
+#if 0
 				if (pEnemy->IsSteppedOnHead(transform_.position_.x, transform_.position_.y + 40.0f, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0)) {
 					jumpSpeed = -sqrt(2 * GRAVITY * JUMP_HIGHT);
 					onGround = false;
 					animType = 3;
 					pEnemy->KillEnemy();
 				}
+#endif
 				if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y + 20, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
 					hp--;
 					/*if (cam != nullptr)
@@ -698,7 +780,7 @@ XMFLOAT3 Player::GetPosition()
 bool Player::IsTouchBall(XMFLOAT3 pos)
 {
 	float cx = PLAYER_WIDTH / 2.0f;
-	float cy = 60.0f;
+	float cy = 50.0f;
 	if ((pos.x <= transform_.position_.x + cx) && (pos.x >= transform_.position_.x - cx)) {
 		if ((pos.y <= transform_.position_.y) && (pos.y >= transform_.position_.y - cy)) {
 			return true;

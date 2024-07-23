@@ -23,7 +23,7 @@ public:
 
 	void SetPosition(float x,float y);
 	
-	void Spike(bool isRight);
+	void Spike(bool isRight,bool moveNow);
 	void FirstToss();
 	void SecondToss();
 	

@@ -128,7 +128,7 @@ void PlayScene::StartPlay()
 	state = s_Play;
 	BlackLoad* bl = FindGameObject<BlackLoad>();
 	bl->Load(BlackLoad::LoadID::L_Nothing, pPlayer->GetPosition().x, pPlayer->GetPosition().y);
-	ChangeVolumeSoundMem(255 * 50 / 100, playBGM);
+	//ChangeVolumeSoundMem(255 * 50 / 100, playBGM);
 	PlaySoundMem(playBGM, DX_PLAYTYPE_LOOP);
 }
 

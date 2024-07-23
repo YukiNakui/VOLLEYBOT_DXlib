@@ -268,21 +268,25 @@ void Ball::SetPosition(float x,float y)
 	transform_.position_.y = y;
 }
 
-void Ball::Spike(bool isRight)
+void Ball::Spike(bool isRight,bool moveNow)
 {
 	isAlive = true;
 	float spikeSpeed = 10.0f;
-	rotSpeed = 1.0f;
+	rotSpeed = 0.8f;
 
 	state = SPIKE;
 
-	if (isRight)
-	{
-		moveVec = { spikeSpeed,spikeSpeed,0.0f,0.0f };
+	if (!moveNow) {
+		if (isRight)
+			moveVec = { spikeSpeed,spikeSpeed,0.0f,0.0f };
+		else
+			moveVec = { -spikeSpeed,spikeSpeed,0.0f,0.0f };
 	}
-	else
-	{
-		moveVec = { -spikeSpeed,spikeSpeed,0.0f,0.0f };
+	else {
+		if (isRight)
+			moveVec = { spikeSpeed,spikeSpeed/2,0.0f,0.0f };
+		else
+			moveVec = { -spikeSpeed,spikeSpeed/2,0.0f,0.0f };
 	}
 }
 
@@ -319,7 +323,7 @@ bool Ball::IsBallCatch(float x,float y)
 	float lenX = x - transform_.position_.x;
 	float lenY = y - transform_.position_.y;
 	float len = sqrt(lenX * lenX + lenY * lenY);
-	if (len < 25.0f) {
+	if (len < 20.0f) {
 		isAlive = false;
 		return true;
 	}
