@@ -36,5 +36,8 @@ public:
 	bool IsSteppedOnHead(float x, float y, float w, float h) override;
 private:
 	bool IsCanAttack(XMFLOAT3 pos);
+
+	int roarSound;
+	int deathSound;
 };
 

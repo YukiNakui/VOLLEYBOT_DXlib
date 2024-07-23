@@ -23,5 +23,6 @@ private:
 	//float overY;
 	//float overAlpha;
 	//float overTimer;
+	int loadSound;
 };
 

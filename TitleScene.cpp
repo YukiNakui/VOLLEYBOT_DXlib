@@ -23,10 +23,13 @@ TitleScene::TitleScene(GameObject* parent)
 	bgPosX = 0;
 	bgPosY = SCREEN_HEIGHT / 2.0;
 	rotAngle = 0.0f;
+	titleBGM = LoadSoundMem("Assets/Sounds/GB-Action-D01-3(Title-Loop140).mp3");
+	assert(titleBGM > 0);
 }
 
 void TitleScene::Initialize()
 {
+	PlaySoundMem(titleBGM, DX_PLAYTYPE_LOOP);
 }
 
 void TitleScene::Update()
@@ -69,5 +72,8 @@ void TitleScene::Release()
 	}
 	if (hTitleImage > 0) {
 		DeleteGraph(hTitleImage);
+	}
+	if (titleBGM > 0) {
+		DeleteSoundMem(titleBGM);
 	}
 }

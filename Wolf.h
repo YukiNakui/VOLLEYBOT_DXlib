@@ -42,7 +42,13 @@ public:
 private:
 	bool ViewInPlayer(XMFLOAT3 pos);
 	XMFLOAT3 targetPos;
+	XMVECTOR viewVec;
 	float accel;
 	bool attackRight;
+	bool attackAfter;
+	float attackAfterTimer;
+
+	int roarSound;
+	int deathSound;
 };
 

@@ -38,5 +38,10 @@ public:
 	bool CollideRectToRect(float x, float y, float w, float h);
 	void Goal();
 	void UpdateRect();
+private:
+	int explosionSound1;
+	int explosionSound2;
+	int explosionSound3;
+	int soundNumber;
 };
 

@@ -31,5 +31,8 @@ public:
 	bool CollideRectToRect(float x, float y, float w, float h) override;
 	void KillEnemy() override;
 	bool IsSteppedOnHead(float x, float y, float w, float h) override;
+private:
+	int shotSound;
+	int deathSound;
 };
 

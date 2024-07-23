@@ -5,10 +5,13 @@ GameOverScene::GameOverScene(GameObject* parent)
 {
 	hImage = LoadGraph("Assets/Scenes/GAMEOVER.png");
 	assert(hImage > 0);
+	goBGM = LoadSoundMem("Assets/Sounds/GB-Action-D09-1(ED).mp3");
+	assert(goBGM > 0);
 }
 
 void GameOverScene::Initialize()
 {
+	PlaySoundMem(goBGM, DX_PLAYTYPE_LOOP);
 }
 
 void GameOverScene::Update()
@@ -32,5 +35,8 @@ void GameOverScene::Release()
 {
 	if (hImage > 0) {
 		DeleteGraph(hImage);
+	}
+	if (goBGM > 0) {
+		DeleteSoundMem(goBGM);
 	}
 }

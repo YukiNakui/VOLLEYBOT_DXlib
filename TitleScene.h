@@ -25,5 +25,7 @@ private:
 	float bgPosX;
 	float bgPosY;
 	float rotAngle;
+
+	int titleBGM;
 };
 

@@ -30,6 +30,10 @@ Skeleton::Skeleton(GameObject* parent):Enemy(parent)
 {
 	hAnimImg = LoadGraph("Assets/Enemy/Skeleton.png");
 	assert(hAnimImg > 0);
+	shotSound = LoadSoundMem("Assets/Sounds/Onoma-Surprise08-3(High).mp3");
+	assert(shotSound > 0);
+	deathSound = LoadSoundMem("Assets/Sounds/Monster01-8.mp3");
+	assert(deathSound > 0);
 
 	animType = 0;
 	animFrame = 0;
@@ -48,6 +52,12 @@ Skeleton::~Skeleton()
 {
 	if (hAnimImg > 0) {
 		DeleteGraph(hAnimImg);
+	}
+	if (shotSound > 0) {
+		DeleteSoundMem(shotSound);
+	}
+	if (deathSound > 0) {
+		DeleteSoundMem(deathSound);
 	}
 }
 
@@ -126,6 +136,7 @@ void Skeleton::Update()
 			}
 			if (animFrame >= 12 && !afterShot) {
 				afterShot = true;
+				PlaySoundMem(shotSound, DX_PLAYTYPE_BACK);
 				Arrow* pArrow = Instantiate<Arrow>(GetParent());
 				pArrow->SetArrow(transform_.position_.x, transform_.position_.y + SHOT_HEIGHT, isRight);
 			}
@@ -265,6 +276,7 @@ void Skeleton::KillEnemy()
 	animFrame = 0;
 	frameCounter = 0;
 	cdTimer = 0.0f;
+	PlaySoundMem(deathSound, DX_PLAYTYPE_BACK);
 }
 
 bool Skeleton::IsSteppedOnHead(float x, float y, float w, float h)

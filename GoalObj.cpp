@@ -22,11 +22,18 @@ GoalObj::GoalObj(GameObject* scene)
 	}*/
 	hAnimImage = LoadGraph("Assets/Goal.png");
 	assert(hAnimImage > 0);
+	explosionSound1 = LoadSoundMem("Assets/Sounds/Explosion03-2(Short).mp3");
+	assert(explosionSound1 > 0);
+	explosionSound2 = LoadSoundMem("Assets/Sounds/Explosion04-1(Short).mp3");
+	assert(explosionSound2 > 0);
+	explosionSound3 = LoadSoundMem("Assets/Sounds/Explosion08-2(Short).mp3");
+	assert(explosionSound3 > 0);
 
 	animFrame = 0;
 	//animType = 0;
 	frameCounter = 0;
 	cdTimer = 0.0f;
+	soundNumber = 0;
 
 	state = NOTBRAKE;
 	UpdateRect();
@@ -46,7 +53,27 @@ void GoalObj::Update()
 	Field* pField = GetParent()->FindGameObject<Field>();
 	if (state == BRAKE) {//ゴールしたら
 		if (animFrame < GOAL_MAXFRAME - 1) {
+			if (soundNumber > 2)
+				soundNumber = 0;
 			frameCounter++;
+			if (frameCounter % 20 == 0) {
+				if (soundNumber == 0)
+					PlaySoundMem(explosionSound1, DX_PLAYTYPE_BACK);
+				else if (soundNumber == 1)
+					PlaySoundMem(explosionSound1, DX_PLAYTYPE_BACK);
+				else if (soundNumber == 2)
+					PlaySoundMem(explosionSound1, DX_PLAYTYPE_BACK);
+				soundNumber += 1;
+			}
+			if (frameCounter % 30 == 0) {
+				if (soundNumber == 0)
+					PlaySoundMem(explosionSound1, DX_PLAYTYPE_BACK);
+				else if (soundNumber == 1)
+					PlaySoundMem(explosionSound1, DX_PLAYTYPE_BACK);
+				else if (soundNumber == 2)
+					PlaySoundMem(explosionSound1, DX_PLAYTYPE_BACK);
+				soundNumber += 1;
+			}
 			if (frameCounter > 60) {
 				animFrame = (animFrame + 1) % GOAL_MAXFRAME;
 				frameCounter = 0;
@@ -54,7 +81,7 @@ void GoalObj::Update()
 		}
 		else {
 			cdTimer++;
-			if (cdTimer > 60.0f) {
+			if (cdTimer > 200.0f) {
 				//if (pField->CanNextStageChange()) {//次のステージがあったら
 				//	//pField->SetNextStage();//ステージ番号を進める
 				//	//pField->Reset();//ステージの再読み込み
@@ -65,9 +92,9 @@ void GoalObj::Update()
 					SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 					pSceneManager->ChangeScene(SCENE_ID_CLEAR);
 				//}
-				animFrame = 0;
+				/*animFrame = 0;
 				frameCounter = 0;
-				cdTimer = 0;
+				cdTimer = 0;*/
 			}
 		}
 	}

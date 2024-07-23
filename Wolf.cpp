@@ -29,6 +29,10 @@ Wolf::Wolf(GameObject* parent):Enemy(parent)
 {
 	hAnimImg = LoadGraph("Assets/Enemy/Wolf2.png");
 	assert(hAnimImg > 0);
+	roarSound = LoadSoundMem("Assets/Sounds/Monster01-1.mp3");
+	assert(roarSound > 0);
+	deathSound = LoadSoundMem("Assets/Sounds/Monster01-8.mp3");
+	assert(deathSound > 0);
 
 	animType = 0;
 	animFrame = 0;
@@ -40,14 +44,24 @@ Wolf::Wolf(GameObject* parent):Enemy(parent)
 	cdTimer = 0.0f;
 	accel = 0.0f;
 	attackRight = false;
+	attackAfter = false;
+	attackAfterTimer = 0.0f;
+	viewVec = { -1.0f,0.0f,0.0f,0.0f };
 
 	state = NORMAL;
+	
 }
 
 Wolf::~Wolf()
 {
 	if (hAnimImg > 0) {
 		DeleteGraph(hAnimImg);
+	}
+	if (roarSound > 0) {
+		DeleteSoundMem(roarSound);
+	}
+	if (deathSound > 0) {
+		DeleteSoundMem(deathSound);
 	}
 }
 
@@ -90,6 +104,13 @@ void Wolf::Update()
 			KillMe();
 	}
 
+	if (attackAfter) {
+		attackAfterTimer += 1.0f / 60.0f;
+		if (attackAfterTimer > 3.0f) {
+			attackAfter = false;
+			attackAfterTimer = 0.0f;
+		}
+	}
 
 	if (state == NORMAL) {
 		frameCounter++;
@@ -104,12 +125,13 @@ void Wolf::Update()
 			transform_.position_.x -= MOVE_SPEED;
 		}
 		if (pPlayer != nullptr) {
-			if (ViewInPlayer(pPlayer->GetPosition())) {
+			if (ViewInPlayer(pPlayer->GetPosition()) &&  !attackAfter) {
 				attackRight = isRight;
 				targetPos = pPlayer->GetPosition();
 				animType = 1;
 				animFrame = 0;
 				state = ATTACK;
+				PlaySoundMem(roarSound, DX_PLAYTYPE_BACK);
 			}
 		}
 	}
@@ -123,21 +145,21 @@ void Wolf::Update()
 		}
 		if (attackRight) {
 			if (len > 0) {
-				accel += 0.05f;
+				accel += 0.1f;
 				transform_.position_.x += accel;
 			}
 			else {
-				accel -= 0.1f;
+				accel -= 0.3f;
 				transform_.position_.x += accel;
 			}
 		}
 		else {
 			if (len < 0) {
-				accel += 0.05f;
+				accel += 0.1f;
 				transform_.position_.x -= accel;
 			}
 			else {
-				accel -= 0.1f;
+				accel -= 0.3f;
 				transform_.position_.x -= accel;
 			}
 		}
@@ -146,6 +168,7 @@ void Wolf::Update()
 			animFrame = 0;
 			animType = 0;
 			state = NORMAL;
+			attackAfter = true;
 		}
 	}
 	
@@ -159,6 +182,12 @@ void Wolf::Update()
 		if (pushRight > 0.0f) {
 			isRight = false;
 			transform_.position_.x -= pushRight - 1.0f;
+			viewVec = -viewVec;
+			if (state == ATTACK) {
+				animType = 0;
+				state = NORMAL;
+				attackAfter = true;
+			}
 		}
 
 		float pushTleft = pField->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + cy - CORRECT_TOP - 1.0f);
@@ -167,6 +196,12 @@ void Wolf::Update()
 		if (pushLeft > 0.0f) {
 			isRight = true;
 			transform_.position_.x += pushLeft - 1.0f;
+			viewVec = -viewVec;
+			if (state == ATTACK) {
+				animType = 0;
+				state = NORMAL;
+				attackAfter = true;
+			}
 		}
 
 		jumpSpeed += GRAVITY;
@@ -199,6 +234,12 @@ void Wolf::Update()
 		if (pushRight > 0.0f) {
 			isRight = false;
 			transform_.position_.x -= pushRight - 1.0f;
+			viewVec = -viewVec;
+			if (state == ATTACK) {
+				animType = 0;
+				state = NORMAL;
+				attackAfter = true;
+			}
 		}
 
 		float pushTleft = pIBox->CollisionLeft(transform_.position_.x - cx, transform_.position_.y + cy - CORRECT_TOP - 1.0f);
@@ -207,6 +248,12 @@ void Wolf::Update()
 		if (pushLeft > 0.0f) {
 			isRight = true;
 			transform_.position_.x += pushLeft - 1.0f;
+			viewVec = -viewVec;
+			if (state == ATTACK) {
+				animType = 0;
+				state = NORMAL;
+				attackAfter = true;
+			}
 		}
 
 		//transform_.position_.y += GRAVITY;
@@ -292,6 +339,7 @@ void Wolf::KillEnemy()
 	animType = 2;
 	animFrame = 0;
 	frameCounter = 0;
+	PlaySoundMem(deathSound, DX_PLAYTYPE_BACK);
 }
 
 bool Wolf::IsSteppedOnHead(float x, float y, float w, float h)
@@ -322,13 +370,20 @@ bool Wolf::ViewInPlayer(XMFLOAT3 pos)
 	float len = sqrt((lenX * lenX) + (lenY * lenY));
 	if (len < 200.0f) {
 		XMVECTOR playerVec = XMLoadFloat3(&pos);
-		playerVec = XMVector3Normalize(playerVec);
+		//playerVec = XMVector3Normalize(playerVec);
 		XMVECTOR eVec = XMLoadFloat3(&transform_.position_);
-		eVec = XMVector3Normalize(eVec);
-		XMVECTOR dot = XMVector3Dot(playerVec, eVec);
+		//eVec = XMVector3Normalize(eVec);
+		XMVECTOR epVec = playerVec - eVec;
+		epVec = XMVector3Normalize(epVec);
+		//XMVECTOR viewEnemyVec = eVec + viewVec;
+		viewVec = XMVector3Normalize(viewVec);
+		XMVECTOR dot = XMVector3Dot(epVec, viewVec);
 		float c = XMVectorGetX(dot);
-		float angle = acos(c);
-		if (c <= 15.0f && c >= -15.0f)
+
+		// 15度のコサイン値を計算 (cos(15°))
+		float cos15 = cos(15.0f * XM_PI / 180.0f);
+
+		if (c >= cos15)
 			return true;
 		else
 			return false;

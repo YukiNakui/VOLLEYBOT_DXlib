@@ -30,6 +30,10 @@ Bird::Bird(GameObject* parent):Enemy(parent)
 {
 	hAnimImg = LoadGraph("Assets/Enemy/Bird.png");
 	assert(hAnimImg > 0);
+	roarSound = LoadSoundMem("Assets/Sounds/Monster01-2.mp3");
+	assert(roarSound > 0);
+	deathSound = LoadSoundMem("Assets/Sounds/Monster01-8.mp3");
+	assert(deathSound > 0);
 
 	animType = 0;
 	animFrame = 0;
@@ -51,6 +55,12 @@ Bird::~Bird()
 {
 	if (hAnimImg > 0) {
 		DeleteGraph(hAnimImg);
+	}
+	if (roarSound > 0) {
+		DeleteSoundMem(roarSound);
+	}
+	if (deathSound > 0) {
+		DeleteSoundMem(deathSound);
 	}
 }
 
@@ -117,6 +127,7 @@ void Bird::Update()
 				animFrame = 13;
 				moveRate = 0.0f;
 				state = ATTACK;
+				PlaySoundMem(roarSound, DX_PLAYTYPE_BACK);
 			}
 		}
 		if (isRight) {
@@ -272,6 +283,7 @@ void Bird::KillEnemy()
 	animType = 1;
 	animFrame = 0;
 	frameCounter = 0;
+	PlaySoundMem(deathSound, DX_PLAYTYPE_BACK);
 }
 
 bool Bird::IsSteppedOnHead(float x, float y, float w, float h)
