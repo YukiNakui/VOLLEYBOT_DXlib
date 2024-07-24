@@ -22,7 +22,7 @@ namespace {
 	static const int WINDOW_WIDTH = 1280;
 	static const int WINDOW_HEIGHT = 720;
 	const float COLLIDE_WIDTH = 40.0f;
-	const float COLLIDE_HEIGHT = 70.0f;
+	const float COLLIDE_HEIGHT = 60.0f;
 }
 
 Wolf::Wolf(GameObject* parent):Enemy(parent)

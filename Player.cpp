@@ -20,7 +20,7 @@ namespace {
 
 	const float MAX_MOVE_SPEED = 3.5f;
 	const float GROUND = 600.0f;
-	const float JUMP_HIGHT = 64.0f * 3.0f;//ジャンプの高さ
+	const float JUMP_HIGHT = 64.0f * 3.2f;//ジャンプの高さ
 	const float GRAVITY = 8.0f / 60.0f;//重力加速度
 	
 	const float PLAYER_WIDTH = 128.0f;
@@ -57,7 +57,7 @@ Player::Player(GameObject* parent) : GameObject(sceneTop)
 	transform_.position_.x = 128.0f;
 	transform_.position_.y = GROUND;
 
-	hp = 3;
+	hp = 5;
 	moveSpeed = 0.0;
 	jumpSpeed = 0.0f;
 	onGround = true;
@@ -166,18 +166,18 @@ void Player::Update()
 
 	if (!scene->CanMove()) {
 		int x = (int)transform_.position_.x - cam->GetValueX();
-		if (x > 960) {
-			x = 960;
+		if (x > 900) {
+			x = 900;
 			cam->SetValueX((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
 		}
-		else if (x < 320) {
-			x = 320;
+		else if (x < 380) {
+			x = 380;
 			cam->SetValueX((int)transform_.position_.x - x);
 		}
 		int y = (int)transform_.position_.y - cam->GetValueY();
 		if (!fallNow) {
-			if (y > 592) {
-				y = 592;
+			if (y > 550) {
+				y = 550;
 				cam->SetValueY((int)transform_.position_.y - y);//カメラの値を出すには上の式を移項する
 			}
 			else if (y < 32) {
@@ -450,8 +450,10 @@ void Player::Update()
 				float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
 				float cy = PLAYER_HEIGHT / 2.0f;
 				if (++frameCounter >= WALK_MAXFRAME) {
-					if (animFrame % 2 == 1 && onGround)
+					if (animFrame % 2 == 1 && onGround) {
+						ChangeVolumeSoundMem(255 * 80 / 100, walkSound);
 						PlaySoundMem(walkSound, DX_PLAYTYPE_BACK);
+					}
 					animFrame = (animFrame + 1) % WALK_MAXFRAME;
 					frameCounter = 0;
 				}
@@ -489,8 +491,10 @@ void Player::Update()
 				float cx = PLAYER_WIDTH / 2.0f - CORRECT_WIDTH;
 				float cy = PLAYER_HEIGHT / 2.0f;
 				if (++frameCounter >= WALK_MAXFRAME) {
-					if (animFrame % 2 == 1 && onGround)
+					if (animFrame % 2 == 1 && onGround) {
+						ChangeVolumeSoundMem(255 * 80 / 100, walkSound);
 						PlaySoundMem(walkSound, DX_PLAYTYPE_BACK);
+					}
 					animFrame = (animFrame + 1) % WALK_MAXFRAME;
 					frameCounter = 0;
 				}
@@ -665,6 +669,7 @@ void Player::Update()
 					pEnemy->KillEnemy();
 				}
 #endif
+#if 1
 				if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y + 20, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
 					hp--;
 					/*if (cam != nullptr)
@@ -680,6 +685,7 @@ void Player::Update()
 					if (pBall != nullptr)
 						pBall->KillMe();
 				}
+#endif
 			}
 		}
 	}
@@ -718,18 +724,18 @@ void Player::Update()
 		}
 		else {
 			int x = (int)transform_.position_.x - cam->GetValueX();
-			if (x > 960) {
-				x = 960;
+			if (x > 900) {
+				x = 900;
 				cam->SetValueX((int)transform_.position_.x - x);//カメラの値を出すには上の式を移項する
 			}
-			else if (x < 320) {
-				x = 320;
+			else if (x < 380) {
+				x = 380;
 				cam->SetValueX((int)transform_.position_.x - x);
 			}
 			int y = (int)transform_.position_.y - cam->GetValueY();
 			if (!fallNow) {
-				if (y > 592) {
-					y = 592;
+				if (y > 550) {
+					y = 550;
 					cam->SetValueY((int)transform_.position_.y - y);//カメラの値を出すには上の式を移項する
 				}
 				else if (y < 32) {

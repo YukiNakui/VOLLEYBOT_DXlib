@@ -3,10 +3,10 @@
 namespace {
 	const float HPBAR_POSX = 200.0f;
 	const float HPBAR_POSY = 50.0f;
-	const float hartPosX = 180.0f;
+	const float hartPosX = 150.0f;
 	const float hartPosY = 50.0f;
-	const float HART_SPACE = 80.0f;
-	const int MAX_HP = 3;
+	const float HART_SPACE = 50.0f;
+	const int MAX_HP = 5;
 }
 
 HPBar::HPBar(GameObject* parent)
@@ -17,7 +17,9 @@ HPBar::HPBar(GameObject* parent)
 	assert(hHartImage > 0);
 	hBlackHartImage = LoadGraph("Assets/BlackHart.png");
 	assert(hBlackHartImage > 0);
-	playerHP = 3;
+	manuImage = LoadGraph("Assets/manu.png");
+	assert(manuImage > 0);
+	playerHP = 5;
 }
 
 HPBar::~HPBar()
@@ -28,6 +30,8 @@ HPBar::~HPBar()
 		DeleteGraph(hHartImage);
 	if (hBlackHartImage > 0)
 		DeleteGraph(hBlackHartImage);
+	if (manuImage > 0)
+		DeleteGraph(manuImage);
 }
 
 void HPBar::Update()
@@ -43,6 +47,7 @@ void HPBar::Draw()
 	for (int i = 0; i < playerHP; i++) {
 		DrawRotaGraph(hartPosX+i*HART_SPACE, hartPosY, 2.0, 0, hHartImage, TRUE);
 	}
+	DrawRotaGraph(100, 630, 0.3, 0, manuImage, TRUE);
 }
 
 void HPBar::SetHP(int hp)

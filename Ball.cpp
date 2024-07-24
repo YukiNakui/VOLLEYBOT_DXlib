@@ -30,6 +30,8 @@ Ball::Ball(GameObject* parent)
 	for (int i = 0; i < BAF::CHARGE_MAXFRAME*2; i++) {
 		assert(hChargeImg[i] > 0);
 	}
+	breakSound = LoadSoundMem("Assets/Sounds/Hit01-1.mp3");
+	assert(breakSound > 0);
 
 	moveVec = XMVectorZero();
 	isAlive = true;
@@ -52,6 +54,9 @@ Ball::~Ball()
 	if (hImage > 0)
 	{
 		DeleteGraph(hImage);
+	}
+	if (breakSound > 0) {
+		DeleteSoundMem(breakSound);
 	}
 }
 
@@ -148,8 +153,10 @@ void Ball::Update()
 		float pushRBottom = pIBox->CollisionRight(nextPosFloat.x + cx, nextPosFloat.y + cy - CORRECT_VALUE);
 		float pushR = max(pushRBottom, pushRTop);
 		if (pushR > 0.0f) {
-			if (state == SPIKE)
+			if (state == SPIKE) {
+				PlaySoundMem(breakSound, DX_PLAYTYPE_BACK);
 				pIBox->KillMe();
+			}
 			transform_.position_.x -= pushR - 1.0f;
 			move.x = -move.x * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
@@ -159,8 +166,10 @@ void Ball::Update()
 		float pushLBottom = pIBox->CollisionLeft(nextPosFloat.x - cx, nextPosFloat.y + cy - CORRECT_VALUE);
 		float pushL = max(pushLBottom, pushLTop);
 		if (pushL > 0.0f) {
-			if (state == SPIKE)
+			if (state == SPIKE) {
+				PlaySoundMem(breakSound, DX_PLAYTYPE_BACK);
 				pIBox->KillMe();
+			}
 			transform_.position_.x += pushL - 1.0f;
 			move.x = -move.x * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
@@ -171,8 +180,10 @@ void Ball::Update()
 		float pushTLeft = pIBox->CollisionUp(nextPosFloat.x - cx + CORRECT_VALUE, nextPosFloat.y - cy);
 		float pushT = max(pushTRight, pushTLeft);
 		if (pushT > 0.0f) {
-			if (state != NORMAL)
+			if (state != NORMAL) {
+				PlaySoundMem(breakSound, DX_PLAYTYPE_BACK);
 				pIBox->KillMe();
+			}
 			transform_.position_.y += pushT - 1.0f;
 			move.y = -move.y * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;
@@ -182,8 +193,10 @@ void Ball::Update()
 		float pushBLeft = pIBox->CollisionDown(nextPosFloat.x - cx + CORRECT_VALUE, nextPosFloat.y + cy);
 		float pushB = max(pushBRight, pushBLeft);
 		if (pushB > 0.0f) {
-			if (state == SPIKE)
+			if (state == SPIKE) {
+				PlaySoundMem(breakSound, DX_PLAYTYPE_BACK);
 				pIBox->KillMe();
+			}
 			transform_.position_.y -= pushB - 1.0f;
 			move.y = -move.y * BALL_E;
 			rotSpeed = rotSpeed * BALL_E;

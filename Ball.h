@@ -61,5 +61,7 @@ private:
 		SPIKE,
 	};
 	State state;
+private:
+	int breakSound;
 };
 

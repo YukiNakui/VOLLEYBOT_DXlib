@@ -7,6 +7,7 @@ class HPBar :
 	int hBarImage;
 	int hHartImage;
 	int hBlackHartImage;
+	int manuImage;
 public:
 	HPBar(GameObject* parent);
 	~HPBar();
