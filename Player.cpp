@@ -733,7 +733,7 @@ void Player::Update()
 				cam->SetValueX((int)transform_.position_.x - x);
 			}
 			int y = (int)transform_.position_.y - cam->GetValueY();
-			if (!fallNow) {
+			if (state!=DEAD) {
 				if (y > 550) {
 					y = 550;
 					cam->SetValueY((int)transform_.position_.y - y);//ƒJƒƒ‰‚Ì’l‚ğo‚·‚É‚Íã‚Ì®‚ğˆÚ€‚·‚é
