@@ -21,7 +21,7 @@ namespace {
 	static const int WINDOW_WIDTH = 1280;
 	static const int WINDOW_HEIGHT = 720;
 	const float COLLIDE_WIDTH = 50.0f;
-	const float COLLIDE_HEIGHT = 40.0f;
+	const float COLLIDE_HEIGHT = 35.0f;
 	const float COLLIDE_BOTTOM = 10.0f;
 	const float CAN_ATTACK_LENGTH = 64.0f;
 }

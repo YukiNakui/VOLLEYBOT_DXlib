@@ -669,7 +669,7 @@ void Player::Update()
 					pEnemy->KillEnemy();
 				}
 #endif
-#if 0
+#if 1
 				if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y + 20, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
 					hp--;
 					/*if (cam != nullptr)
@@ -786,7 +786,7 @@ XMFLOAT3 Player::GetPosition()
 bool Player::IsTouchBall(XMFLOAT3 pos)
 {
 	float cx = PLAYER_WIDTH / 2.0f;
-	float cy = 50.0f;
+	float cy = 60.0f;
 	if ((pos.x <= transform_.position_.x + cx) && (pos.x >= transform_.position_.x - cx)) {
 		if ((pos.y <= transform_.position_.y) && (pos.y >= transform_.position_.y - cy)) {
 			return true;

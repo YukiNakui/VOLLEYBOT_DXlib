@@ -22,8 +22,8 @@ namespace {
 	const float SHOT_HEIGHT = 17.0f;
 	static const int WINDOW_WIDTH = 1280;
 	static const int WINDOW_HEIGHT = 720;
-	const float COLLIDE_WIDTH = 65.0f;
-	const float COLLIDE_HEIGHT = 70.0f;
+	const float COLLIDE_WIDTH = 60.0f;
+	const float COLLIDE_HEIGHT = 60.0f;
 }
 
 Skeleton::Skeleton(GameObject* parent):Enemy(parent)
