@@ -22,6 +22,8 @@ GoalObj::GoalObj(GameObject* scene)
 	}*/
 	hAnimImage = LoadGraph("Assets/Goal.png");
 	assert(hAnimImage > 0);
+	arrowImage = LoadGraph("Assets/Sign_2.png");
+	assert(arrowImage > 0);
 	explosionSound1 = LoadSoundMem("Assets/Sounds/Explosion03-2(Short).mp3");
 	assert(explosionSound1 > 0);
 	explosionSound2 = LoadSoundMem("Assets/Sounds/Explosion04-1(Short).mp3");
@@ -44,6 +46,10 @@ GoalObj::~GoalObj()
 	if (hAnimImage > 0)
 	{
 		DeleteGraph(hAnimImage);
+	}
+	if (arrowImage > 0)
+	{
+		DeleteGraph(arrowImage);
 	}
 }
 
@@ -112,6 +118,7 @@ void GoalObj::Draw()
 		y -= cam->GetValueY();
 	}
 	//DrawRotaGraph(x, y, 1.0f, 0, hImage[animFrame], TRUE);
+	DrawGraph(x - GOAL_WIDTH / 2.0, y - GOAL_HEIGHT / 2.0 + 305, arrowImage, TRUE);
 	DrawRectGraph(x - GOAL_WIDTH / 2.0, y - GOAL_HEIGHT / 2.0, animFrame * GOAL_WIDTH, 0, GOAL_WIDTH, GOAL_HEIGHT, hAnimImage, TRUE);
 
 	// デバッグ用の当たり判定の矩形を描画

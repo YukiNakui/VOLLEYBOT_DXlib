@@ -11,6 +11,7 @@ class GoalObj :
 {
 //	int hImage[GAF::GOAL_MAXFRAME];
 	int hAnimImage;
+	int arrowImage;
 	
 	float gRectTop;
 	float gRectBottom;
