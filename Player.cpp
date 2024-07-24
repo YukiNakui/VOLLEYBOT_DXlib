@@ -669,7 +669,7 @@ void Player::Update()
 					pEnemy->KillEnemy();
 				}
 #endif
-#if 1
+#if 0
 				if (pEnemy->CollideRectToRect(transform_.position_.x, transform_.position_.y + 20, PLAYER_WIDTH / 2.0f, PLAYER_HEIGHT / 2.0f)) {
 					hp--;
 					/*if (cam != nullptr)
