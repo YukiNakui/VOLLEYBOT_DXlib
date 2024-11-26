@@ -14,11 +14,14 @@
     <Filter Include="01Engine\ResourceManager">
       <UniqueIdentifier>{bedee914-5063-4c08-95bb-79c861b4969c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Characters">
-      <UniqueIdentifier>{f3069efe-7a61-433f-af72-9ed4dcbcfd0e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scenes">
       <UniqueIdentifier>{334ed72b-d931-4e7e-a1df-323b774abd87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects">
+      <UniqueIdentifier>{57045f6b-038a-47a7-b941-14f0d7866f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Characters">
+      <UniqueIdentifier>{57ffd7e8-2f92-4b41-bf3a-df98744d0d94}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -40,45 +43,65 @@
     <ClCompile Include="Engine\Transform.cpp">
       <Filter>01Engine\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Field.cpp" />
-    <ClCompile Include="Ball.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="BackGround.cpp" />
-    <ClCompile Include="ItemBox.cpp" />
-    <ClCompile Include="GoalObj.cpp" />
-    <ClCompile Include="Wolf.cpp">
-      <Filter>Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayScene.cpp">
+    <ClCompile Include="Scenes\ClearScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="ClearScene.cpp">
+    <ClCompile Include="Scenes\GameOverScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="GameOverScene.cpp">
+    <ClCompile Include="Scenes\PlayScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="Bird.cpp">
-      <Filter>Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="Skeleton.cpp">
-      <Filter>Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="Arrow.cpp">
-      <Filter>Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="Continue.cpp" />
-    <ClCompile Include="StageClear.cpp" />
-    <ClCompile Include="HPBar.cpp" />
-    <ClCompile Include="BlackLoad.cpp" />
-    <ClCompile Include="TitleScene.cpp">
+    <ClCompile Include="Scenes\TitleScene.cpp">
       <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Characters\Arrow.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Characters\Bird.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Characters\Enemy.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Characters\Player.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Characters\Skeleton.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Characters\Wolf.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\BackGround.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Ball.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\BlackLoad.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Camera.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Continue.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Field.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\GoalObj.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\HPBar.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\ItemBox.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\StageClear.cpp">
+      <Filter>Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -100,45 +123,65 @@
     <ClInclude Include="Engine\Transform.h">
       <Filter>01Engine\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Field.h" />
-    <ClInclude Include="Ball.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="BackGround.h" />
-    <ClInclude Include="ItemBox.h" />
-    <ClInclude Include="GoalObj.h" />
-    <ClInclude Include="Wolf.h">
-      <Filter>Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayScene.h">
+    <ClInclude Include="Scenes\ClearScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="ClearScene.h">
+    <ClInclude Include="Scenes\GameOverScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="GameOverScene.h">
+    <ClInclude Include="Scenes\PlayScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Bird.h">
-      <Filter>Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Skeleton.h">
-      <Filter>Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Arrow.h">
-      <Filter>Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Continue.h" />
-    <ClInclude Include="StageClear.h" />
-    <ClInclude Include="HPBar.h" />
-    <ClInclude Include="BlackLoad.h" />
-    <ClInclude Include="TitleScene.h">
+    <ClInclude Include="Scenes\TitleScene.h">
       <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Characters\Arrow.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Characters\Bird.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Characters\Enemy.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Characters\Player.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Characters\Skeleton.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Characters\Wolf.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\BackGround.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Ball.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\BlackLoad.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Camera.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Continue.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Field.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\GoalObj.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\HPBar.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\ItemBox.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\StageClear.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

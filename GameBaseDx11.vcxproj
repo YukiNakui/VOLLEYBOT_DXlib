@@ -23,7 +23,7 @@
     <ProjectGuid>{D68FA256-14C6-4B85-B85F-EC93C87CD599}</ProjectGuid>
     <RootNamespace>BaseProjectDx112</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>GameBaseDx11</ProjectName>
+    <ProjectName>VOLLEYBOT</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -93,10 +93,10 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>D:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;C:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;%(AdditionalIncludeDirectories);C:\Users\user\Desktop\プログラム\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;C:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;%(AdditionalIncludeDirectories);C:\Users\user\Desktop\プログラム\DxLib_VC\プロジェクトに追加すべきファイル_VC用;D:\GE2A16\DxLibプログラム\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>D:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;C:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;C:\DxLib_VC\プロジェクトに追加すべきファイル_VC用;%(AdditionalLibraryDirectories);D:\GE2A16\DxLibプログラム\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -122,68 +122,69 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>;C:\Users\user\Desktop\プログラム\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>;C:\Users\user\Desktop\プログラム\DxLib_VC\プロジェクトに追加すべきファイル_VC用;D:\GE2A16\DxLibプログラム\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>;D:\GE2A16\DxLibプログラム\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Arrow.cpp" />
-    <ClCompile Include="Bird.cpp" />
-    <ClCompile Include="BlackLoad.cpp" />
-    <ClCompile Include="ClearScene.cpp" />
-    <ClCompile Include="Continue.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="GameOverScene.cpp" />
-    <ClCompile Include="HPBar.cpp" />
-    <ClCompile Include="ItemBox.cpp" />
-    <ClCompile Include="BackGround.cpp" />
-    <ClCompile Include="Ball.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Skeleton.cpp" />
-    <ClCompile Include="StageClear.cpp" />
-    <ClCompile Include="TitleScene.cpp" />
-    <ClCompile Include="Wolf.cpp" />
+    <ClCompile Include="Characters\Arrow.cpp" />
+    <ClCompile Include="Characters\Bird.cpp" />
+    <ClCompile Include="Characters\Enemy.cpp" />
+    <ClCompile Include="Characters\Player.cpp" />
+    <ClCompile Include="Characters\Skeleton.cpp" />
+    <ClCompile Include="Characters\Wolf.cpp" />
+    <ClCompile Include="Objects\BackGround.cpp" />
+    <ClCompile Include="Objects\Ball.cpp" />
+    <ClCompile Include="Objects\BlackLoad.cpp" />
+    <ClCompile Include="Objects\Camera.cpp" />
+    <ClCompile Include="Objects\Continue.cpp" />
+    <ClCompile Include="Objects\Field.cpp" />
+    <ClCompile Include="Objects\GoalObj.cpp" />
+    <ClCompile Include="Objects\HPBar.cpp" />
+    <ClCompile Include="Objects\ItemBox.cpp" />
+    <ClCompile Include="Objects\StageClear.cpp" />
+    <ClCompile Include="Scenes\ClearScene.cpp" />
+    <ClCompile Include="Scenes\GameOverScene.cpp" />
+    <ClCompile Include="Scenes\PlayScene.cpp" />
+    <ClCompile Include="Scenes\TitleScene.cpp" />
     <ClCompile Include="Engine\CsvReader.cpp" />
     <ClCompile Include="Engine\GameObject.cpp" />
     <ClCompile Include="Engine\Main.cpp" />
     <ClCompile Include="Engine\RootObject.cpp" />
     <ClCompile Include="Engine\SceneManager.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
-    <ClCompile Include="Field.cpp" />
-    <ClCompile Include="GoalObj.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PlayScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Arrow.h" />
-    <ClInclude Include="Bird.h" />
-    <ClInclude Include="BlackLoad.h" />
-    <ClInclude Include="ClearScene.h" />
-    <ClInclude Include="Continue.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="GameOverScene.h" />
-    <ClInclude Include="HPBar.h" />
-    <ClInclude Include="ItemBox.h" />
-    <ClInclude Include="BackGround.h" />
-    <ClInclude Include="Ball.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Skeleton.h" />
-    <ClInclude Include="StageClear.h" />
-    <ClInclude Include="TitleScene.h" />
-    <ClInclude Include="Wolf.h" />
+    <ClInclude Include="Characters\Arrow.h" />
+    <ClInclude Include="Characters\Bird.h" />
+    <ClInclude Include="Characters\Enemy.h" />
+    <ClInclude Include="Characters\Player.h" />
+    <ClInclude Include="Characters\Skeleton.h" />
+    <ClInclude Include="Characters\Wolf.h" />
+    <ClInclude Include="Objects\BackGround.h" />
+    <ClInclude Include="Objects\Ball.h" />
+    <ClInclude Include="Objects\BlackLoad.h" />
+    <ClInclude Include="Objects\Camera.h" />
+    <ClInclude Include="Objects\Continue.h" />
+    <ClInclude Include="Objects\Field.h" />
+    <ClInclude Include="Objects\GoalObj.h" />
+    <ClInclude Include="Objects\HPBar.h" />
+    <ClInclude Include="Objects\ItemBox.h" />
+    <ClInclude Include="Objects\StageClear.h" />
+    <ClInclude Include="Scenes\ClearScene.h" />
+    <ClInclude Include="Scenes\GameOverScene.h" />
+    <ClInclude Include="Scenes\PlayScene.h" />
+    <ClInclude Include="Scenes\TitleScene.h" />
     <ClInclude Include="Engine\CsvReader.h" />
     <ClInclude Include="Engine\GameObject.h" />
     <ClInclude Include="Engine\Global.h" />
     <ClInclude Include="Engine\RootObject.h" />
     <ClInclude Include="Engine\SceneManager.h" />
     <ClInclude Include="Engine\Transform.h" />
-    <ClInclude Include="Field.h" />
-    <ClInclude Include="GoalObj.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="PlayScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

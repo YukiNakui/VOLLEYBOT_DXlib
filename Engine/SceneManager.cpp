@@ -1,9 +1,9 @@
 #include "sceneManager.h"
 
-#include"../TitleScene.h"
-#include "../PlayScene.h"
-#include"../GameOverScene.h"
-#include"../ClearScene.h"
+#include"../Scenes/TitleScene.h"
+#include "../Scenes/PlayScene.h"
+#include"../Scenes/GameOverScene.h"
+#include"../Scenes/ClearScene.h"
 
 namespace {
 	const int MAX_STAGE_NUM = 3;
